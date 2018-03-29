@@ -1,0 +1,81 @@
+// If you edit this file you need to compile the theme. See README.md for details.
+
+// Global variable overrides. Must be declared before importing Valo.
+
+// Defines the plaintext font size, weight and family. Font size affects general component sizing.
+//$v-font-size: 16px;
+//$v-font-weight: 300;
+//$v-font-family: "Open Sans", sans-serif;
+
+// Defines the border used by all components.
+//$v-border: 1px solid (v-shade 0.7);
+//$v-border-radius: 4px;
+
+// Affects the color of some component elements, e.g Button, Panel title, etc
+//$v-background-color: hsl(210, 0%, 98%);
+// Affects the color of content areas, e.g  Panel and Window content, TextField input etc
+//$v-app-background-color: $v-background-color;
+
+// Affects the visual appearance of all components
+//$v-gradient: v-linear 8%;
+//$v-bevel-depth: 30%;
+//$v-shadow-opacity: 5%;
+
+// Defines colors for indicating status (focus, success, failure)
+//$v-focus-color: valo-focus-color(); // Calculates a suitable color automatically
+//$v-friendly-color: #2c9720;
+//$v-error-indicator-color: #ed473b;
+
+// For more information, see: https://vaadin.com/book/-/page/themes.valo.html
+// Example variants can be copy/pasted from https://vaadin.com/wiki/-/wiki/Main/Valo+Examples
+
+@import "../valo/valo.scss";
+
+@mixin mytheme {
+  @include valo;
+
+  //.backgroundDark {
+  //  background: url("https://s3-us-west-2.amazonaws.com/xyz.cleangone/org/big/intro/banner.png") no-repeat center;
+  //}
+
+  .mainLayout {
+    background: white;
+  }
+
+  .v-menubar-menuitem-menuRight {
+    float: right;
+  }
+
+  .category {
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  .sold {
+    color: red;
+    font-weight: bold;
+  }
+
+  .adminNav {
+    background: whitesmoke;
+    border-left: 1px solid silver;
+    border-right: 1px solid silver;
+  }
+
+  .link { cursor: pointer; }
+  .linkActive { cursor: pointer; font-weight: bold; }
+  .marginLeft { margin-left: 15px; }
+  .fontBold { font-weight: bold; }
+
+  .wordWrap {
+    white-space: pre-wrap; /* css-3 */
+    white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+    white-space: -o-pre-wrap; /* Opera 7 */
+    word-wrap: break-word; /* Internet Explorer 5.5+ */
+  }
+
+  .backgroundWhite { background: white; }
+
+  .dividerBot { border-bottom: 1px solid silver; }
+  .dividerRight { border-right: 1px solid silver; }
+}

@@ -1,0 +1,62 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Braintree Payments Test</title>
+        <link rel="stylesheet" href="braintree_styles.css">
+    </head>
+
+    <body>
+        <h1>Braintree Payments Test 2</h1>
+
+        <!--
+            1.  Braintree client-side integration sends payment information (cc, PayPal auth) to Braintree in exchange
+                for a payment method nonce, a one time use value that represents that payment method.
+
+            2.  On your server, use a payment method nonce with a Braintree server SDK to charge a card
+                or update a customer's payment methods.
+
+            3.  By default, Braintree.js will add a hidden input named payment_method_nonce to your form. When your
+                user submits the form, if you have not subscribed to the onPaymentMethodReceived callback, your form
+                will be submitted with this value.
+
+            4.  (web) Process submitted form: get nonce, create transaction, process it via gateway
+
+            4.  (Vaadin) catch the onPaymentMethodReceived callback to get the nonce.
+        -->
+
+        <script src="https://js.braintreegateway.com/js/braintree-2.32.1.min.js"></script>
+        <script>
+            alert("setup");
+            braintree.setup('sandbox_fd8c7ggz_y5gr23fv42kg59mk', 'dropin', {
+                container: 'dropin-container',
+                onPaymentMethodReceived: function (event, nonce) {
+                    alert("paymentMethodReceived");
+                },
+                onSuccess: function (nonce, email) {
+                    alert("onsuccess");
+                },
+                form: 'checkout-form'
+//                paypal: {
+//                    button: {
+//                        type: 'checkout'
+//                    },
+//                    singleUse: true,
+//                    amount: 10.00,
+//                    currency: 'USD'
+//                }
+            });
+
+            function paymentMethodReceived(event, nonce)
+            {
+                alert("paymentMethodReceived");
+            }
+
+        </script>
+
+        <div style="width:500px">
+            <div id="dropin-container"></div>
+            <form id="checkout-form">
+                <input type='submit' class="button button--small button--green" value='Pay'/>
+            </form>
+        </div>
+    </body>
+</html>

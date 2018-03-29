@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+        <link rel="stylesheet" type="text/css" id="braintree-dropin-stylesheet"
+              href="https://js.braintreegateway.com/web/dropin/1.9.2/css/dropin.css">
+
+        <meta charset="utf-8">
+    =    <style>
+            html {
+                font-family: sans-serif;
+                font-size: 16pt;
+                background: #f9f9f9;
+            }
+            body {
+                width: 95%;
+                max-width: 500px;
+                margin: 0 auto;
+            }
+            #dropin-container, #checkout-form {
+                margin-bottom: 1em;
+            }
+            input[type="submit"], button {
+                font: inherit;
+                padding: 0.5em 1em;
+                border: 1px solid #d9d9d9;
+                background: #f2f2f2;
+                background-image: linear-gradient(-180deg,#f2f2f2 0,#e6e6e6 100%);
+            }
+        </style>
+
+        <script src="https://js.braintreegateway.com/assign-polyfill.js"></script>
+    </head>
+
+    <body>
+        <h1>Braintree Drop-in Script Tag Demo</h1>
+
+        <!--data-braintree-dropin-authorization="sandbox_fd8c7ggz_y5gr23fv42kg59mk"-->
+        <!--data-braintree-dropin-authorization="sandbox_f252zhq7_hh4cpc39zq4rgjcg"-->
+
+        <form id="checkout-form" action="script-tag-result.html">
+            <script src="https://js.braintreegateway.com/web/dropin/1.9.2/js/dropin.min.js"
+                    data-braintree-dropin-authorization="sandbox_fd8c7ggz_y5gr23fv42kg59mk"
+                    data-payment-option-priority='["card", "paypal"]'
+                    data-card.overrides.fields.cvv="null"
+                    data-paypal.flow="checkout"
+                    data-paypal.amount="10.00"
+                    data-paypal.currency="USD"
+                    data-paypal-credit.flow="vault">
+            </script>
+            <input id="pay-button" value="Pay" type="submit">
+        </form>
+    </body>
+</html>

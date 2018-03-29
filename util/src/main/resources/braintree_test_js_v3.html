@@ -1,0 +1,49 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <title>Braintree Payments Test - JS3</title>
+
+        <!--<link rel="stylesheet" href="braintree_styles.css">-->
+        <link rel="stylesheet" type="text/css" href="https://assets.braintreegateway.com/web/dropin/1.9.2/css/dropin.min.css" id="braintree-dropin-stylesheet">
+    </head>
+
+    <body>
+        <div align="center"> <h1>Braintree Payments Test - JS3</h1></div>
+
+
+            <div id="dropin-container"></div>
+            <button id="submit-button">Purchase</button>
+
+            <script src="https://js.braintreegateway.com/web/dropin/1.9.2/js/dropin.min.js"></script>
+            <script>
+
+                var button = document.querySelector('#submit-button');
+                braintree.dropin.create({
+                    authorization: 'sandbox_fd8c7ggz_y5gr23fv42kg59mk',
+                    container: '#dropin-container',
+                    paypal: {
+                        flow: 'checkout',
+                        amount: '10.00',
+                        currency: 'USD'
+                    }
+                }).then(function(dropinInstance) {
+                    button.addEventListener('click', function() { dropinInstance.requestPaymentMethod()
+                        .then(handleRequestPaymentMethodReply)
+                        .catch(handleRequestPaymentMethodError)
+                    });
+                }).catch(function(createErr) {
+                    alert("Create Error: " + createErr);
+                });
+
+                function handleRequestPaymentMethodReply(payload)
+                {
+                    alert("Recvd nonce: " + payload.nonce);
+                }
+
+                function handleRequestPaymentMethodError(requestPaymentMethodError)
+                {
+                    alert("RequestPaymentMethod Error: " + requestPaymentMethodError);
+                }
+            </script>
+    </body>
+</html>

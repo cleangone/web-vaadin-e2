@@ -50,7 +50,12 @@ public class BaseMenuBar extends MenuBar
 
     protected void addNavigateItem(String pageName, MenuBar menuBar)
     {
-        menuBar.addItem(pageName, null, getNavigateCmd(pageName));
+        addNavigateItem(pageName, pageName, menuBar);
+    }
+
+    protected void addNavigateItem(String pageName, String caption, MenuBar menuBar)
+    {
+        menuBar.addItem(caption, null, getNavigateCmd(pageName));
     }
 
     protected Command getNavigateCmd(String pageName)

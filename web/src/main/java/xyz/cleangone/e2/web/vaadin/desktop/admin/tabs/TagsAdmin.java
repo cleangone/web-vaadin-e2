@@ -1,4 +1,4 @@
-package xyz.cleangone.e2.web.vaadin.desktop.admin;
+package xyz.cleangone.e2.web.vaadin.desktop.admin.tabs;
 
 import com.vaadin.data.ValueProvider;
 import com.vaadin.server.Setter;

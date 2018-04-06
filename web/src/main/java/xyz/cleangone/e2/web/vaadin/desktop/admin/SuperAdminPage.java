@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 public class SuperAdminPage extends VerticalLayout implements View
 {
     public static final String NAME = "Super";
+    public static final String DISPLAY_NAME = "SuperAdmin";
 
     private VerticalLayout mainLayout = new VerticalLayout();
     private ActionBar actionBar = new ActionBar();
@@ -144,7 +145,7 @@ public class SuperAdminPage extends VerticalLayout implements View
     {
         return VaadinUtils.createLinkButton(org.getName(), e -> {
             sessionMgr.setOrg(org);
-            getUI().getNavigator().navigateTo(AdminPage.NAME);
+            getUI().getNavigator().navigateTo(OrgAdminPage.NAME);
         });
     }
 

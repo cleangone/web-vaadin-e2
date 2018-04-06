@@ -10,6 +10,8 @@ import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 import java.util.List;
 
 
+// todo - shows all events to event admins - should only show events they are an admin to - like events page
+
 public class NavCol extends VerticalLayout
 {
     private static String STYLE_ADMIN_NAV = "adminNav";

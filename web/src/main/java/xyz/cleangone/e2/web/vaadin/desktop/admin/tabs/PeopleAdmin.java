@@ -1,4 +1,4 @@
-package xyz.cleangone.e2.web.vaadin.desktop.admin;
+package xyz.cleangone.e2.web.vaadin.desktop.admin.tabs;
 
 
 import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.createDeleteButton;

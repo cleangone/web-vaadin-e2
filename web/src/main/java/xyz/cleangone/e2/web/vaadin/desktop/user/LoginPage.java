@@ -4,7 +4,6 @@ import com.vaadin.event.ShortcutAction;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.*;
-import com.vaadin.ui.themes.ValoTheme;
 import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.aws.dynamo.entity.person.UserToken;
@@ -13,9 +12,7 @@ import xyz.cleangone.data.manager.UserManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.manager.VaadinSessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.SuperAdminPage;
-import xyz.cleangone.e2.web.vaadin.desktop.banner.ActionBar;
-import xyz.cleangone.e2.web.vaadin.desktop.banner.BannerCarousel;
-import xyz.cleangone.e2.web.vaadin.desktop.banner.BannerSingle;
+import xyz.cleangone.e2.web.vaadin.desktop.actionbar.ActionBar;
 import xyz.cleangone.e2.web.vaadin.desktop.org.OrgPage;
 
 import javax.servlet.http.Cookie;
@@ -43,10 +40,7 @@ public class LoginPage extends Panel implements View
         setContent(pageLayout);
 
         ActionBar actionBar = new ActionBar();
-        actionBar.getLeftMenuBar().removeItems();
-        actionBar.getCenterMenuBar().removeItems();
-        actionBar.getRightMenuBar().removeItems();
-        orgsItem = actionBar.getLeftMenuBar().addItem("Organizations", null, null);
+        orgsItem = actionBar.override("Organizations");
 
         VerticalLayout mainLayout = new VerticalLayout();
         mainLayout.setMargin(false);

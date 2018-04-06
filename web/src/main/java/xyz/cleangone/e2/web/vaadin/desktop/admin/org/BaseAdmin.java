@@ -4,6 +4,7 @@ import com.vaadin.ui.*;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
 
+// todo - rename to BaseLayout
 public abstract class BaseAdmin extends VerticalLayout
 {
     protected final MessageDisplayer msgDisplayer;

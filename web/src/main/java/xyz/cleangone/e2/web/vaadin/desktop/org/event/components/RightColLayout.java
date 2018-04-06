@@ -1,18 +1,19 @@
 package xyz.cleangone.e2.web.vaadin.desktop.org.event.components;
 
 import com.vaadin.ui.VerticalLayout;
+import xyz.cleangone.data.aws.dynamo.entity.base.EntityType;
 import xyz.cleangone.data.aws.dynamo.entity.organization.EventParticipant;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.data.aws.dynamo.entity.person.Person;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
-import xyz.cleangone.data.cache.EntityLastTouched;
-import xyz.cleangone.data.cache.EntityType;
 import xyz.cleangone.data.manager.EventManager;
 import xyz.cleangone.data.manager.OrgManager;
 import xyz.cleangone.data.manager.TagManager;
+import xyz.cleangone.e2.web.manager.EntityChangeManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
-import xyz.cleangone.e2.web.vaadin.desktop.banner.ActionBar;
+import xyz.cleangone.e2.web.vaadin.desktop.actionbar.ActionBar;
+import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -20,7 +21,6 @@ import java.util.stream.Collectors;
 
 public class RightColLayout extends VerticalLayout
 {
-    private EntityLastTouched entityLastTouched = EntityLastTouched.getEntityLastTouched();
     private final ActionBar actionBar;
 
     private SessionManager sessionMgr;
@@ -29,11 +29,7 @@ public class RightColLayout extends VerticalLayout
     private TagManager tagMgr;
     private OrgEvent event;
     private User user;
-
-    private OrgEvent prevEvent;
-    private User prevUser;
-    private Date entitiesSetDate;
-
+    private EntityChangeManager changeManager = new EntityChangeManager();
 
     public RightColLayout(ActionBar actionBar)
     {
@@ -52,32 +48,27 @@ public class RightColLayout extends VerticalLayout
         user = sessionMgr.getUser();
     }
 
-    public void set()
+    public PageDisplayType set()
     {
-        if (event == prevEvent &&
-            user == prevUser &&
-            !entityLastTouched.entityChangedAfter(entitiesSetDate, orgMgr.getOrgId(), EntityType.PersonTag, EntityType.Person) &&
-            !entityLastTouched.entityChangedAfter(entitiesSetDate, event, EntityType.Entity, EntityType.PersonTag, EntityType.Participant))
+        if (changeManager.unchanged(user) &&
+            changeManager.unchanged(event) &&
+            changeManager.unchanged(orgMgr.getOrgId(), EntityType.PersonTag, EntityType.Person) &&
+            changeManager.unchanged(event, EntityType.Entity, EntityType.PersonTag, EntityType.Participant))
         {
-            // nothing has changed - do not reset components;
-            return;
+            return PageDisplayType.NoChange;
         }
 
-        prevEvent = event;
-        prevUser = user;
-        entitiesSetDate = new Date();
-
+        changeManager.reset(user, event);
         removeAllComponents();
         setWidth("28em");
 
         if (!event.getUserCanRegister() && !event.getAcceptDonations() && !event.getAcceptPledges())
         {
-            return;
+            return PageDisplayType.NoRetrieval;
         }
 
         List<OrgTag> orgTagsVisibleToEvent = tagMgr.getTags(event.getTagIds());
         List<OrgTag> eventTags = tagMgr.getEventTags(OrgTag.TagType.PersonTag, event.getId());
-
         List<OrgTag> allEventTags = new ArrayList<>(orgTagsVisibleToEvent);
         allEventTags.addAll(eventTags);
         Collections.sort(allEventTags);
@@ -105,5 +96,7 @@ public class RightColLayout extends VerticalLayout
             if (event.getAcceptDonations()) { addComponent(new DonationPanel(visibleParticipants, sessionMgr, actionBar)); }
             if (event.getAcceptPledges()) { addComponent(new PledgePanel(visibleParticipants, sessionMgr, actionBar)); }
         }
+
+        return PageDisplayType.ObjectRetrieval;
     }
 }

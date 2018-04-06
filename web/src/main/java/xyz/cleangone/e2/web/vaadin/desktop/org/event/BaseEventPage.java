@@ -12,7 +12,9 @@ import xyz.cleangone.data.manager.*;
 import xyz.cleangone.data.manager.event.ItemManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.org.BasePage;
+import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.components.RightColLayout;
+import xyz.cleangone.e2.web.vaadin.util.PageUtils;
 import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 
 import java.util.*;
@@ -84,7 +86,7 @@ public abstract class BaseEventPage extends BasePage implements View
         return layout;
     }
 
-    protected void set(SessionManager sessionMgr)
+    protected PageDisplayType set(SessionManager sessionMgr)
     {
         super.set(sessionMgr);
         eventMgr = sessionMgr.getEventManager();
@@ -98,15 +100,17 @@ public abstract class BaseEventPage extends BasePage implements View
         rightLayout.set(sessionMgr);
 
         resetHeader();
+        return PageDisplayType.NotApplicable;
     }
 
-    protected void setLeftLayout() { setLeftLayout(null); }
-    protected void setLeftLayout(OrgTag currentCategory)
+    protected PageDisplayType setLeftLayout() { return setLeftLayout(null); }
+    protected PageDisplayType setLeftLayout(OrgTag currentCategory)
     {
         leftWrapper.removeAllComponents();
         List<String> categoryIds = event.getCategoryIds();
-        if (categoryIds == null || categoryIds.isEmpty()) { return; }
+        if (categoryIds == null || categoryIds.isEmpty()) { return PageDisplayType.NoRetrieval; }
 
+        Date retrievalDate = new Date();
         List<OrgTag> categories = tagMgr.getTags(categoryIds);
         if (!categories.isEmpty())
         {
@@ -115,6 +119,8 @@ public abstract class BaseEventPage extends BasePage implements View
 
             leftWrapper.addComponents(getMarginLayout(), leftLayout);
         }
+
+        return PageDisplayType.ObjectRetrieval;
     }
 
     protected Component getCategoriesLayout(OrgTag currentCategory, List<OrgTag> categories)
@@ -127,6 +133,8 @@ public abstract class BaseEventPage extends BasePage implements View
 
         Page.Styles styles = Page.getCurrent().getStyles();
 
+
+        // todo - these styles need to be -org-event
         String textStyleName = "category-text-" + event.getTag();
         styles.add("." + textStyleName + " {color: " + textColor + "}");
 

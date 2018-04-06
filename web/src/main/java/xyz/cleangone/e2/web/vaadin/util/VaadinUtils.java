@@ -3,6 +3,7 @@ package xyz.cleangone.e2.web.vaadin.util;
 
 import com.vaadin.data.HasValue;
 import com.vaadin.event.FieldEvents;
+import com.vaadin.event.LayoutEvents;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Sizeable;
@@ -311,4 +312,19 @@ public class VaadinUtils
     {
         return value == null ? defaultValue : value;
     }
+
+    public static HorizontalLayout getLayout(String text, String styleName, LayoutEvents.LayoutClickListener listener)
+    {
+        HorizontalLayout layout = new HorizontalLayout();
+        layout.setMargin(false);
+
+        Label label = new Label(text);
+        layout.addComponent(label);
+        layout.addLayoutClickListener(listener);
+
+        layout.setStyleName(styleName);
+
+        return(layout);
+    }
+
 }

@@ -13,10 +13,12 @@ public class SigninPage extends BaseOrgPage implements View
     public static final String NAME = "SignIn";
     public static final String DISPLAY_NAME = "Sign In";
 
-    protected void set()
+    protected PageDisplayType set()
     {
         mainLayout.removeAllComponents();
         mainLayout.addComponent(getLogin());
+
+        return PageDisplayType.NotApplicable;
     }
 
     private Component getLogin()

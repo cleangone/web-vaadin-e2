@@ -20,15 +20,14 @@ import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.manager.VaadinSessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.AdminPage;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.SuperAdminPage;
-import xyz.cleangone.e2.web.vaadin.desktop.banner.ActionBar;
+import xyz.cleangone.e2.web.vaadin.desktop.actionbar.ActionBar;
 import xyz.cleangone.e2.web.vaadin.desktop.org.*;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.CatalogPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.EventPage;
-import xyz.cleangone.e2.web.vaadin.desktop.org.payment.BraintreePaymentPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.payment.IatsPaymentPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.payment.PaymentPage;
+import xyz.cleangone.e2.web.vaadin.desktop.org.profile.ProfilePage;
 import xyz.cleangone.e2.web.vaadin.desktop.user.LoginPage;
-import xyz.cleangone.util.Crypto;
 
 import java.util.Arrays;
 import java.util.List;
@@ -74,6 +73,7 @@ public class MyUI extends UI
         nav.addView(SigninPage.NAME, new SigninPage());
         nav.addView(PasswordRequestPage.NAME, new PasswordRequestPage());
         nav.addView(PasswordResetPage.NAME, new PasswordResetPage());
+        //nav.addView(ProfilePage.NAME, new ProfilePage());
         nav.addView(ProfilePage.NAME, new ProfilePage());
         nav.addView(CreateAccountPage.NAME, new CreateAccountPage());
         nav.addView(CartPage.NAME, new CartPage());
@@ -146,6 +146,7 @@ public class MyUI extends UI
         String path = vaadinRequest.getPathInfo();
         if (path == null || !path.startsWith("/") || path.equals("/")) { return null; }
 
+        // url path may contain /<orgTag>/<eventTag>
         List<String> tags = Arrays.asList(path.substring(1).split("\\s*/\\s*"));
         if (tags.isEmpty()) { return null; }
 

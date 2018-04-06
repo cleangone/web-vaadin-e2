@@ -22,10 +22,13 @@ import com.vaadin.ui.renderers.DateRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 import org.vaadin.dialogs.ConfirmDialog;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
+import xyz.cleangone.data.aws.dynamo.entity.base.EntityType;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
+import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
 import xyz.cleangone.data.aws.dynamo.entity.person.Person;
 import xyz.cleangone.data.manager.OrgManager;
 import xyz.cleangone.data.manager.TagManager;
+import xyz.cleangone.e2.web.manager.EntityChangeManager;
 import xyz.cleangone.e2.web.vaadin.util.CountingDataProvider;
 import xyz.cleangone.e2.web.vaadin.util.MultiFieldFilter;
 import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
@@ -40,6 +43,7 @@ public class PeopleAdmin extends VerticalLayout implements MultiSelectionListene
     private final MessageDisplayer msgDisplayer;
 
     private OrgManager orgMgr;
+    private EntityChangeManager changeManager = new EntityChangeManager();
 
     // add/remove tag from selected people
     private Map<String, OrgTag> orgTagsById;
@@ -75,6 +79,15 @@ public class PeopleAdmin extends VerticalLayout implements MultiSelectionListene
 
     public void set()
     {
+        Organization org = orgMgr.getOrg();
+        if (changeManager.unchanged(org) &&
+            changeManager.unchanged(org, EntityType.PersonTag, EntityType.Person))
+        {
+            return;
+        }
+
+        changeManager.reset(org);
+
         TagManager tagMgr = orgMgr.getTagManager();
         List<OrgTag> orgTags = tagMgr.getPersonTags();
         orgTagsById = tagMgr.getTagsById(orgTags);

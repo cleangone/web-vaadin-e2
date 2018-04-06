@@ -6,6 +6,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.TextField;
 import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
 import xyz.cleangone.e2.web.manager.SessionManager;
+import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 import xyz.cleangone.payment.PaymentResult;
 import xyz.cleangone.payment.iats.IatsClient;
@@ -20,7 +21,7 @@ public class IatsPaymentPage extends PaymentPage implements View
 
     private IatsClient iatsClient;
 
-    protected void set(SessionManager sessionMgr)
+    protected PageDisplayType set(SessionManager sessionMgr)
     {
         iatsClient = null;
         Organization org = sessionMgr.getOrg();
@@ -32,7 +33,7 @@ public class IatsPaymentPage extends PaymentPage implements View
             iatsClient = new IatsClient(org.getPaymentProcessorUser(), org.getPaymentProcessorAuth());
         }
 
-        super.set(sessionMgr);
+        return super.set(sessionMgr);
     }
 
     protected void setForm()

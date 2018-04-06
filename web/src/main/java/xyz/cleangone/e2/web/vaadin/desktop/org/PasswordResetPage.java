@@ -19,7 +19,7 @@ public class PasswordResetPage extends BaseOrgPage implements View
         mainLayout.setWidth("100%");
     }
 
-    protected void set()
+    protected PageDisplayType set()
     {
         userMgr = sessionMgr.getUserManager();
 
@@ -27,6 +27,8 @@ public class PasswordResetPage extends BaseOrgPage implements View
         Component passwordPanel = getPasswordPanel();
         mainLayout.addComponent(passwordPanel);
         mainLayout.setComponentAlignment(passwordPanel, Alignment.MIDDLE_CENTER);
+
+        return PageDisplayType.NotApplicable;
     }
 
     private Component getPasswordPanel()

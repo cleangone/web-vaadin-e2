@@ -11,7 +11,7 @@ import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.manager.VaadinSessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.event.EventsAdminPage;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.org.OrgAdmin;
-import xyz.cleangone.e2.web.vaadin.desktop.banner.ActionBar;
+import xyz.cleangone.e2.web.vaadin.desktop.actionbar.ActionBar;
 
 import java.util.logging.Logger;
 
@@ -26,6 +26,7 @@ public class AdminPage extends Panel implements View
     private TabSheet tabsheet = new TabSheet();
 
     private OrgAdmin orgAdmin = new OrgAdmin(actionBar);
+    private StatsAdmin statsAdmin = new StatsAdmin();
     private TagsAdmin tagsAdmin = new TagsAdmin(actionBar, OrgTag.TagType.PersonTag);
     private PeopleAdmin peopleAdmin = new PeopleAdmin(actionBar);
     private UsersAdmin usersAdmin = new UsersAdmin(actionBar);
@@ -54,21 +55,22 @@ public class AdminPage extends Panel implements View
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event)
     {
-        UI ui = getUI(); // set
-
         SessionManager sessionMgr = VaadinSessionManager.getExpectedSessionManager();
         OrgManager orgMgr = sessionMgr.getOrgManager();
         sessionMgr.resetEventManager();
-        actionBar.reset(sessionMgr);
+        actionBar.set(sessionMgr);
 
         tabsheet.removeAllComponents();
         boolean admin = sessionMgr.getUserManager().userIsAdmin(orgMgr.getOrg());
         TabSheet.Tab orgTab = admin ? tabsheet.addTab(createLayoutSizeFull(orgAdmin), "Organization") : null;
+        TabSheet.Tab statsTab = admin ? tabsheet.addTab(createLayoutSizeFull(statsAdmin), "Stats") : null;
         TabSheet.Tab tagsTab = admin ? tabsheet.addTab(createLayout100Pct(tagsAdmin), "Tags") : null;
         TabSheet.Tab peopleTab = admin ? tabsheet.addTab(createLayoutSizeFull(peopleAdmin), "People") : null;
         TabSheet.Tab usersTab = admin ? tabsheet.addTab(createLayoutSizeFull(usersAdmin), "Users") : null;
         TabSheet.Tab categoriesTab = admin ? tabsheet.addTab(createLayout100Pct(categoriesAdmin), "Categories") : null;
         TabSheet.Tab eventsTab = tabsheet.addTab(createLayoutSizeFull(eventsAdmin), "Events");
+
+        //statsTab.setEnabled();
 
         if (admin)
         {
@@ -89,6 +91,7 @@ public class AdminPage extends Panel implements View
                 Component selection = tabsheet.getSelectedTab();
                 TabSheet.Tab selectedTab = tabsheet.getTab(selection);
                 if (selectedTab == tagsTab) { tagsAdmin.set(orgMgr.getTagManager(), sessionMgr.getResetEventManager()); }
+                else if (selectedTab == statsTab) { statsAdmin.set(orgMgr); }
                 else if (selectedTab == categoriesTab) { categoriesAdmin.set(orgMgr.getTagManager(), sessionMgr.getResetEventManager()); }
                 else if (selectedTab == peopleTab) { peopleAdmin.set(orgMgr); }
                 else if (selectedTab == usersTab)  { usersAdmin.set(orgMgr, sessionMgr.getUserManager()); }

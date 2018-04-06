@@ -1,7 +1,6 @@
 package xyz.cleangone.e2.web.vaadin.desktop.admin.event;
 
 import com.vaadin.event.LayoutEvents;
-import com.vaadin.server.Page;
 import com.vaadin.ui.*;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.manager.EventManager;
@@ -23,8 +22,6 @@ public class NavCol extends VerticalLayout
 
     protected SessionManager sessionMgr;
     protected EventManager eventMgr;
-
-
     protected EventAdminPageType currPageType;
 
 
@@ -64,6 +61,16 @@ public class NavCol extends VerticalLayout
         int longestNameLength = EventAdminPageType.EVENTS.toString().length();
 
         List<OrgEvent> events = eventMgr.getEvents();
+
+        // events may have changed because cache refreshed
+        if (currEvent != null)
+        {
+            for (OrgEvent event : events)
+            {
+                if (event.getId().equals(currEvent.getId())) { currEvent = event; }
+            }
+        }
+
         for (OrgEvent event : events)
         {
             longestNameLength = Math.max(longestNameLength, event.getName().length());
@@ -82,6 +89,7 @@ public class NavCol extends VerticalLayout
                 eventAdmin.addComponent(getLink(EventAdminPageType.ROLES));
                 eventAdmin.addComponent(getLink(EventAdminPageType.USERS));
                 eventAdmin.addComponent(getLink(EventAdminPageType.DONATIONS));
+                eventAdmin.addComponent(getLink(EventAdminPageType.PURCHASES));
 
                 VerticalLayout eventLayout = new VerticalLayout();
                 eventLayout.setSpacing(false);

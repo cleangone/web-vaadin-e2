@@ -25,13 +25,15 @@ public class PasswordRequestPage extends BaseOrgPage implements View
     private Organization org;
 
 
-    protected void set()
+    protected PageDisplayType set()
     {
         userMgr = sessionMgr.getUserManager();
         org = sessionMgr.getOrg();
 
         mainLayout.removeAllComponents();
         mainLayout.addComponent(getSendEmail());
+
+        return PageDisplayType.NotApplicable;
     }
 
     private Component getSendEmail()

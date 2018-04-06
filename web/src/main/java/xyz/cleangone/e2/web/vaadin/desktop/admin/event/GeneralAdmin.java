@@ -8,11 +8,17 @@ import org.vaadin.alump.ckeditor.CKEditorTextField;
 import org.vaadin.viritin.components.DisclosurePanel;
 import xyz.cleangone.data.aws.dynamo.dao.DynamoBaseDao;
 import xyz.cleangone.data.aws.dynamo.dao.EventDao;
+import xyz.cleangone.data.aws.dynamo.entity.action.Action;
+import xyz.cleangone.data.aws.dynamo.entity.action.ActionType;
 import xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
+import xyz.cleangone.data.aws.dynamo.entity.base.EntityType;
 import xyz.cleangone.data.aws.dynamo.entity.organization.BaseOrg;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
+import xyz.cleangone.data.aws.dynamo.entity.person.User;
+import xyz.cleangone.data.manager.ActionManager;
 import xyz.cleangone.data.manager.EventManager;
+import xyz.cleangone.e2.web.manager.EntityChangeManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.org.BaseOrgAdmin;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.org.disclosure.BaseCustomComponent;
@@ -34,17 +40,18 @@ import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.createTextField;
 
 public class GeneralAdmin extends BaseOrgAdmin
 {
-    private final EventsAdminPage eventsAdmin;
     private EventManager eventMgr;
     private EventDao eventDao;
+    private ActionManager actionMgr;
+    private User user;
+    private EntityChangeManager changeManager = new EntityChangeManager();
+
 
     private final FormLayout formLayout = new FormLayout();
 
-    public GeneralAdmin(EventsAdminPage eventsAdmin, MessageDisplayer msgDisplayer)
+    public GeneralAdmin(MessageDisplayer msgDisplayer)
     {
         super(msgDisplayer);
-
-        this.eventsAdmin = eventsAdmin;
 
         setMargin(false);
         setSpacing(false);
@@ -57,16 +64,24 @@ public class GeneralAdmin extends BaseOrgAdmin
     {
         eventMgr = sessionMgr.getEventManager();
         eventDao = eventMgr.getEventDao();
+        actionMgr = sessionMgr.getOrgManager().getActionManager();
+        user = sessionMgr.getUserManager().getUser();
     }
 
     public void set()
     {
-        imageAdmin.set(eventMgr, getUI());
-
-        removeAllComponents();
-        formLayout.removeAllComponents();
-
         OrgEvent event = requireNonNull(eventMgr.getEvent());
+        if (changeManager.unchanged(user) &&
+            changeManager.unchanged(event) &&
+            changeManager.unchanged(event, EntityType.Entity))
+        {
+            return;
+        }
+
+        changeManager.reset(user, event);
+        removeAllComponents();
+        imageAdmin.set(eventMgr, getUI());
+        formLayout.removeAllComponents();
 
         formLayout.addComponent(new NameDisclosure(event, eventDao));
         formLayout.addComponent(new StatusDisclosure(event));
@@ -100,8 +115,12 @@ public class GeneralAdmin extends BaseOrgAdmin
             CheckBox useOrgBannerCheckbox = createCheckBox(OrgEvent.USE_ORG_BANNER_FIELD, event, this);
 //            useOrgBannerCheckbox.addValueChangeListener(e -> setDisclosureCaption());
 
+            CheckBox enabledCheckBox = createCheckBox(OrgEvent.ENABLED_FIELD, event, this);
+            enabledCheckBox.addValueChangeListener(e ->
+                actionMgr.saveAction(user, event, (e.getValue() ? ActionType.Enabled : ActionType.Disabled)));
+
             mainLayout.addComponents(
-                createCheckBox(OrgEvent.ENABLED_FIELD, event, this),
+                enabledCheckBox,
                 useOrgBannerCheckbox,
                 createCheckBox(OrgEvent.USER_CAN_REGISTER_FIELD, event, this),
                 createCheckBox(OrgEvent.EVENT_COMPLETED_FIELD, event, this));
@@ -112,8 +131,6 @@ public class GeneralAdmin extends BaseOrgAdmin
         {
 
         }
-
-
 
         public void setDisclosureCaption()
         {

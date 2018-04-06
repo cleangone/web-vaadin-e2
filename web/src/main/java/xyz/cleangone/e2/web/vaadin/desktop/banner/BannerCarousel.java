@@ -5,11 +5,14 @@ import com.vaadin.ui.AbsoluteLayout;
 import org.vaadin.virkki.carousel.HorizontalCarousel;
 import org.vaadin.virkki.carousel.client.widget.gwt.ArrowKeysMode;
 import org.vaadin.virkki.carousel.client.widget.gwt.CarouselLoadMode;
+import xyz.cleangone.data.aws.dynamo.entity.base.EntityLastTouched;
+import xyz.cleangone.data.aws.dynamo.entity.base.EntityType;
 import xyz.cleangone.data.aws.dynamo.entity.base.OrgLastTouched;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
 import xyz.cleangone.data.manager.EventManager;
 import xyz.cleangone.data.manager.OrgManager;
+import xyz.cleangone.e2.web.manager.EntityChangeManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 
 import java.util.HashMap;
@@ -18,8 +21,8 @@ import java.util.Map;
 
 public class BannerCarousel extends HorizontalCarousel implements BannerComponent
 {
-    private OrgLastTouched orgLastTouched = null;
     private AbsoluteLayout orgBanner;
+    private EntityChangeManager changeManager = new EntityChangeManager();
 
     public BannerCarousel()
     {
@@ -32,42 +35,38 @@ public class BannerCarousel extends HorizontalCarousel implements BannerComponen
 
     public void reset(SessionManager sessionMgr)
     {
-        OrgManager orgMgr = sessionMgr.getOrgManager();
-
-        if (!bannerIsCurrent(orgMgr))
-        {
-            removeAllComponents();
-            orgLastTouched = orgMgr.getOrgLastTouched();
-
-            EventManager eventMgr = sessionMgr.getEventManager();
-            for (OrgEvent event : eventMgr.getActiveEvents())
-            {
-                if (!event.getUseOrgBanner())
-                {
-                    AbsoluteLayout eventBanner = getBanner(event);
-                    addComponent(eventBanner);
-                    addComponentToLayout(getHtml(event, sessionMgr, getUI()), eventBanner);
-                }
-            }
-
-            // add org last so we can see scrolling
-            Organization org = orgMgr.getOrg();
-            orgBanner = getBanner(org);
-            addComponent(orgBanner);
-            addComponentToLayout(getHtml(org, getUI()), orgBanner);
-        }
-
+        resetBanner(sessionMgr);
         scrollTo(orgBanner);
     }
 
-    private boolean bannerIsCurrent(OrgManager orgMgr)
+    private void resetBanner(SessionManager sessionMgr)
     {
-        if (orgLastTouched == null) { return false; }
-
+        OrgManager orgMgr = sessionMgr.getOrgManager();
         Organization org = orgMgr.getOrg();
-        if (!orgLastTouched.getId().equals(org.getId())) { return false; }
 
-        OrgLastTouched currlastTouch = orgMgr.getOrgLastTouched();
-        return orgLastTouched.equals(currlastTouch);
+        if (changeManager.unchanged(org) &&
+            changeManager.unchanged(org, EntityType.Entity, EntityType.Event))
+        {
+            return;
+        }
+
+        changeManager.reset(org);
+        removeAllComponents();
+
+        EventManager eventMgr = sessionMgr.getEventManager();
+        for (OrgEvent event : eventMgr.getActiveEvents())
+        {
+            if (!event.getUseOrgBanner())
+            {
+                AbsoluteLayout eventBanner = getBanner(event);
+                addComponent(eventBanner);
+                addComponentToLayout(getHtml(event, sessionMgr, getUI()), eventBanner);
+            }
+        }
+
+        // add org last so we can see scrolling
+        orgBanner = getBanner(org);
+        addComponent(orgBanner);
+        addComponentToLayout(getHtml(org, getUI()), orgBanner);
     }
 }

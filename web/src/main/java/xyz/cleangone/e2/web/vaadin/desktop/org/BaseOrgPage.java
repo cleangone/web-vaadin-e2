@@ -10,13 +10,13 @@ public abstract class BaseOrgPage extends BasePage implements View
         super(BannerStyle.Single);
     }
 
-    protected void set(SessionManager sessionMgr)
+    protected PageDisplayType set(SessionManager sessionMgr)
     {
         super.set(sessionMgr);
 
         resetHeader();
-        set();
+        return set();
     }
 
-    protected abstract void set();
+    protected abstract PageDisplayType set();
 }

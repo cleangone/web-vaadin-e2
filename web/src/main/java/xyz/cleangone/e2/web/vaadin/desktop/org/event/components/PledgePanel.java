@@ -5,7 +5,7 @@ import com.vaadin.ui.*;
 import xyz.cleangone.data.aws.dynamo.entity.action.Action;
 import xyz.cleangone.data.aws.dynamo.entity.organization.EventParticipant;
 import xyz.cleangone.e2.web.manager.SessionManager;
-import xyz.cleangone.e2.web.vaadin.desktop.banner.ActionBar;
+import xyz.cleangone.e2.web.vaadin.desktop.actionbar.ActionBar;
 import xyz.cleangone.e2.web.vaadin.desktop.org.SigninPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.EventPage;
 import xyz.cleangone.e2.web.vaadin.util.DollarField;

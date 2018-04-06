@@ -33,7 +33,7 @@ public class CalendarPage extends BasePage implements View
         super(BannerStyle.Single);
     }
 
-    protected void set(SessionManager sessionManager)
+    protected PageDisplayType set(SessionManager sessionManager)
     {
         super.set(sessionManager);
 
@@ -48,6 +48,8 @@ public class CalendarPage extends BasePage implements View
         calendarLayout.addComponent(calendar);
 
         mainLayout.addComponent(calendarLayout);
+
+        return PageDisplayType.NotApplicable;
     }
 
     private Calendar<EventCalendarItem> createCalendar(EventManager eventMgr)

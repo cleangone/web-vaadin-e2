@@ -19,7 +19,7 @@ public class CreateAccountPage extends BaseOrgPage implements View
     public static final String NAME = "CreateAccount";
     public static final String DISPLAY_NAME = "Create Account";
 
-    protected void set()
+    protected PageDisplayType set()
     {
         mainLayout.removeAllComponents();
 
@@ -66,6 +66,8 @@ public class CreateAccountPage extends BaseOrgPage implements View
                 // todo - setSessionMsg("User created"), which will be displayed by next ActionBar
             }
         });
+
+        return PageDisplayType.NotApplicable;
     }
 
     private TextField createTextField(EntityField field, BaseEntity entity)

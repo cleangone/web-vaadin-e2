@@ -8,7 +8,7 @@ import xyz.cleangone.data.manager.ActionManager;
 import xyz.cleangone.data.manager.EventManager;
 import xyz.cleangone.data.manager.UserManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
-import xyz.cleangone.e2.web.vaadin.desktop.banner.ActionBar;
+import xyz.cleangone.e2.web.vaadin.desktop.actionbar.ActionBar;
 
 public class BaseActionPanel extends Panel
 {

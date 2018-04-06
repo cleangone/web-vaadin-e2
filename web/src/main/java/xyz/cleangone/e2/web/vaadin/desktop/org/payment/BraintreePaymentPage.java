@@ -3,6 +3,7 @@ package xyz.cleangone.e2.web.vaadin.desktop.org.payment;
 import com.vaadin.navigator.View;
 import com.vaadin.ui.Component;
 import xyz.cleangone.e2.web.manager.SessionManager;
+import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 import xyz.cleangone.payment.PaymentResult;
 import xyz.cleangone.payment.braintree.BraintreeClient;
 import xyz.cleangone.payment.braintree.BraintreeClientResult;
@@ -15,14 +16,14 @@ public class BraintreePaymentPage extends PaymentPage implements View
     private BraintreeClient braintreeClient;
     private Gateway gateway;
 
-    protected void set(SessionManager sessionMgr)
+    protected PageDisplayType set(SessionManager sessionMgr)
     {
         braintreeClient = new BraintreeClient();
         braintreeClient.setAuth("sandbox_fd8c7ggz_y5gr23fv42kg59mk");  // todo - get fm org
 
         gateway = new Gateway(sessionMgr.getOrg());
 
-        super.set(sessionMgr);
+        return super.set(sessionMgr);
     }
 
     protected Component getCheckout()

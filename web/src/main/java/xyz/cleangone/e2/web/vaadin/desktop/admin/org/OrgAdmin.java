@@ -69,6 +69,7 @@ public class OrgAdmin extends BaseOrgAdmin
         formLayout.addComponent(new NameDisclosure(org, dao));
         formLayout.addComponent(new BannerDisclosure(org, orgMgr, dao));
         formLayout.addComponent(new BannerTextDisclosure(org, dao));
+        formLayout.addComponent(new MenuDisclosure(org, dao));
         formLayout.addComponent(new LayoutDisclosure(org, dao));
         formLayout.addComponent(new ImagesDisclosure(imageAdmin));
         formLayout.addComponent(new IntroHtmlDisclosure(org, dao));

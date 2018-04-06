@@ -1,117 +1,85 @@
-package xyz.cleangone.e2.web.vaadin.desktop.org;
+package xyz.cleangone.e2.web.vaadin.desktop.org.profile;
 
-import static xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity.CREATED_DATE_FIELD;
-import static xyz.cleangone.data.aws.dynamo.entity.person.User.*;
-import static xyz.cleangone.e2.web.vaadin.util.DisclosureUtils.*;
-
-import com.vaadin.data.provider.ListDataProvider;
-import com.vaadin.navigator.View;
-import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.shared.ui.AlignmentInfo;
 import com.vaadin.ui.*;
-import com.vaadin.ui.renderers.DateRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 import org.apache.commons.lang3.StringUtils;
-import xyz.cleangone.data.aws.dynamo.dao.DynamoBaseDao;
-import xyz.cleangone.data.aws.dynamo.entity.action.Action;
-import xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
-import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
 import xyz.cleangone.data.aws.dynamo.entity.person.Person;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.aws.dynamo.entity.person.UserToken;
-import xyz.cleangone.data.manager.ActionManager;
 import xyz.cleangone.data.manager.UserManager;
+import xyz.cleangone.e2.web.manager.EntityChangeManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.MyUI;
+import xyz.cleangone.e2.web.vaadin.desktop.admin.org.BaseAdmin;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.org.disclosure.BaseDisclosure;
-
 import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
 import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 import xyz.cleangone.message.EmailSender;
 
-import java.text.DateFormat;
-import java.util.List;
+import static java.util.Objects.requireNonNull;
+import static xyz.cleangone.data.aws.dynamo.entity.person.User.*;
+import static xyz.cleangone.e2.web.vaadin.util.DisclosureUtils.createCheckBox;
+import static xyz.cleangone.e2.web.vaadin.util.DisclosureUtils.createTextField;
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
-public class ProfilePage extends BaseOrgPage implements View
+public class ProfileAdmin extends BaseAdmin
 {
-    public static final String NAME = "UserProfile";
-    public static final String DISPLAY_NAME = "User Profile";
-
-    private FormLayout topLayout = new FormLayout();
-    private VerticalLayout bottomLayout = new VerticalLayout();
+    private final FormLayout formLayout = new FormLayout();
     private EmailSender emailSender = new EmailSender();
 
+    private SessionManager sessionMgr;
     private UserManager userMgr;
-    private ActionManager actionMgr;
     private Organization org;
     private User user;
     private Person person;
+    private EntityChangeManager changeManager = new EntityChangeManager();
 
-    public ProfilePage()
+    public ProfileAdmin(MessageDisplayer msgDisplayer)
     {
-        topLayout.setMargin(true);
-        topLayout.setSpacing(false);
-        mainLayout.addComponents(topLayout, bottomLayout);
+        super(msgDisplayer);
+
+        setMargin(false);
+        setSpacing(false);
+
+        formLayout.setMargin(true);
+        formLayout.setSpacing(false);
     }
 
-    protected void set(SessionManager sessionMgr)
+    public void set(SessionManager sessionMgr)
     {
-        sessionMgr.resetEventManager();
-        super.set(sessionMgr);
-    }
-
-    protected void set()
-    {
-        topLayout.removeAllComponents();
-        bottomLayout.removeAllComponents();
-
+        this.sessionMgr = sessionMgr;
         userMgr = sessionMgr.getPopulatedUserManager();
-        actionMgr = sessionMgr.getOrgManager().getActionManager();
         org = sessionMgr.getOrg();
         user = userMgr.getUser();
         person = userMgr.getPerson();
 
-        topLayout.addComponent(new NameDisclosure());
-        topLayout.addComponent(new EmailDisclosure());
-        topLayout.addComponent(new PhoneDisclosure());
-        topLayout.addComponent(new AddressDisclosure());
-        topLayout.addComponent(new PasswordDisclosure());
-
-        bottomLayout.addComponent(getActionGrid(user));
+        set();
     }
 
-    private Grid<Action> getActionGrid(User user)
+    public void set()
     {
-        Grid<Action> grid = new Grid<>();
-        grid.setSizeFull();
+        if (changeManager.unchanged(user) &&
+            changeManager.unchangedEntity(user.getId()) &&
+            changeManager.unchangedEntity(user.getPersonId()))
+        {
+            return;
+        }
 
-        grid.addColumn(Action::getCreatedDate).setCaption("Date")
-            .setId(CREATED_DATE_FIELD.getName())
-            .setRenderer(new DateRenderer(DateFormat.getDateInstance(DateFormat.MEDIUM)));
-        grid.addColumn(Action::getTargetEventName).setCaption("Event");
-        grid.addColumn(Action::getActionType).setCaption("Action");
-        grid.addColumn(Action::getDisplayAmount).setCaption("Amount");
-        grid.addColumn(Action::getDescription).setCaption("Description");
-        grid.addColumn(Action::getTargetPersonFirstLast).setCaption("For Person");
+        changeManager.reset(user);
+        removeAllComponents();
+        formLayout.removeAllComponents();
 
-        grid.sort(CREATED_DATE_FIELD.getName(), SortDirection.DESCENDING);
+        formLayout.addComponent(new NameDisclosure());
+        formLayout.addComponent(new EmailDisclosure());
+        formLayout.addComponent(new PhoneDisclosure());
+        formLayout.addComponent(new AddressDisclosure());
+        formLayout.addComponent(new PasswordDisclosure());
 
-        List<Action> actions = actionMgr.getActionsBySourcePerson(user.getPersonId());
-        grid.setDataProvider(new ListDataProvider<>(actions));
-
-        return grid;
-    }
-
-    private TextField createUserTextField(EntityField field, BaseDisclosure disclosure)
-    {
-        return createTextField(field, user, userMgr.getUserDao(), actionBar, disclosure);
-    }
-
-    private TextField createPersonTextField(EntityField field, BaseDisclosure disclosure)
-    {
-        return createTextField(field, person, userMgr.getPersonDao(), actionBar, disclosure);
+        addComponents(formLayout);
+        setExpandRatio(formLayout, 1.0f);
     }
 
     class NameDisclosure extends BaseDisclosure
@@ -163,7 +131,7 @@ public class ProfilePage extends BaseOrgPage implements View
                         mainLayout.addComponent(verifyEmailButton);
                     }
 
-                    actionBar.displayMessage("Email saved");
+                    msgDisplayer.displayMessage("Email saved");
                     setDisclosureCaption();
                 }
                 else
@@ -194,7 +162,7 @@ public class ProfilePage extends BaseOrgPage implements View
             String textBody = "Verify your email by pasting the following link into your browwser: " + link;
 
             boolean emailSent = emailSender.sendEmail(userEmail, subject, htmlBody, textBody);
-            actionBar.displayMessage(emailSent ? "Verification email sent" : "Error sending verification email");
+            msgDisplayer.displayMessage(emailSent ? "Verification email sent" : "Error sending verification email");
         }
 
         public void setDisclosureCaption()
@@ -215,7 +183,7 @@ public class ProfilePage extends BaseOrgPage implements View
 
             mainLayout.addComponents(
                 createUserTextField(PHONE_FIELD, this),
-                createCheckBox(ACCEPT_TEXTS_FIELD, user, userMgr.getUserDao(), actionBar, this));
+                createCheckBox(ACCEPT_TEXTS_FIELD, user, userMgr.getUserDao(), msgDisplayer, this));
         }
 
         public void setDisclosureCaption()
@@ -255,11 +223,11 @@ public class ProfilePage extends BaseOrgPage implements View
         {
             String caption =
                 (user.getAddress() == null && user.getCity() == null && user.getState() == null && user.getZip() == null) ?
-                "Address not set" :
-                getOrDefault(user.getAddress(),   "Address") + ", " +
-                    getOrDefault(user.getCity(),  "City")    + ", " +
-                    getOrDefault(user.getState(), "State")   + ", " +
-                    getOrDefault(user.getZip(),   "Zip");
+                    "Address not set" :
+                    getOrDefault(user.getAddress(),   "Address") + ", " +
+                        getOrDefault(user.getCity(),  "City")    + ", " +
+                        getOrDefault(user.getState(), "State")   + ", " +
+                        getOrDefault(user.getZip(),   "Zip");
 
             setDisclosureCaption(caption);
         }
@@ -294,7 +262,7 @@ public class ProfilePage extends BaseOrgPage implements View
                     newPasswordField.clear();
                     confirmField.clear();
                     setDisclosureCaption();
-                    actionBar.displayMessage("Password updated");
+                    msgDisplayer.displayMessage("Password updated");
                 }
             });
 
@@ -306,4 +274,16 @@ public class ProfilePage extends BaseOrgPage implements View
             setDisclosureCaption("Password " + (user.getEncryptedPassword()==null ? " not" : "") + " set");
         }
     }
+
+    private TextField createUserTextField(EntityField field, BaseDisclosure disclosure)
+    {
+        return createTextField(field, user, userMgr.getUserDao(), msgDisplayer, disclosure);
+    }
+
+    private TextField createPersonTextField(EntityField field, BaseDisclosure disclosure)
+    {
+        return createTextField(field, person, userMgr.getPersonDao(), msgDisplayer, disclosure);
+    }
+
+
 }

@@ -3,13 +3,17 @@ package xyz.cleangone.e2.web.vaadin.desktop.org.event;
 import com.vaadin.navigator.View;
 import com.vaadin.ui.Label;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
+import xyz.cleangone.data.manager.UserManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
+import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.components.*;
 
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import static xyz.cleangone.e2.web.vaadin.util.PageUtils.*;
+import static xyz.cleangone.e2.web.vaadin.util.PageUtils.getPageDisplayType;
 import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
 public class EventPage extends BaseEventPage implements View
@@ -18,23 +22,29 @@ public class EventPage extends BaseEventPage implements View
     public static final String NAME = "Event";
     private static String STYLE_WORD_WRAP = "wordWrap";
 
-
-    protected void set(SessionManager sessionMgr)
+    protected PageDisplayType set(SessionManager sessionMgr)
     {
         super.set(sessionMgr);
 
         setMenuLeftStyle();
-        set();
+        return set();
     }
 
-    protected void set()
+    protected String getPageName()
     {
-        setLeftLayout();
-        setCenterLayout();
-        rightLayout.set();
+        return event == null ? "Event" : event.getName();
     }
 
-    private void setCenterLayout()
+    protected PageDisplayType set()
+    {
+        PageDisplayType leftDisplayType = setLeftLayout();
+        PageDisplayType centerDisplayType = setCenterLayout();
+        PageDisplayType rightDisplayType = rightLayout.set();
+
+        return getPageDisplayType(leftDisplayType, centerDisplayType, rightDisplayType);
+    }
+
+    private PageDisplayType setCenterLayout()
     {
         boolean showFulfillPledgesPanel = FulfillPledgesPanel.panelHasContent(event, user);
         if (!showFulfillPledgesPanel &&
@@ -42,14 +52,14 @@ public class EventPage extends BaseEventPage implements View
             !updateDateChanged(event))
         {
             // layout just showing html, which has not changed
-            return;
+            return PageDisplayType.NoChange;
         }
 
         setUpdateDate(event);
         centerLayout.removeAllComponents();
 
-        FulfillPledgesPanel panel = new FulfillPledgesPanel(sessionMgr, actionBar);
-        if (panel.unfulfilledPledgesExist()) { centerLayout.addComponents(new Label(), panel); }
+        FulfillPledgesPanel pledgesPanel = new FulfillPledgesPanel(sessionMgr, actionBar);
+        if (pledgesPanel.unfulfilledPledgesExist()) { centerLayout.addComponents(new Label(), pledgesPanel); }
 
         Label label = getHtmlLabel(event.getIntroHtml());
         label.setStyleName(STYLE_WORD_WRAP);
@@ -65,5 +75,7 @@ public class EventPage extends BaseEventPage implements View
         {
             centerLayout.addComponent(new CatalogLayout(items, eventMgr, itemMgr.getImageManager()));
         }
+
+        return PageDisplayType.ObjectRetrieval;
     }
 }

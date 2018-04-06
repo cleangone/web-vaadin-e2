@@ -50,16 +50,16 @@ public class CartPage extends BasePage implements View
         cartPanel.setContent(cartLayout);
     }
 
-    protected void set(SessionManager sessionMgr)
+    protected PageDisplayType set(SessionManager sessionMgr)
     {
         super.set(sessionMgr);
         eventMgr = sessionMgr.getEventManager();
         cart = sessionMgr.getCart();
 
-        set();
+        return set();
     }
 
-    protected void set()
+    protected PageDisplayType set()
     {
         resetHeader();
 
@@ -71,6 +71,8 @@ public class CartPage extends BasePage implements View
 
         String pageName = orgMgr.getOrg().isPaymentProcessor(Organization.PaymentProcessorType.iATS) ? IatsPaymentPage.NAME : PaymentPage.NAME;
         if (!cart.isEmpty()) { mainLayout.addComponent(createTextButton("Checkout", e -> navigateTo(pageName))); }
+
+        return PageDisplayType.NotApplicable;
     }
 
     private Grid<CartItem> getCartGrid()

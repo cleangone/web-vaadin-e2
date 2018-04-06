@@ -13,6 +13,7 @@ import xyz.cleangone.data.aws.dynamo.entity.purchase.Cart;
 import xyz.cleangone.data.manager.ImageManager;
 import xyz.cleangone.e2.web.vaadin.desktop.image.ImageDimension;
 import xyz.cleangone.e2.web.vaadin.desktop.image.ImageLabel;
+import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 
 import java.math.BigDecimal;
@@ -22,12 +23,14 @@ public class ItemPage extends CatalogPage implements View
 {
     public static final String NAME = "Item";
 
-    protected void set()
+    protected PageDisplayType set()
     {
         imageMgr = itemMgr.getImageManager();
 
         setLeftLayout(category);
         setCenterLayout();
+
+        return PageDisplayType.NotApplicable;
     }
 
     protected void setCenterLayout()
@@ -73,7 +76,7 @@ public class ItemPage extends CatalogPage implements View
                 cart.addItem(new CartItem(item, event, category));
                 cart.setReturnPage(EventPage.NAME);
 
-                actionBar.setCartMenuItem(sessionMgr);
+                actionBar.setCartMenuItem();
                 actionBar.displayMessage("Item added to Cart");
             }));
         }

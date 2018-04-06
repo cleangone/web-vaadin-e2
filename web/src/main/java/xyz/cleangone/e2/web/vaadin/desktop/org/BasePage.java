@@ -5,11 +5,10 @@ import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
 import xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
-import xyz.cleangone.data.cache.EntityLastTouched;
 import xyz.cleangone.data.manager.OrgManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.manager.VaadinSessionManager;
-import xyz.cleangone.e2.web.vaadin.desktop.banner.ActionBar;
+import xyz.cleangone.e2.web.vaadin.desktop.actionbar.ActionBar;
 import xyz.cleangone.e2.web.vaadin.desktop.banner.BannerComponent;
 import xyz.cleangone.e2.web.vaadin.desktop.banner.BannerCarousel;
 import xyz.cleangone.e2.web.vaadin.desktop.banner.BannerSingle;
@@ -18,12 +17,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import static xyz.cleangone.e2.web.manager.PageStats.*;
 
 
 public abstract class BasePage extends Panel implements View
 {
     protected enum BannerStyle { Carousel, Single };
-    protected EntityLastTouched entityLastTouched = EntityLastTouched.getEntityLastTouched();
 
     private VerticalLayout pageLayout = new VerticalLayout();
     private BannerComponent banner;
@@ -64,20 +63,32 @@ public abstract class BasePage extends Panel implements View
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event)
     {
+        Date start = new Date();
         SessionManager sessionManager = VaadinSessionManager.getExpectedSessionManager();
-        if (sessionManager.hasOrg()) { set(sessionManager); }
+        if (sessionManager.hasOrg())
+        {
+            PageDisplayType pageDisplayType = set(sessionManager);
+            addRetrievalTime(sessionManager.getOrg().getId(), getPageName(), pageDisplayType, start);
+        }
     }
 
-    protected void set(SessionManager sessionMgr)
+    protected String getPageName()
+    {
+        return null;
+    }
+
+    protected PageDisplayType set(SessionManager sessionMgr)
     {
         this.sessionMgr = sessionMgr;
         orgMgr = sessionMgr.getOrgManager();
+
+        return PageDisplayType.NotApplicable;
     }
 
-    protected void resetHeader()
+    protected PageDisplayType resetHeader()
     {
         banner.reset(sessionMgr);
-        actionBar.reset(sessionMgr);
+        return actionBar.set(sessionMgr);
     }
 
     protected boolean updateDatesChanged(BaseEntity entity, List<? extends BaseEntity> entities)
@@ -114,6 +125,8 @@ public abstract class BasePage extends Panel implements View
         setUpdateDate(entity);
         entities.forEach(this::addUpdateDate);
     }
+
+
 
     private void addUpdateDate(BaseEntity entity) { entityIdToUpdateDate.put(entity.getId(), entity.getUpdatedDate()); }
 

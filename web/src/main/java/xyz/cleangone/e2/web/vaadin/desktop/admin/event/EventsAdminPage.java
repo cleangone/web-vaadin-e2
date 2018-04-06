@@ -4,6 +4,8 @@ import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.e2.web.manager.SessionManager;
+import xyz.cleangone.e2.web.vaadin.desktop.admin.event.actions.DonationsAdmin;
+import xyz.cleangone.e2.web.vaadin.desktop.admin.event.actions.PurchasesAdmin;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.org.BaseAdmin;
 import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
 
@@ -20,12 +22,13 @@ public class EventsAdminPage extends HorizontalLayout
     {
         navCol = new NavCol(this);
         adminComponents.put(EventAdminPageType.EVENTS, new EventsAdmin(this, msgDisplayer));
-        adminComponents.put(EventAdminPageType.GENERAL, new GeneralAdmin(this, msgDisplayer));
+        adminComponents.put(EventAdminPageType.GENERAL, new GeneralAdmin(msgDisplayer));
         adminComponents.put(EventAdminPageType.PARTICIPANTS, new ParticipantsAdmin(this, msgDisplayer));
         adminComponents.put(EventAdminPageType.TAGS, new TagsAdmin(this, OrgTag.TagType.PersonTag, msgDisplayer));
         adminComponents.put(EventAdminPageType.ITEMS, new ItemsAdmin(this, msgDisplayer));
         adminComponents.put(EventAdminPageType.DATES, new DatesAdmin(this, msgDisplayer));
         adminComponents.put(EventAdminPageType.DONATIONS, new DonationsAdmin(this, msgDisplayer));
+        adminComponents.put(EventAdminPageType.PURCHASES, new PurchasesAdmin(this, msgDisplayer));
         adminComponents.put(EventAdminPageType.ROLES, new TagsAdmin(this, OrgTag.TagType.UserRole, msgDisplayer));
         adminComponents.put(EventAdminPageType.USERS, new UsersAdmin(this, msgDisplayer));
 

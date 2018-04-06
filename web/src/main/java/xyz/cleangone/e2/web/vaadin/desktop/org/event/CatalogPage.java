@@ -5,6 +5,7 @@ import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.data.manager.ImageManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
+import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.components.CatalogLayout;
 
 import java.util.*;
@@ -23,24 +24,26 @@ public class CatalogPage extends BaseEventPage implements View
          super(PageCols.Left, PageCols.Center);
     }
 
-    protected void set(SessionManager sessionMgr)
+    protected PageDisplayType set(SessionManager sessionMgr)
     {
         super.set(sessionMgr);
         category = eventMgr.getCategory();
 
         setMenuLeftStyle();
 
-        set();
+        return set();
     }
 
-    protected void set()
+    protected PageDisplayType set()
     {
-        if (category == null) { return; }  // todo - shouldn't happen - nav back to event?
+        if (category == null) { return PageDisplayType.NotApplicable; }  // shouldn't happen - nav back to event?
 
         imageMgr = itemMgr.getImageManager();
 
         setLeftLayout(category);
         setCenterLayout();
+
+        return PageDisplayType.NotApplicable;
     }
 
     protected void setCenterLayout()

@@ -2,26 +2,18 @@ package xyz.cleangone.e2.web.vaadin.desktop.org;
 
 import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
-import com.vaadin.event.LayoutEvents;
 import com.vaadin.navigator.View;
-import com.vaadin.server.Page;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
 import xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity;
-import xyz.cleangone.data.aws.dynamo.entity.organization.BaseOrg;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
-import xyz.cleangone.data.cache.EntityType;
-import xyz.cleangone.data.manager.EventManager;
+import xyz.cleangone.e2.web.manager.EntityChangeManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
-import xyz.cleangone.e2.web.vaadin.desktop.admin.event.EventAdminPageType;
-import xyz.cleangone.e2.web.vaadin.desktop.org.event.EventPage;
-import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
+import xyz.cleangone.e2.web.vaadin.util.PageUtils;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 public class OrgPage extends BasePage implements View
@@ -37,47 +29,44 @@ public class OrgPage extends BasePage implements View
 
     private Organization org;
     private List<OrgEvent> events;
-
+    private EntityChangeManager changeManager = new EntityChangeManager();
 
     private int pageWidth;
     private int oneColPageWidth = LEFT_WIDTH_DEFAULT + CENTER_RIGHT_WIDTH_DEFAULT;
     private int twoColPageWidth = oneColPageWidth + CENTER_RIGHT_WIDTH_DEFAULT;
-
-    private Organization prevOrg;
-    private int prevEventsCount;
-    private Date entitiesSetDate;
-
 
     public OrgPage()
     {
         super(BannerStyle.Carousel);
     }
 
-    protected void set(SessionManager sessionManager)
+    protected String getPageName()
+    {
+        return "Main Page";
+    }
+
+    protected PageDisplayType set(SessionManager sessionManager)
     {
         super.set(sessionManager);
 
         org = orgMgr.getOrg();
-        events = sessionMgr.getResetEventManager().getEvents();
         resetHeader();
 
-        set();
+        return set();
     }
 
-    protected void set()
+    protected PageDisplayType set()
     {
-        if (org == prevOrg &&
-            events.size() == prevEventsCount &&
-            !entityLastTouched.entityChangedAfter(entitiesSetDate, org, EntityType.Entity) &&
-            !entityLastTouched.entitiesChangedAfter(entitiesSetDate, events, EntityType.Entity))
+        if (changeManager.unchanged(org) &&
+            changeManager.unchanged(events.size()) &&
+            changeManager.unchangedEntity(org) &&
+            changeManager.unchangedEntity(events))
         {
-            return;
+            return PageDisplayType.NoChange;
         }
 
-        prevOrg = org;
-        prevEventsCount = events.size();
-        entitiesSetDate = new Date();
-
+        events = sessionMgr.getResetEventManager().getEvents();
+        changeManager.reset(org, events.size());
         mainLayout.removeAllComponents();
 
         String introHtml = org.getIntroHtml();
@@ -110,9 +99,10 @@ public class OrgPage extends BasePage implements View
             pageWidth = newPageWidth;
         });
 
-
         mainLayout.addComponent(orgLayout);
+        return PageDisplayType.ObjectRetrieval;
     }
+
 
     private void setOrgLayout(HorizontalLayout orgLayout)
     {

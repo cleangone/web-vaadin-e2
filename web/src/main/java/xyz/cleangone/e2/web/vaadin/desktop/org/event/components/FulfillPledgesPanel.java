@@ -10,12 +10,15 @@ import xyz.cleangone.data.aws.dynamo.entity.person.Person;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.aws.dynamo.entity.purchase.Cart;
 import xyz.cleangone.e2.web.manager.SessionManager;
-import xyz.cleangone.e2.web.vaadin.desktop.banner.ActionBar;
+import xyz.cleangone.e2.web.vaadin.desktop.actionbar.ActionBar;
+import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.EventPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.payment.PaymentPage;
+import xyz.cleangone.e2.web.vaadin.util.PageUtils;
 import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -26,23 +29,20 @@ public class FulfillPledgesPanel extends BaseActionPanel
     public FulfillPledgesPanel(SessionManager sessionMgr, ActionBar actionBar)
     {
         super(sessionMgr, actionBar);
-
         panelLayout.setMargin(true);
-
-        Component layout = getPanelContent();
-        if (layout != null) { panelLayout.addComponent(layout); }
+        set();
     }
 
-    private Component getPanelContent()
+    private void set()
     {
-        if (!panelHasContent(event, user)) { return null; }
+        if (!panelHasContent(event, user)) { return; }
 
         // look for pledges
         List<Action> actions = actionMgr.getActionsBySourcePerson(user.getPersonId(), event.getId());
         List<Action> pledges = actions.stream()
             .filter(a -> a.getActionType() == ActionType.Pledged)
             .collect(Collectors.toList());
-        if (pledges.isEmpty()) { return null; }
+        if (pledges.isEmpty()) { return; }
 
         // look for pledges that have not been fulfilled
         Set<String> fulfilledPledgeIds = actions.stream()
@@ -53,14 +53,14 @@ public class FulfillPledgesPanel extends BaseActionPanel
         List<Action> unfulfilledPledges = pledges.stream()
             .filter(a -> !fulfilledPledgeIds.contains(a.getId()))
             .collect(Collectors.toList());
-        if (unfulfilledPledges.isEmpty()) { return null; }
+        if (unfulfilledPledges.isEmpty()) { return; }
 
         // get pledges ready for fulfillment
         List<CartItem> cartItems = unfulfilledPledges.stream()
             .map(this::getFulfillPledgeCartItem)
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
-        if (cartItems.isEmpty()) { return null; }
+        if (cartItems.isEmpty()) { return; }
 
         // populate components
         Button button = VaadinUtils.createTextButton("Fulfill Pledges", e -> {
@@ -73,8 +73,7 @@ public class FulfillPledgesPanel extends BaseActionPanel
         HorizontalLayout layout = new HorizontalLayout();
         layout.setSpacing(true);
         layout.addComponents(new Label("The Event has completed. Please fulfill your pledges"), button);
-
-        return layout;
+        panelLayout.addComponent(layout);
     }
 
     private CartItem getFulfillPledgeCartItem(Action pledge)

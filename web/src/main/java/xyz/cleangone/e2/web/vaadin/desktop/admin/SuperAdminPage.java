@@ -15,7 +15,7 @@ import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
 import xyz.cleangone.data.manager.OrgManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.manager.VaadinSessionManager;
-import xyz.cleangone.e2.web.vaadin.desktop.banner.ActionBar;
+import xyz.cleangone.e2.web.vaadin.desktop.actionbar.ActionBar;
 import xyz.cleangone.e2.web.vaadin.desktop.user.LoginPage;
 import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 
@@ -58,7 +58,7 @@ public class SuperAdminPage extends VerticalLayout implements View
         if (!sessionMgr.hasSuperUser()) { getUI().getNavigator().navigateTo(LoginPage.NAME); }
 
         sessionMgr.resetOrg();
-        actionBar.reset(sessionMgr);
+        actionBar.set(sessionMgr);
         set();
     }
 

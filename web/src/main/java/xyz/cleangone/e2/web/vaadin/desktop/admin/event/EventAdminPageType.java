@@ -10,7 +10,8 @@ public enum EventAdminPageType
     DATES("Dates"),
     ROLES("User Roles"),
     USERS("Users"),
-    DONATIONS("Donations");
+    DONATIONS("Donations"),
+    PURCHASES("Purchases");
 
     private final String text;
 

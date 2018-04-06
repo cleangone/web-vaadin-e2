@@ -6,7 +6,7 @@ import xyz.cleangone.data.aws.dynamo.entity.item.CartItem;
 import xyz.cleangone.data.aws.dynamo.entity.organization.EventParticipant;
 import xyz.cleangone.data.aws.dynamo.entity.purchase.Cart;
 import xyz.cleangone.e2.web.manager.SessionManager;
-import xyz.cleangone.e2.web.vaadin.desktop.banner.ActionBar;
+import xyz.cleangone.e2.web.vaadin.desktop.actionbar.ActionBar;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.EventPage;
 import xyz.cleangone.e2.web.vaadin.util.DollarField;
 
@@ -54,7 +54,7 @@ public class DonationPanel extends BaseActionPanel
 
         amountField.setValue("");
         participantComboBox.setValue(null);
-        actionBar.setCartMenuItem(sessionMgr);
+        actionBar.setCartMenuItem();
         actionBar.displayMessage("Donation added to Cart");
     }
 }

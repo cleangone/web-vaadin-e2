@@ -14,6 +14,7 @@ import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.aws.dynamo.entity.purchase.Cart;
 import xyz.cleangone.data.manager.ActionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.org.BasePage;
+import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.payment.PaymentResult;
@@ -51,7 +52,7 @@ public class PaymentPage extends BasePage implements View
         mainLayout.addComponents(cartPanel, formLayout);
     }
 
-    protected void set(SessionManager sessionMgr)
+    protected PageDisplayType set(SessionManager sessionMgr)
     {
         super.set(sessionMgr);
 
@@ -65,10 +66,10 @@ public class PaymentPage extends BasePage implements View
 
         cart = sessionMgr.getCart();
 
-        set();
+        return set();
     }
 
-    protected void set()
+    protected PageDisplayType set()
     {
         resetHeader();
 
@@ -80,6 +81,8 @@ public class PaymentPage extends BasePage implements View
         setForm();
 
         if (canCheckout()) { formLayout.addComponent(getCheckout()); }
+
+        return PageDisplayType.NotApplicable;
     }
 
     protected void setForm()

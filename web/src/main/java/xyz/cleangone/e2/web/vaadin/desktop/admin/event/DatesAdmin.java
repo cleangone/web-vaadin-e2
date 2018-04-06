@@ -28,7 +28,7 @@ public class DatesAdmin extends BaseEventAdmin
 {
     private EventManager eventMgr;
 
-    public DatesAdmin(EventsAdminPage eventsAdmin, MessageDisplayer msgDisplayer)
+    public DatesAdmin(EventsAdminLayout eventsAdmin, MessageDisplayer msgDisplayer)
     {
         super(eventsAdmin, msgDisplayer);
 

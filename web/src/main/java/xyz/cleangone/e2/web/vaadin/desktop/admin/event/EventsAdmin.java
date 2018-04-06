@@ -36,9 +36,9 @@ public class EventsAdmin extends BaseEventAdmin
     private TagManager tagMgr;
 
 
-    public EventsAdmin(EventsAdminPage eventsAdmin, MessageDisplayer msgDisplayer)
+    public EventsAdmin(EventsAdminLayout eventsAdminLayout, MessageDisplayer msgDisplayer)
     {
-        super(eventsAdmin, msgDisplayer);
+        super(eventsAdminLayout, msgDisplayer);
 
         setMargin(new MarginInfo(true, false, false, false)); // T/R/B/L
         setSpacing(true);
@@ -154,7 +154,7 @@ public class EventsAdmin extends BaseEventAdmin
     {
         return VaadinUtils.createLinkButton(event.getName(), e -> {
             eventMgr.setEvent(event);
-            eventsAdmin.setAdminPage(EventAdminPageType.GENERAL);
+            eventsAdminLayout.setAdminPage(EventAdminPageType.GENERAL);
         });
     }
 }

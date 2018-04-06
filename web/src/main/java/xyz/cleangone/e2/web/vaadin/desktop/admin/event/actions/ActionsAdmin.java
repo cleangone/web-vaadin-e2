@@ -9,7 +9,7 @@ import xyz.cleangone.data.manager.EventManager;
 import xyz.cleangone.e2.web.manager.EntityChangeManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.event.BaseEventAdmin;
-import xyz.cleangone.e2.web.vaadin.desktop.admin.event.EventsAdminPage;
+import xyz.cleangone.e2.web.vaadin.desktop.admin.event.EventsAdminLayout;
 import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
 
 import static java.util.Objects.requireNonNull;
@@ -23,7 +23,7 @@ public abstract class ActionsAdmin extends BaseEventAdmin
     protected ActionManager actionMgr;
 
 
-    public ActionsAdmin(EventsAdminPage eventsAdmin, MessageDisplayer msgDisplayer)
+    public ActionsAdmin(EventsAdminLayout eventsAdmin, MessageDisplayer msgDisplayer)
     {
         super(eventsAdmin, msgDisplayer);
 

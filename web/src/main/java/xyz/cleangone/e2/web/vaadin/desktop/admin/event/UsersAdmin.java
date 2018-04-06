@@ -48,9 +48,9 @@ public class UsersAdmin extends BaseEventAdmin implements MultiSelectionListener
     private List<User> selectedUsers;
 
 
-    public UsersAdmin(EventsAdminPage eventsAdmin, MessageDisplayer msgDisplayer)
+    public UsersAdmin(EventsAdminLayout eventsAdminLayout, MessageDisplayer msgDisplayer)
     {
-        super(eventsAdmin, msgDisplayer);
+        super(eventsAdminLayout, msgDisplayer);
 
         setSizeFull();
         setMargin(new MarginInfo(true, false, false, false)); // T/R/B/L

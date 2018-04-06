@@ -32,9 +32,9 @@ public class BaseEventTagsAdmin extends BaseEventAdmin
 
     protected TagsDisclosure tagsDisclosure;
 
-    public BaseEventTagsAdmin(EventsAdminPage eventsAdmin, OrgTag.TagType tagType, MessageDisplayer msgDisplayer)
+    public BaseEventTagsAdmin(EventsAdminLayout eventsAdminLayout, OrgTag.TagType tagType, MessageDisplayer msgDisplayer)
     {
-        super(eventsAdmin, msgDisplayer);
+        super(eventsAdminLayout, msgDisplayer);
 
         this.tagType = tagType;
     }

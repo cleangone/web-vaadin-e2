@@ -12,13 +12,13 @@ import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EventsAdminPage extends HorizontalLayout
+public class EventsAdminLayout extends HorizontalLayout
 {
     private final NavCol navCol;
     private final Map<EventAdminPageType, BaseAdmin> adminComponents = new HashMap<>();
     private final VerticalLayout mainLayout = new VerticalLayout();
 
-    public EventsAdminPage(MessageDisplayer msgDisplayer)
+    public EventsAdminLayout(MessageDisplayer msgDisplayer)
     {
         navCol = new NavCol(this);
         adminComponents.put(EventAdminPageType.EVENTS, new EventsAdmin(this, msgDisplayer));

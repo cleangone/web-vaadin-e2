@@ -37,9 +37,9 @@ public class ParticipantsAdmin extends BaseEventTagsAdmin implements MultiSelect
     private List<EventParticipant> selectedParticipants;
 
 
-    public ParticipantsAdmin(EventsAdminPage eventsAdmin, MessageDisplayer msgDisplayer)
+    public ParticipantsAdmin(EventsAdminLayout eventsAdminLayout, MessageDisplayer msgDisplayer)
     {
-        super(eventsAdmin, OrgTag.TagType.PersonTag, msgDisplayer);
+        super(eventsAdminLayout, OrgTag.TagType.PersonTag, msgDisplayer);
 
         setSizeFull();
         setMargin(new MarginInfo(true, false, false, false)); // T/R/B/L

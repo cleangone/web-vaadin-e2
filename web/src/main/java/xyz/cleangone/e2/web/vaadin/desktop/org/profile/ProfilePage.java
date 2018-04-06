@@ -73,6 +73,7 @@ public class ProfilePage extends BasePage implements View
     public PageDisplayType set(SessionManager sessionMgr)
     {
         super.set(sessionMgr);
+        sessionMgr.resetEventManager();
         org = orgMgr.getOrg();
 
         for (BaseAdmin component : components.values())

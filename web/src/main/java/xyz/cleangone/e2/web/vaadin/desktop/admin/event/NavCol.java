@@ -2,15 +2,20 @@ package xyz.cleangone.e2.web.vaadin.desktop.admin.event;
 
 import com.vaadin.event.LayoutEvents;
 import com.vaadin.ui.*;
+import xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
+import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.data.manager.EventManager;
+import xyz.cleangone.data.manager.TagManager;
+import xyz.cleangone.data.manager.UserManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 
+import java.util.ArrayList;
 import java.util.List;
-
-
-// todo - shows all events to event admins - should only show events they are an admin to - like events page
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class NavCol extends VerticalLayout
 {
@@ -20,16 +25,16 @@ public class NavCol extends VerticalLayout
     private static String STYLE_FONT_BOLD = "fontBold";
     private static String STYLE_INDENT = "marginLeft";
 
-    protected final EventsAdminPage eventsAdmin;
+    protected final EventsAdminLayout eventsAdminLayout;
 
     protected SessionManager sessionMgr;
     protected EventManager eventMgr;
+    protected UserManager userMgr;
     protected EventAdminPageType currPageType;
 
-
-    public NavCol(EventsAdminPage eventsAdmin)
+    public NavCol(EventsAdminLayout eventsAdminLayout)
     {
-        this.eventsAdmin = eventsAdmin;
+        this.eventsAdminLayout = eventsAdminLayout;
 
         setMargin(true);
         setSpacing(true);
@@ -41,7 +46,8 @@ public class NavCol extends VerticalLayout
     public void set(SessionManager sessionMgr)
     {
         this.sessionMgr = sessionMgr;
-        this.eventMgr = sessionMgr.getEventManager();
+        eventMgr = sessionMgr.getEventManager();
+        userMgr = sessionMgr.getUserManager();
     }
 
     protected void set()
@@ -62,7 +68,7 @@ public class NavCol extends VerticalLayout
 
         int longestNameLength = EventAdminPageType.EVENTS.toString().length();
 
-        List<OrgEvent> events = eventMgr.getEvents();
+        List<OrgEvent> events = new ArrayList<>(eventMgr.getEvents());
 
         // events may have changed because cache refreshed
         if (currEvent != null)
@@ -70,6 +76,26 @@ public class NavCol extends VerticalLayout
             for (OrgEvent event : events)
             {
                 if (event.getId().equals(currEvent.getId())) { currEvent = event; }
+            }
+        }
+
+        if (!userMgr.userIsAdmin(sessionMgr.getOrg()))
+        {
+            // user is an event admin - determine which events to display
+            TagManager tagMgr = sessionMgr.getOrgManager().getTagManager();
+            Map<String, OrgTag> eventAdminRoleTagsById = tagMgr.getEventAdminRoleTagsById();
+            Map<String, OrgEvent> eventsById = events.stream()
+                .collect(Collectors.toMap(BaseEntity::getId, Function.identity()));
+
+            for (String tagId : userMgr.getUser().getTagIds())
+            {
+                events.clear();
+                if (eventAdminRoleTagsById.keySet().contains(tagId))
+                {
+                    OrgTag adminRoleTag = eventAdminRoleTagsById.get(tagId);
+                    OrgEvent event = eventsById.get(adminRoleTag.getEventId());
+                    if (event != null) { events.add(event); }
+                }
             }
         }
 
@@ -130,7 +156,7 @@ public class NavCol extends VerticalLayout
 
     private void setAdminPage(EventAdminPageType pageType)
     {
-        eventsAdmin.setAdminPage(pageType);
+        eventsAdminLayout.setAdminPage(pageType);
     }
 
     public void setAdminLinks(EventAdminPageType pageType)

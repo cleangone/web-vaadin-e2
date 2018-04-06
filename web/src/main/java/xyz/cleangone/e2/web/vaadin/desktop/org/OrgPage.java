@@ -48,6 +48,7 @@ public class OrgPage extends BasePage implements View
     protected PageDisplayType set(SessionManager sessionManager)
     {
         super.set(sessionManager);
+        sessionManager.resetEventManager();
 
         org = orgMgr.getOrg();
         resetHeader();

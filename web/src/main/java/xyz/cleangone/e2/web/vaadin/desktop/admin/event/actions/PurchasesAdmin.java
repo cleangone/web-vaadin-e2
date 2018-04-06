@@ -2,7 +2,6 @@ package xyz.cleangone.e2.web.vaadin.desktop.admin.event.actions;
 
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.shared.data.sort.SortDirection;
-import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.renderers.DateRenderer;
@@ -10,29 +9,23 @@ import xyz.cleangone.data.aws.dynamo.entity.action.Action;
 import xyz.cleangone.data.aws.dynamo.entity.action.ActionType;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.manager.ActionManager;
-import xyz.cleangone.data.manager.EventManager;
-import xyz.cleangone.e2.web.manager.SessionManager;
-import xyz.cleangone.e2.web.vaadin.desktop.admin.event.BaseEventAdmin;
-import xyz.cleangone.e2.web.vaadin.desktop.admin.event.EventsAdminPage;
+import xyz.cleangone.e2.web.vaadin.desktop.admin.event.EventsAdminLayout;
 import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 import static xyz.cleangone.data.aws.dynamo.entity.action.Action.AMOUNT_FIELD;
-import static xyz.cleangone.data.aws.dynamo.entity.action.Action.ESTIMATED_AMOUNT_FIELD;
 import static xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity.CREATED_DATE_FIELD;
 
 public class PurchasesAdmin extends ActionsAdmin
 {
     private List<Action> actions;
 
-    public PurchasesAdmin(EventsAdminPage eventsAdmin, MessageDisplayer msgDisplayer)
+    public PurchasesAdmin(EventsAdminLayout eventsAdmin, MessageDisplayer msgDisplayer)
     {
         super(eventsAdmin, msgDisplayer);
     }

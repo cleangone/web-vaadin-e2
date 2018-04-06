@@ -46,7 +46,6 @@ public class GeneralAdmin extends BaseOrgAdmin
     private User user;
     private EntityChangeManager changeManager = new EntityChangeManager();
 
-
     private final FormLayout formLayout = new FormLayout();
 
     public GeneralAdmin(MessageDisplayer msgDisplayer)

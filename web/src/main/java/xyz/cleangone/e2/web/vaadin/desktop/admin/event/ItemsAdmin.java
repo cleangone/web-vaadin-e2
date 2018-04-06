@@ -38,9 +38,9 @@ public class ItemsAdmin extends BaseEventTagsAdmin implements MultiSelectionList
     private ComboBox<OrgTag> removeCategoryComboBox = new ComboBox<>();;
     private List<CatalogItem> selectedItems;
 
-    public ItemsAdmin(EventsAdminPage eventsAdmin, MessageDisplayer msgDisplayer)
+    public ItemsAdmin(EventsAdminLayout eventsAdminLayout, MessageDisplayer msgDisplayer)
     {
-        super(eventsAdmin, OrgTag.TagType.Category, msgDisplayer);
+        super(eventsAdminLayout, OrgTag.TagType.Category, msgDisplayer);
 
         setSizeFull();
         setMargin(false);

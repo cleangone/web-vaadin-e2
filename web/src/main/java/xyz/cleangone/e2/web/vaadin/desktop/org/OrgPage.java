@@ -24,12 +24,10 @@ public class OrgPage extends BasePage implements View
     private static int LEFT_WIDTH_DEFAULT = 550;
     private static int CENTER_RIGHT_WIDTH_DEFAULT = 250;
 
-    private static final Logger LOG = Logger.getLogger(OrgPage.class.getName());
     public static final String NAME = "Org";
 
     private Organization org;
     private List<OrgEvent> events;
-    private EntityChangeManager changeManager = new EntityChangeManager();
 
     private int pageWidth;
     private int oneColPageWidth = LEFT_WIDTH_DEFAULT + CENTER_RIGHT_WIDTH_DEFAULT;

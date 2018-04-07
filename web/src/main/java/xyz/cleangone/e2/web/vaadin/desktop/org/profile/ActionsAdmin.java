@@ -11,7 +11,7 @@ import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.manager.ActionManager;
 import xyz.cleangone.e2.web.manager.EntityChangeManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
-import xyz.cleangone.e2.web.vaadin.desktop.admin.org.BaseAdmin;
+import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.BaseAdmin;
 import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
 
 import java.text.DateFormat;

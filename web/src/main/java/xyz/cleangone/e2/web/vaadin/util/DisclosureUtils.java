@@ -4,7 +4,7 @@ import com.vaadin.ui.*;
 import xyz.cleangone.data.aws.dynamo.dao.DynamoBaseDao;
 import xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
-import xyz.cleangone.e2.web.vaadin.desktop.admin.org.disclosure.BaseDisclosure;
+import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.disclosure.BaseDisclosure;
 
 public class DisclosureUtils
 {

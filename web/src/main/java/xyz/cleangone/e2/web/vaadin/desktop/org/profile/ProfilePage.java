@@ -1,17 +1,13 @@
 package xyz.cleangone.e2.web.vaadin.desktop.org.profile;
 
-import com.vaadin.event.LayoutEvents;
 import com.vaadin.navigator.View;
 import com.vaadin.server.Page;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
-import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
 import xyz.cleangone.data.aws.dynamo.entity.organization.BaseOrg;
-import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
-import xyz.cleangone.data.manager.ImageManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
-import xyz.cleangone.e2.web.vaadin.desktop.admin.org.BaseAdmin;
+import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.BaseAdmin;
 import xyz.cleangone.e2.web.vaadin.desktop.org.BasePage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;

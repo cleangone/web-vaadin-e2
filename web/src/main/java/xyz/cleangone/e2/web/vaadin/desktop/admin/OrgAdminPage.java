@@ -4,10 +4,10 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.e2.web.manager.SessionManager;
-import xyz.cleangone.e2.web.vaadin.desktop.admin.event.EventsAdminLayout;
-import xyz.cleangone.e2.web.vaadin.desktop.admin.org.OrgAdmin;
+import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.EventsAdminLayout;
+import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.OrgAdmin;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.PeopleAdmin;
-import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.StatsAdmin;
+import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.stats.StatsAdmin;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.TagsAdmin;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.UsersAdmin;
 

@@ -2,8 +2,8 @@ package xyz.cleangone.e2.web.vaadin.desktop.org.event;
 
 import com.vaadin.navigator.View;
 import com.vaadin.ui.Label;
+import xyz.cleangone.data.aws.dynamo.entity.base.EntityType;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
-import xyz.cleangone.data.manager.UserManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.components.*;
@@ -12,7 +12,6 @@ import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import static xyz.cleangone.e2.web.vaadin.util.PageUtils.*;
 import static xyz.cleangone.e2.web.vaadin.util.PageUtils.getPageDisplayType;
 import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
@@ -46,16 +45,15 @@ public class EventPage extends BaseEventPage implements View
 
     private PageDisplayType setCenterLayout()
     {
-        boolean showFulfillPledgesPanel = FulfillPledgesPanel.panelHasContent(event, user);
-        if (!showFulfillPledgesPanel &&
-            centerLayout.getComponentCount() == 1 &&
-            !updateDateChanged(event))
+        if (changeManager.unchanged(user) &&
+            changeManager.unchanged(event) &&
+            changeManager.unchanged(orgMgr.getOrgId(), EntityType.PersonTag, EntityType.Person) &&
+            changeManager.unchanged(event, EntityType.Entity, EntityType.PersonTag, EntityType.Participant, EntityType.Item))
         {
-            // layout just showing html, which has not changed
             return PageDisplayType.NoChange;
         }
 
-        setUpdateDate(event);
+        changeManager.reset(user, event);
         centerLayout.removeAllComponents();
 
         FulfillPledgesPanel pledgesPanel = new FulfillPledgesPanel(sessionMgr, actionBar);

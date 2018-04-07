@@ -12,11 +12,8 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.renderers.DateRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 import org.apache.commons.lang3.StringUtils;
-import xyz.cleangone.data.aws.dynamo.dao.DynamoBaseDao;
 import xyz.cleangone.data.aws.dynamo.entity.action.Action;
-import xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
-import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
 import xyz.cleangone.data.aws.dynamo.entity.person.Person;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
@@ -25,9 +22,8 @@ import xyz.cleangone.data.manager.ActionManager;
 import xyz.cleangone.data.manager.UserManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.MyUI;
-import xyz.cleangone.e2.web.vaadin.desktop.admin.org.disclosure.BaseDisclosure;
+import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.disclosure.BaseDisclosure;
 
-import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
 import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 import xyz.cleangone.message.EmailSender;
 

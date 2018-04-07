@@ -9,10 +9,9 @@ import java.util.Date;
 public class PageStat
 {
     private final String pageName;
-    private int totalCalls;
 
+    private final RetrievalStats all = new RetrievalStats();
     private final RetrievalStats pageUnchanged = new RetrievalStats();
-    private final RetrievalStats noRetrieval = new RetrievalStats();
     private final RetrievalStats retrieval = new RetrievalStats();
 
     public PageStat(String pageName)
@@ -22,11 +21,19 @@ public class PageStat
 
     public void addRetrievalTime(PageDisplayType pageDisplayType, Date start)
     {
-        totalCalls++;
+        all.increment(start);
 
         if (pageDisplayType == PageDisplayType.NoChange) { pageUnchanged.increment(start); }
-        else if (pageDisplayType == PageDisplayType.NoRetrieval) { noRetrieval.increment(start); }
         else if (pageDisplayType == PageDisplayType.ObjectRetrieval) { retrieval.increment(start); }
+    }
+
+    public int getAllPages()
+    {
+        return all.calls;
+    }
+    public String getAllAvgSeconds()
+    {
+        return all.getAvgSeconds();
     }
 
     public int getUnchangedPages()
@@ -35,16 +42,7 @@ public class PageStat
     }
     public String getUnchangedAvgSeconds()
     {
-        return pageUnchanged.getAvgSeconds().toString();
-    }
-
-    public int getNoRetrievals()
-    {
-        return noRetrieval.calls;
-    }
-    public String getNoRetrievalAvgSeconds()
-    {
-        return noRetrieval.getAvgSeconds().toString();
+        return pageUnchanged.getAvgSeconds();
     }
 
     public int getRetrievals()
@@ -53,16 +51,12 @@ public class PageStat
     }
     public String getRetrievalAvgSeconds()
     {
-        return retrieval.getAvgSeconds().toString();
+        return retrieval.getAvgSeconds();
     }
 
     public String getPageName()
     {
         return pageName;
-    }
-    public int getTotalCalls()
-    {
-        return totalCalls;
     }
 
     class RetrievalStats
@@ -78,12 +72,12 @@ public class PageStat
             totalTime += callTime;
         }
 
-        BigDecimal getAvgSeconds()
+        String getAvgSeconds()
         {
-            if (calls == 0) { return BigDecimal.valueOf(0); }
+            if (calls == 0) { return "0"; }
 
             BigDecimal avgMillis = (new BigDecimal(totalTime)).divide(new BigDecimal(calls), 3, BigDecimal.ROUND_UP);
-            return avgMillis.divide(new BigDecimal(1000), 3, BigDecimal.ROUND_UP);
+            return avgMillis.divide(new BigDecimal(1000), 3, BigDecimal.ROUND_UP).toString();
         }
     }
 

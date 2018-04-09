@@ -4,7 +4,6 @@ import com.vaadin.navigator.View;
 import com.vaadin.ui.Label;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityType;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
-import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.components.*;
 
@@ -21,14 +20,6 @@ public class EventPage extends BaseEventPage implements View
     public static final String NAME = "Event";
     private static String STYLE_WORD_WRAP = "wordWrap";
 
-    protected PageDisplayType set(SessionManager sessionMgr)
-    {
-        super.set(sessionMgr);
-
-        setMenuLeftStyle();
-        return set();
-    }
-
     protected String getPageName()
     {
         return event == null ? "Event" : event.getName();
@@ -36,7 +27,7 @@ public class EventPage extends BaseEventPage implements View
 
     protected PageDisplayType set()
     {
-        PageDisplayType leftDisplayType = setLeftLayout();
+        PageDisplayType leftDisplayType = leftLayout.set();
         PageDisplayType centerDisplayType = setCenterLayout();
         PageDisplayType rightDisplayType = rightLayout.set();
 

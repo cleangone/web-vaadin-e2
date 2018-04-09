@@ -21,6 +21,12 @@ public class EntityChangeManager
     private Date entitiesSetDate;
     private boolean dateSet;
 
+    public boolean changed(OrgEvent newEvent) { return !unchanged(newEvent); }
+    public boolean changed(BaseEntity entity, EntityType... types)
+    {
+        return !unchanged(entity, types);
+    }
+
     public boolean unchanged(User newUser) { return dateSet && user == newUser; }
     public boolean unchanged(Organization newOrg) { return dateSet && org == newOrg; }
     public boolean unchanged(OrgEvent newEvent) { return dateSet && event == newEvent; }

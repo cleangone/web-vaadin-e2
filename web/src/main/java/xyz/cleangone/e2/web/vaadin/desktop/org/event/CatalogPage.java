@@ -24,23 +24,14 @@ public class CatalogPage extends BaseEventPage implements View
          super(PageCols.Left, PageCols.Center);
     }
 
-    protected PageDisplayType set(SessionManager sessionMgr)
-    {
-        super.set(sessionMgr);
-        category = eventMgr.getCategory();
-
-        setMenuLeftStyle();
-
-        return set();
-    }
-
     protected PageDisplayType set()
     {
+        category = eventMgr.getCategory();
         if (category == null) { return PageDisplayType.NotApplicable; }  // shouldn't happen - nav back to event?
 
         imageMgr = itemMgr.getImageManager();
 
-        setLeftLayout(category);
+        leftLayout.set(category);
         setCenterLayout();
 
         return PageDisplayType.NotApplicable;

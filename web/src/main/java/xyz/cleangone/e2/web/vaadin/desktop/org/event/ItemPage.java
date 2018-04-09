@@ -4,19 +4,14 @@ import com.amazonaws.services.dynamodbv2.datamodeling.S3Link;
 import com.vaadin.navigator.View;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
-
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
 import xyz.cleangone.data.aws.dynamo.entity.item.CartItem;
-import xyz.cleangone.data.aws.dynamo.entity.organization.EventParticipant;
-import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.data.aws.dynamo.entity.purchase.Cart;
-import xyz.cleangone.data.manager.ImageManager;
 import xyz.cleangone.e2.web.vaadin.desktop.image.ImageDimension;
 import xyz.cleangone.e2.web.vaadin.desktop.image.ImageLabel;
 import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 public class ItemPage extends CatalogPage implements View
@@ -27,7 +22,7 @@ public class ItemPage extends CatalogPage implements View
     {
         imageMgr = itemMgr.getImageManager();
 
-        setLeftLayout(category);
+        leftLayout.set(category);
         setCenterLayout();
 
         return PageDisplayType.NotApplicable;

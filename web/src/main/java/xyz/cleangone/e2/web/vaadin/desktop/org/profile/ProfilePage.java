@@ -15,6 +15,7 @@ import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 import java.util.HashMap;
 import java.util.Map;
 
+import static xyz.cleangone.e2.web.vaadin.util.PageUtils.*;
 import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
 public class ProfilePage extends BasePage implements View
@@ -27,9 +28,6 @@ public class ProfilePage extends BasePage implements View
     // quick hack on style
     private static String STYLE_LINK = "link";
     private static String STYLE_LINK_ACTIVE = "linkActive";
-
-
-    static int COL_MIN_HEIGHT = 700;
 
     private final HorizontalLayout leftWrapper = new HorizontalLayout();
     protected final VerticalLayout leftLayout = new VerticalLayout();
@@ -151,17 +149,7 @@ public class ProfilePage extends BasePage implements View
         }
     }
 
-    // todo - all below same as BaseEventPage
-    protected VerticalLayout getMarginLayout()
-    {
-        VerticalLayout layout = new VerticalLayout();
-        layout.setMargin(false);
-        layout.setWidth("25px");
-        layout.setHeight(COL_MIN_HEIGHT + "px");
-
-        return layout;
-    }
-
+    // overlapping code with event left col
     protected void setMenuLeftStyle(BaseOrg baseOrg)
     {
         String styleName = "menu-left-" + baseOrg.getTag();

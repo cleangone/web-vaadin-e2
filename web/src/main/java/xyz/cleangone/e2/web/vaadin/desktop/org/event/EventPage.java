@@ -8,7 +8,6 @@ import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.components.*;
 
 import java.util.*;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static xyz.cleangone.e2.web.vaadin.util.PageUtils.getPageDisplayType;
@@ -16,7 +15,6 @@ import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
 public class EventPage extends BaseEventPage implements View
 {
-    private static final Logger LOG = Logger.getLogger(EventPage.class.getName());
     public static final String NAME = "Event";
     private static String STYLE_WORD_WRAP = "wordWrap";
 

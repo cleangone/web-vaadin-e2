@@ -4,7 +4,6 @@ import com.vaadin.navigator.View;
 import com.vaadin.server.Page;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
-import xyz.cleangone.data.aws.dynamo.entity.organization.BaseOrg;
 import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.BaseAdmin;
@@ -14,9 +13,8 @@ import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import static xyz.cleangone.e2.web.vaadin.util.PageUtils.*;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+
 
 public class ProfilePage extends BasePage implements View
 {
@@ -34,31 +32,35 @@ public class ProfilePage extends BasePage implements View
     protected final VerticalLayout centerLayout = new VerticalLayout();
 
     private Organization org;
-
     private final Map<ProfilePageType, BaseAdmin> components = new HashMap<>();
-
     protected ProfilePageType currPageType = ProfilePageType.GENERAL;
 
     public ProfilePage()
     {
-        super(new HorizontalLayout(), BannerStyle.Single);  // mainLayout is horizontal
-        mainLayout.setWidth("100%");
-        mainLayout.setHeightUndefined();
+        super(new HorizontalLayout(), BannerStyle.Single);  // mainLayout is horizontal - nav col and main content
+
         mainLayout.setMargin(false);
+        mainLayout.setSizeFull();
 
         leftWrapper.setMargin(false);
         leftWrapper.setSpacing(false);
-        leftWrapper.addComponents(getMarginLayout(), leftLayout);
+        leftWrapper.setSizeUndefined();
+        leftWrapper.addComponents(getMarginLayout(getMainLayoutHeight()), leftLayout);
+        if (COLORS) { leftWrapper.addStyleName("backRed"); }
 
         leftLayout.setSpacing(false);
         leftLayout.setWidthUndefined();
         leftLayout.setMargin(new MarginInfo(true, true, true, false)); // T/R/B/L margins
+        leftLayout.setHeight("100%");
 
         centerLayout.setMargin(new MarginInfo(false, true, false, true)); // T/R/B/L margins
+        centerLayout.setHeight("100%");
+        if (COLORS) { centerLayout.addStyleName("backBlue"); }
 
         components.put(ProfilePageType.GENERAL, new ProfileAdmin(actionBar));
         components.put(ProfilePageType.DONATIONS, new ActionsAdmin(actionBar, ProfilePageType.DONATIONS));
         components.put(ProfilePageType.PURCHASES, new ActionsAdmin(actionBar, ProfilePageType.PURCHASES));
+        components.put(ProfilePageType.BIDS,      new ActionsAdmin(actionBar, ProfilePageType.BIDS));
 
         mainLayout.addComponents(leftWrapper, centerLayout);
         mainLayout.setExpandRatio(centerLayout, 1.0f);
@@ -92,9 +94,6 @@ public class ProfilePage extends BasePage implements View
     {
         leftLayout.removeAllComponents();
         leftLayout.addComponent(getLinksLayout());
-
-        leftWrapper.removeAllComponents();
-        leftWrapper.addComponents(getMarginLayout(), leftLayout);
     }
 
     private void setCenterLayout()
@@ -120,9 +119,10 @@ public class ProfilePage extends BasePage implements View
         linkLayout.setMargin(false);
         linkLayout.setSpacing(false);
 
-        linkLayout.addComponent(getLink(ProfilePageType.GENERAL, STYLE_LINK_ACTIVE, STYLE_LINK));
-        linkLayout.addComponent(getLink(ProfilePageType.DONATIONS, STYLE_LINK_ACTIVE, STYLE_LINK));
-        linkLayout.addComponent(getLink(ProfilePageType.PURCHASES, STYLE_LINK_ACTIVE, STYLE_LINK));
+        linkLayout.addComponent(getLink(ProfilePageType.GENERAL));
+        linkLayout.addComponent(getLink(ProfilePageType.DONATIONS));
+        linkLayout.addComponent(getLink(ProfilePageType.PURCHASES));
+        linkLayout.addComponent(getLink(ProfilePageType.BIDS));
 
         Label label = new Label("User Profile");
         label.setStyleName(STYLE_FONT_BOLD);
@@ -134,6 +134,10 @@ public class ProfilePage extends BasePage implements View
         return layout;
     }
 
+    private Component getLink(ProfilePageType pageType)
+    {
+        return getLink(pageType, STYLE_LINK_ACTIVE, STYLE_LINK);
+    }
     private Component getLink(ProfilePageType pageType, String selectedTextStyleName, String textStyleName)
     {
         String styleName = currPageType == pageType ? selectedTextStyleName : textStyleName;
@@ -149,15 +153,8 @@ public class ProfilePage extends BasePage implements View
         }
     }
 
-    // overlapping code with event left col
-    protected void setMenuLeftStyle(BaseOrg baseOrg)
+    protected void setMenuLeftStyle(Organization org)
     {
-        String styleName = "menu-left-" + baseOrg.getTag();
-
-        Page.Styles styles = Page.getCurrent().getStyles();
-        String backgroundColor = getOrDefault(baseOrg.getNavBackgroundColor(), "whitesmoke");
-        styles.add("." + styleName + " {background: " + backgroundColor + ";  border-right: 1px solid silver;}");
-
-        leftWrapper.setStyleName(styleName);
+        leftWrapper.setStyleName(setNavStyle("menu-left-", org));
     }
 }

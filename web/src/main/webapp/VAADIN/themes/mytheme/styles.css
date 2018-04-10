@@ -15461,3 +15461,27 @@ div.v-layout.v-horizontal.v-widget {
 .mytheme .dividerRight {
 	border-right: 1px solid silver;
 }
+
+.mytheme .backRed {
+	background: red;
+}
+
+.mytheme .backOrange {
+	background: orange;
+}
+
+.mytheme .backYellow {
+	background: yellow;
+}
+
+.mytheme .backGreen {
+	background: greenyellow;
+}
+
+.mytheme .backBlue {
+	background: deepskyblue;
+}
+
+.mytheme .backDBlue {
+	background: blue;
+}

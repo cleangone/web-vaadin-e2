@@ -4,7 +4,8 @@ public enum ProfilePageType
 {
     GENERAL("General"),
     DONATIONS("Donations"),
-    PURCHASES("Purchases");
+    PURCHASES("Purchases"),
+    BIDS("Bids");
 
     private final String text;
 

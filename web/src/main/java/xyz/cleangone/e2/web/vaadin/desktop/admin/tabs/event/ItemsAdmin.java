@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 import static xyz.cleangone.data.aws.dynamo.entity.base.BaseMixinEntity.NAME_FIELD;
 import static xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem.CATEGORIES_FIELD;
 import static xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem.PRICE_FIELD;
+import static xyz.cleangone.data.aws.dynamo.entity.item.PurchaseItem.AVAIL_START_FIELD;
 import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
 
@@ -165,6 +166,7 @@ public class ItemsAdmin extends BaseEventTagsAdmin implements MultiSelectionList
         nameCol.setId(NAME_FIELD.getName());
         addColumn(grid, CATEGORIES_FIELD, CatalogItem::getCategoriesCsv, 2);
         addColumn(grid, PRICE_FIELD, CatalogItem::getDisplayPrice, 1);
+        addDateColumn(grid, AVAIL_START_FIELD, CatalogItem::getAvailabilityStart, 1);
 
         //addBigDecimalColumn(grid, PRICE_FIELD, CatalogItem::getPrice, 1);
 
@@ -225,6 +227,13 @@ public class ItemsAdmin extends BaseEventTagsAdmin implements MultiSelectionList
 
     private Grid.Column<CatalogItem, BigDecimal> addBigDecimalColumn(Grid<CatalogItem> grid,
         EntityField entityField, ValueProvider<CatalogItem, BigDecimal> valueProvider, int expandRatio)
+    {
+        return grid.addColumn(valueProvider)
+            .setId(entityField.getName()).setCaption(entityField.getDisplayName()).setExpandRatio(expandRatio);
+    }
+
+    private Grid.Column<CatalogItem, Date> addDateColumn(Grid<CatalogItem> grid,
+        EntityField entityField, ValueProvider<CatalogItem, Date> valueProvider, int expandRatio)
     {
         return grid.addColumn(valueProvider)
             .setId(entityField.getName()).setCaption(entityField.getDisplayName()).setExpandRatio(expandRatio);

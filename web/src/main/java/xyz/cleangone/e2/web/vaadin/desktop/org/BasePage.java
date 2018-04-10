@@ -19,6 +19,7 @@ import static xyz.cleangone.e2.web.manager.PageStats.*;
 
 public abstract class BasePage extends Panel implements View
 {
+    protected static boolean COLORS = false;
     protected enum BannerStyle { Carousel, Single };
 
     private VerticalLayout pageLayout = new VerticalLayout();
@@ -41,13 +42,23 @@ public abstract class BasePage extends Panel implements View
     public BasePage(AbstractOrderedLayout mainLayout, BannerStyle bannerStyle)
     {
         this.mainLayout = mainLayout;
+        if (COLORS) { mainLayout.addStyleName("backGreen"); }
 
-        // components fills the browser screen
+        // panel fills the browser screen
         setSizeFull();
+        if (COLORS) { setStyleName("backOrange"); }
 
-        // pageLayout sits in components, scrolls if doesn't fit
+        // pageLayout sits in panel, scrolls if doesn't fit, sadly does not expand because height not 100%
+        //
+        // From vaadin:
+        // if size undefined, layout shrinks to fit the component(s) inside it
+        // If you set a VerticalLayout vertically, and there is space left over from the contained components,
+        // the extra space is distributed equally between the component cells.
+        // if you want one or more components to take all the leftover space. You need to set such a component
+        // to 100% size and use setExpandRatio()
         pageLayout.setMargin(false);
         pageLayout.setSpacing(false);
+        if (COLORS) { pageLayout.addStyleName("backYellow"); }
 
         banner = (bannerStyle == BannerStyle.Carousel) ? new BannerCarousel() : new BannerSingle();
         pageLayout.addComponents(banner, actionBar, mainLayout);
@@ -66,6 +77,12 @@ public abstract class BasePage extends Panel implements View
             PageDisplayType pageDisplayType = set(sessionManager);
             addRetrievalTime(sessionManager.getOrg().getId(), getPageName(), pageDisplayType, start);
         }
+    }
+
+    // todo - hardcoded w/ banner height and est height of actionbar
+    protected int getMainLayoutHeight()
+    {
+        return UI.getCurrent().getPage().getBrowserWindowHeight() - 300;
     }
 
     protected String getPageName()

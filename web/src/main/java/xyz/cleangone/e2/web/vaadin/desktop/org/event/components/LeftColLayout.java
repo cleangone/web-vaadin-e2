@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 
 import static xyz.cleangone.e2.web.vaadin.util.PageUtils.*;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.getOrDefault;
 
 public class LeftColLayout extends HorizontalLayout
 {
@@ -43,11 +42,11 @@ public class LeftColLayout extends HorizontalLayout
     protected User user;
     private EntityChangeManager changeManager = new EntityChangeManager();
 
-    public LeftColLayout()
+    public LeftColLayout(int pageHeight)
     {
         setMargin(false);
         setSpacing(false);
-        addComponents(getMarginLayout(), leftLayout);
+        addComponents(getMarginLayout(pageHeight), leftLayout);
 
         leftLayout.setSpacing(false);
         leftLayout.setWidthUndefined();
@@ -180,13 +179,6 @@ public class LeftColLayout extends HorizontalLayout
 
     private void setStyle()
     {
-        String styleName = "menu-left-" + event.getTag();
-
-        Page.Styles styles = Page.getCurrent().getStyles();
-        String backgroundColor = getOrDefault(event.getNavBackgroundColor(), "silver");
-        styles.add("." + styleName + " {background: " + backgroundColor + ";  border-right: 1px solid silver;}");
-
-        setStyleName(styleName);
+        setStyleName(setNavStyle("menu-left-" + orgMgr.getOrg().getTag() + "-", event));
     }
-
 }

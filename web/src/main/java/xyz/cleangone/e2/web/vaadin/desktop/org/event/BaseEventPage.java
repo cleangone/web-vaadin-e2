@@ -18,7 +18,7 @@ public abstract class BaseEventPage extends BasePage implements View
 {
     protected enum PageCols { Left, Center, Right };
 
-    protected final LeftColLayout leftLayout = new LeftColLayout();
+    protected final LeftColLayout leftLayout;
     protected final VerticalLayout centerLayout = new VerticalLayout();
     protected final RightColLayout rightLayout;
 
@@ -41,12 +41,16 @@ public abstract class BaseEventPage extends BasePage implements View
         mainLayout.setHeightUndefined();
         mainLayout.setMargin(false);
 
+        leftLayout = new LeftColLayout(getMainLayoutHeight());
         centerLayout.setMargin(new MarginInfo(false, true, false, true)); // T/R/B/L margins
         rightLayout = new RightColLayout(actionBar);
 
         for (PageCols pageCol : pageCols)
         {
-            if (pageCol == PageCols.Left) { mainLayout.addComponent(leftLayout); }
+            if (pageCol == PageCols.Left)
+            {
+                mainLayout.addComponent(leftLayout);
+            }
             else if (pageCol == PageCols.Center)
             {
                 mainLayout.addComponent(centerLayout);
@@ -55,6 +59,7 @@ public abstract class BaseEventPage extends BasePage implements View
             else if (pageCol == PageCols.Right) { mainLayout.addComponent(rightLayout); }
         }
     }
+
     protected PageDisplayType set(SessionManager sessionMgr)
     {
         super.set(sessionMgr);

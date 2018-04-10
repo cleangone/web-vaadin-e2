@@ -4,9 +4,12 @@ import com.amazonaws.services.dynamodbv2.datamodeling.S3Link;
 import com.vaadin.navigator.View;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
+import xyz.cleangone.data.aws.dynamo.entity.action.Action;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
 import xyz.cleangone.data.aws.dynamo.entity.item.CartItem;
+import xyz.cleangone.data.aws.dynamo.entity.item.PurchaseItem;
 import xyz.cleangone.data.aws.dynamo.entity.purchase.Cart;
+import xyz.cleangone.data.manager.ActionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.image.ImageDimension;
 import xyz.cleangone.e2.web.vaadin.desktop.image.ImageLabel;
 import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
@@ -65,15 +68,28 @@ public class ItemPage extends CatalogPage implements View
 
         if (quantity == null || quantity > 0)
         {
-            detailslayout.addComponent(VaadinUtils.createTextButton("Purchase", ev ->
+            if (item.getSaleType() == PurchaseItem.SaleType.Bid)
             {
-                Cart cart = sessionMgr.getCart();
-                cart.addItem(new CartItem(item, event, category));
-                cart.setReturnPage(EventPage.NAME);
+                detailslayout.addComponent(VaadinUtils.createTextButton("Bid", ev ->
+                {
+                    ActionManager actionMgr = orgMgr.getActionManager();
+                    Action bid = actionMgr.createBid(user, item, event);
+                    actionMgr.save(bid);
+                    actionBar.displayMessage("Bid submitted");
+                }));
+            }
+            else if (item.getSaleType() == PurchaseItem.SaleType.Purchase)
+            {
+                detailslayout.addComponent(VaadinUtils.createTextButton("Purchase", ev ->
+                {
+                    Cart cart = sessionMgr.getCart();
+                    cart.addItem(new CartItem(item, event, category));
+                    cart.setReturnPage(EventPage.NAME);
 
-                actionBar.setCartMenuItem();
-                actionBar.displayMessage("Item added to Cart");
-            }));
+                    actionBar.setCartMenuItem();
+                    actionBar.displayMessage("Item added to Cart");
+                }));
+            }
         }
 
         return layout;

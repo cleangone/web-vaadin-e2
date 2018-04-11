@@ -5,21 +5,26 @@ import com.vaadin.navigator.View;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
 import xyz.cleangone.data.aws.dynamo.entity.action.Action;
+import xyz.cleangone.data.aws.dynamo.entity.bid.ItemBid;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
 import xyz.cleangone.data.aws.dynamo.entity.item.CartItem;
 import xyz.cleangone.data.aws.dynamo.entity.item.PurchaseItem;
 import xyz.cleangone.data.aws.dynamo.entity.purchase.Cart;
 import xyz.cleangone.data.manager.ActionManager;
+import xyz.cleangone.data.manager.event.BidManager;
 import xyz.cleangone.e2.web.vaadin.desktop.image.ImageDimension;
 import xyz.cleangone.e2.web.vaadin.desktop.image.ImageLabel;
 import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
+import xyz.cleangone.e2.web.vaadin.util.DollarField;
 import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class ItemPage extends CatalogPage implements View
 {
     public static final String NAME = "Item";
+    private BidManager bidManager = new BidManager();
 
     protected PageDisplayType set()
     {
@@ -42,6 +47,8 @@ public class ItemPage extends CatalogPage implements View
 
     private Component getItemLayout(CatalogItem item)
     {
+        ItemBid highBid = item.getHighBidId() == null ? null : bidManager.getItemBid(item.getHighBidId());
+
         HorizontalLayout layout = new HorizontalLayout();
         layout.setMargin(new MarginInfo(true, false, false, false)); // T/R/B/L margins
 
@@ -58,7 +65,10 @@ public class ItemPage extends CatalogPage implements View
         layout.addComponent(detailslayout);
 
         detailslayout.addComponent(new Label(item.getName()));
-        detailslayout.addComponent(new Label(item.getDisplayPrice()));
+
+        String displayPrice = item.getDisplayPrice();
+        if (highBid != null && highBid.getUserId().equals(user.getId())) { displayPrice += " (you are high bidder)"; }
+        detailslayout.addComponent(new Label(displayPrice));
 
         Integer quantity = item.getQuantity();
         if (quantity != null)
@@ -70,12 +80,20 @@ public class ItemPage extends CatalogPage implements View
         {
             if (item.getSaleType() == PurchaseItem.SaleType.Bid)
             {
+                DollarField maxBidField = new DollarField("Max Bid");
+                detailslayout.addComponent(maxBidField);
                 detailslayout.addComponent(VaadinUtils.createTextButton("Bid", ev ->
                 {
-                    ActionManager actionMgr = orgMgr.getActionManager();
-                    Action bid = actionMgr.createBid(user, item, event);
-                    actionMgr.save(bid);
-                    actionBar.displayMessage("Bid submitted");
+                    BigDecimal maxBid = maxBidField.getDollarValue();
+                    if (maxBid.compareTo(item.getPrice()) > 0)
+                    {
+                        bidManager.createBid(user, item, maxBid);
+                        ActionManager actionMgr = orgMgr.getActionManager();
+                        Action bid = actionMgr.createBid(user, item, event);
+                        actionMgr.save(bid);
+                        actionBar.displayMessage("Bid submitted");
+                        setCenterLayout();
+                    }
                 }));
             }
             else if (item.getSaleType() == PurchaseItem.SaleType.Purchase)

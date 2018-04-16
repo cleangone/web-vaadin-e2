@@ -8,9 +8,11 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.renderers.DateRenderer;
 import xyz.cleangone.data.aws.dynamo.entity.action.Action;
 import xyz.cleangone.data.aws.dynamo.entity.bid.ItemBid;
+import xyz.cleangone.data.aws.dynamo.entity.bid.UserBid;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
 import xyz.cleangone.data.aws.dynamo.entity.item.CartItem;
 import xyz.cleangone.data.aws.dynamo.entity.item.PurchaseItem;
+import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.aws.dynamo.entity.purchase.Cart;
 import xyz.cleangone.data.manager.ActionManager;
 import xyz.cleangone.data.manager.event.BidManager;
@@ -82,9 +84,20 @@ public class ItemPage extends CatalogPage implements View
             {
                 String bidDesc = (highBid == null ? "Starting" : "Current");
                 detailslayout.addComponent(new Label(bidDesc + " Bid: " + displayPrice));
-                if (highBid != null && highBid.getUserId().equals(user.getId()))
+                if (highBid != null)
                 {
-                    detailslayout.addComponent(new Label("You are the high bidder, with a max bid of $" + highBid.getMaxAmount()));
+                    if (highBid.getUserId().equals(user.getId()))
+                    {
+                        detailslayout.addComponent(new Label("You are the high bidder, with a max bid of " + highBid.getDisplayMaxAmount()));
+                    }
+                    else
+                    {
+                        UserBid userBid = bidManager.getUserBid(user, item);
+                        if (userBid != null)
+                        {
+                            detailslayout.addComponent(new Label("Your bid of " + userBid.getDisplayMaxAmount() + " was outbid"));
+                        }
+                    }
                 }
 
                 detailslayout.addComponent(new Label("Auction ends " + SDF.format(item.getAvailabilityEnd())));
@@ -142,7 +155,7 @@ public class ItemPage extends CatalogPage implements View
         BigDecimal maxBid = maxBidField.getDollarValue();
         if (maxBid.compareTo(item.getPrice()) > 0)
         {
-            // todo - item will be updated in-place with any new bid - good/bad?
+            // note - item will be updated in-place with any new bid
             BidStatus bidStatus = bidManager.createBid(user, item, maxBid);
 
             if (bidStatus.getUserBid() != null)

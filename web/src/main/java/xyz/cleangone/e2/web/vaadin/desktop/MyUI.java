@@ -27,6 +27,7 @@ import xyz.cleangone.e2.web.vaadin.desktop.org.event.CatalogPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.EventPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.payment.IatsPaymentPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.payment.PaymentPage;
+import xyz.cleangone.e2.web.vaadin.desktop.org.profile.BidsPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.profile.ProfilePage;
 import xyz.cleangone.e2.web.vaadin.desktop.user.LoginPage;
 
@@ -75,8 +76,8 @@ public class MyUI extends UI
         nav.addView(SigninPage.NAME, new SigninPage());
         nav.addView(PasswordRequestPage.NAME, new PasswordRequestPage());
         nav.addView(PasswordResetPage.NAME, new PasswordResetPage());
-        //nav.addView(ProfilePage.NAME, new ProfilePage());
         nav.addView(ProfilePage.NAME, new ProfilePage());
+        nav.addView(BidsPage.NAME, new BidsPage());
         nav.addView(CreateAccountPage.NAME, new CreateAccountPage());
         nav.addView(CartPage.NAME, new CartPage());
         nav.addView(PaymentPage.NAME, new PaymentPage());

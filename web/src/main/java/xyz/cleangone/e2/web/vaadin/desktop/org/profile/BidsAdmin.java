@@ -36,7 +36,6 @@ public class BidsAdmin extends BaseAdmin
     Map<String, OrgEvent> itemIdToEvent   = new HashMap<>();
     Map<String, OrgTag> itemIdToCategory  = new HashMap<>();
 
-
     public BidsAdmin(MessageDisplayer msgDisplayer)
     {
         super(msgDisplayer);
@@ -99,9 +98,9 @@ public class BidsAdmin extends BaseAdmin
         grid.setWidth("100%");
 
         grid.addComponentColumn(this::buildItemLinkButton).setCaption("Item");;
-        grid.addColumn(UserBid::getMaxAmount).setCaption("Max Bid");
-        grid.addColumn(UserBid::getCurrAmount).setCaption("Curr Bid");
-        grid.addColumn(UserBid::getIsHighBid).setCaption("High Bid");
+        grid.addColumn(UserBid::getDisplayMaxAmount).setCaption("Max Bid");
+        grid.addColumn(UserBid::getDisplayCurrAmount).setCaption("Curr Bid");
+        grid.addColumn(this::getStatus).setCaption("Status");
 
         grid.setHeightByRows(bids.size());
         grid.setDataProvider(new ListDataProvider<>(bids));
@@ -119,11 +118,18 @@ public class BidsAdmin extends BaseAdmin
         if (event == null || category == null) { return VaadinUtils.createLinkButton(item.getName()); }
 
         return VaadinUtils.createLinkButton(item.getName(), e -> {
-            eventMgr.setItem(item);
             eventMgr.setEvent(event);
             eventMgr.setCategory(category);
+            eventMgr.setItem(item);
+
+            // todo - why do this instead of initializing ItemPage in ui?  it is not specific to item?
+            ui.getNavigator().addView(ItemPage.NAME, new ItemPage());
             ui.getNavigator().navigateTo(ItemPage.NAME);
         });
     }
 
+    private String getStatus(UserBid bid)
+    {
+        return bid.getIsHighBid() ? "High Bid" : "Outbid";
+    }
 }

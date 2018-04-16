@@ -8,6 +8,7 @@ import xyz.cleangone.data.aws.dynamo.entity.purchase.Cart;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.manager.VaadinSessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.org.*;
+import xyz.cleangone.e2.web.vaadin.desktop.org.profile.BidsPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.profile.ProfilePage;
 
 import static xyz.cleangone.e2.web.vaadin.util.PageUtils.*;
@@ -45,7 +46,9 @@ public class RightMenuBar extends BaseMenuBar
             MenuBar.MenuItem profileItem = addItem(" " + userMgr.getPersonFirstName(), null, null);
             profileItem.setIcon(VaadinIcons.USER);
             profileItem.setDescription(ProfilePage.DISPLAY_NAME);
+
             profileItem.addItem(ProfilePage.NAME, null, getNavigateCmd(ProfilePage.NAME));
+            profileItem.addItem(BidsPage.NAME, null, getNavigateCmd(BidsPage.NAME));
 
             MenuBar.Command logoutCmd = new MenuBar.Command() {
                 public void menuSelected(MenuBar.MenuItem selectedItem) {

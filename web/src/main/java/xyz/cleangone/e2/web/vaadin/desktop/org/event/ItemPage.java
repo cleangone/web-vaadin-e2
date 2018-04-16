@@ -84,7 +84,7 @@ public class ItemPage extends CatalogPage implements View
             {
                 String bidDesc = (highBid == null ? "Starting" : "Current");
                 detailslayout.addComponent(new Label(bidDesc + " Bid: " + displayPrice));
-                if (highBid != null)
+                if (highBid != null && user != null)
                 {
                     if (highBid.getUserId().equals(user.getId()))
                     {
@@ -189,7 +189,7 @@ public class ItemPage extends CatalogPage implements View
             {
                 if (!userIdToAnonName.containsKey(bid.getUserId()))
                 {
-                    String anonName = bid.getUserId().equals(user.getId()) ? "You" : "Bidder " + (userIdToAnonName.size() + 1);
+                    String anonName = (user != null && bid.getUserId().equals(user.getId())) ? "You" : "Bidder " + (userIdToAnonName.size() + 1);
                     userIdToAnonName.put(bid.getUserId(), anonName);
                 }
 

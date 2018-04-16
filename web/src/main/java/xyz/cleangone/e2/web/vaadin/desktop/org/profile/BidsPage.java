@@ -16,20 +16,6 @@ public class BidsPage extends BaseProfilePage
 
     protected Component getLinksLayout()
     {
-        addStyles();
-
-        VerticalLayout linkLayout = new VerticalLayout();
-        linkLayout.setMargin(false);
-        linkLayout.setSpacing(false);
-
-        linkLayout.addComponent(getLink(ProfilePageType.BIDS));
-        linkLayout.addComponent(getLink(ProfilePageType.BID_HISTORY));
-
-        VerticalLayout layout = new VerticalLayout();
-        layout.setMargin(false);
-        layout.addComponents(linkLayout);
-
-        return layout;
+        return getLinksLayout(ProfilePageType.BIDS, ProfilePageType.BID_HISTORY);
     }
-
 }

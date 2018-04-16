@@ -19,23 +19,13 @@ public class ProfilePage extends BaseProfilePage
 
     protected Component getLinksLayout()
     {
-        addStyles();
-
-        VerticalLayout linkLayout = new VerticalLayout();
-        linkLayout.setMargin(false);
-        linkLayout.setSpacing(false);
-
-        linkLayout.addComponent(getLink(ProfilePageType.GENERAL));
-        linkLayout.addComponent(getLink(ProfilePageType.DONATIONS));
-        linkLayout.addComponent(getLink(ProfilePageType.PURCHASES));
-        linkLayout.addComponent(getLink(ProfilePageType.BID_HISTORY));
-
         Label label = new Label("User Profile");
         label.setStyleName(STYLE_FONT_BOLD);
 
         VerticalLayout layout = new VerticalLayout();
         layout.setMargin(false);
-        layout.addComponents(label, linkLayout);
+        layout.addComponents(label, getLinksLayout(
+            ProfilePageType.GENERAL, ProfilePageType.DONATIONS, ProfilePageType.PURCHASES, ProfilePageType.BID_HISTORY));
 
         return layout;
     }

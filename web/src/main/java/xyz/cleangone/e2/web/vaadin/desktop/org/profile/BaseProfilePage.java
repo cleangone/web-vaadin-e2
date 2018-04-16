@@ -80,7 +80,37 @@ public abstract class BaseProfilePage extends BasePage implements View
 
     protected abstract Component getLinksLayout();
 
-    protected void addStyles()
+    protected VerticalLayout getLinksLayout(ProfilePageType... profilePageTypes)
+    {
+        VerticalLayout layout = new VerticalLayout();
+        layout.setMargin(false);
+        layout.setSpacing(false);
+
+        for (ProfilePageType profilePageType : profilePageTypes)
+        {
+            layout.addComponent(getLink(profilePageType));
+        }
+
+        return layout;
+    }
+
+    protected Component getLink(ProfilePageType pageType)
+    {
+        return getLink(pageType, STYLE_LINK_ACTIVE, STYLE_LINK);
+    }
+
+    private void set()
+    {
+        addStyles();
+
+        leftLayout.removeAllComponents();
+        leftLayout.addComponent(getLinksLayout());
+
+        centerLayout.removeAllComponents();
+        centerLayout.addComponent(components.get(currPageType));
+    }
+
+    private void addStyles()
     {
         String textColor = VaadinUtils.getOrDefault(org.getNavTextColor(), "black");
         String selectedTextColor = VaadinUtils.getOrDefault(org.getNavSelectedTextColor(), "black");
@@ -92,20 +122,6 @@ public abstract class BaseProfilePage extends BasePage implements View
 
         String selectedTextStyleName = "category-text-selected-" + org.getTag();
         styles.add("." + selectedTextStyleName + " {color: " + selectedTextColor + "}");
-    }
-
-    protected Component getLink(ProfilePageType pageType)
-    {
-        return getLink(pageType, STYLE_LINK_ACTIVE, STYLE_LINK);
-    }
-
-    private void set()
-    {
-        leftLayout.removeAllComponents();
-        leftLayout.addComponent(getLinksLayout());
-
-        centerLayout.removeAllComponents();
-        centerLayout.addComponent(components.get(currPageType));
     }
 
     private Component getLink(ProfilePageType pageType, String selectedTextStyleName, String textStyleName)

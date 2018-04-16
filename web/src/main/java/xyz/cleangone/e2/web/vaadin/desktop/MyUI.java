@@ -9,13 +9,18 @@ import com.vaadin.navigator.View;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.*;
+import xyz.cleangone.data.aws.dynamo.dao.CatalogItemDao;
+import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
+import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.aws.dynamo.entity.person.UserToken;
 import xyz.cleangone.data.manager.EventManager;
 import xyz.cleangone.data.manager.OrgManager;
+import xyz.cleangone.data.manager.TagManager;
 import xyz.cleangone.data.manager.UserManager;
+import xyz.cleangone.data.manager.event.ItemManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.manager.VaadinSessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.EventAdminPage;
@@ -25,6 +30,7 @@ import xyz.cleangone.e2.web.vaadin.desktop.actionbar.ActionBar;
 import xyz.cleangone.e2.web.vaadin.desktop.org.*;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.CatalogPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.EventPage;
+import xyz.cleangone.e2.web.vaadin.desktop.org.event.ItemPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.payment.IatsPaymentPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.payment.PaymentPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.profile.BidsPage;
@@ -32,7 +38,9 @@ import xyz.cleangone.e2.web.vaadin.desktop.org.profile.ProfilePage;
 import xyz.cleangone.e2.web.vaadin.desktop.user.LoginPage;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 @Theme("mytheme")
@@ -40,6 +48,7 @@ public class MyUI extends UI
 {
     public static final String RESET_PASSWORD_URL_PARAM = "reset";
     public static final String VERIFY_EMAIL_URL_PARAM = "verify";
+    public static final String ITEM_URL_PARAM = "item";
 
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
     @VaadinServletConfiguration(ui = MyUI.class, productionMode = false)
@@ -99,17 +108,18 @@ public class MyUI extends UI
             }
         }
 
-        boolean loggedIn = loginByCookie(userMgr);  // return var for debugging
+        loginByCookie(userMgr);
         verifyEmail(vaadinRequest, userMgr);
 
-        String initialPage = getInitialPage(vaadinRequest, sessionMgr);
-
-        //sessionMgr.startNotifications();
-
+        String initialPage = getInitialPage(vaadinRequest, sessionMgr);  // parse url /<orgTag>/<eventTag>
         if (initialPage == null && userMgr.userIsSuper())
         {
             initialPage = SuperAdminPage.NAME;
         }
+
+        // check for direct link to item
+        String itemPage = getItemPage(vaadinRequest, sessionMgr);
+        if (itemPage != null) { initialPage = itemPage; }
 
         getNavigator().setErrorView(initialPage == null ? loginPage : orgPage);
         getNavigator().navigateTo(initialPage == null ? LoginPage.NAME : initialPage);
@@ -147,12 +157,12 @@ public class MyUI extends UI
         userMgr.verifyEmail(verifyEmailToken);
     }
 
+    // url path may contain /<orgTag>/<eventTag>
     private String getInitialPage(VaadinRequest vaadinRequest, SessionManager sessionMgr)
     {
         String path = vaadinRequest.getPathInfo();
         if (path == null || !path.startsWith("/") || path.equals("/")) { return null; }
 
-        // url path may contain /<orgTag>/<eventTag>
         List<String> tags = Arrays.asList(path.substring(1).split("\\s*/\\s*"));
         if (tags.isEmpty()) { return null; }
 
@@ -182,6 +192,57 @@ public class MyUI extends UI
 
         return returnPage;
     }
+
+    // todo - quite a mess
+    private String getItemPage(VaadinRequest vaadinRequest, SessionManager sessionMgr)
+    {
+        String itemId = vaadinRequest.getParameter(ITEM_URL_PARAM);
+        if (itemId == null) { return null; }
+
+        // todo - feels wrong to go directly after dao
+        CatalogItemDao itemDao = new CatalogItemDao();
+        CatalogItem item = itemDao.getById(itemId);
+
+        OrgManager orgMgr = sessionMgr.getOrgManager();
+        if (orgMgr.getOrgId() == null) { orgMgr.setOrgById(item.getOrgId()); }
+        else if (!orgMgr.getOrgId().equals(item.getOrgId())) { return null; } // org mismatch - should not have happened
+
+        // set event based on item
+        EventManager eventMgr = sessionMgr.getResetEventManager();  // event, category set to null
+        for (OrgEvent event : eventMgr.getActiveEvents())
+        {
+            if (event.getId().equals(item.getEventId())) { eventMgr.setEvent(event); }
+        }
+
+        if (eventMgr.getEvent() == null) { return null; } // item's event no longer active
+
+        // get category - overlaps with BidAdmin
+        OrgTag category = getCategory(item, orgMgr.getTagManager());
+        if (category == null) { return null; } // cannot find category
+
+        eventMgr.setCategory(category);
+        eventMgr.setItem(item);
+        getNavigator().addView(ItemPage.NAME, new ItemPage());  // todo - why do this?  Same qustion as BidsAdmin
+        return ItemPage.NAME;
+    }
+
+    private OrgTag getCategory(CatalogItem item, TagManager tagMgr)
+    {
+        Map<String, OrgTag> categoryIdToCategory = new HashMap<>();
+        for (OrgTag category : tagMgr.getCategories()) { categoryIdToCategory.put(category.getId(), category); }
+
+        for (String itemCategoryId : item.getCategoryIds())
+        {
+            if (categoryIdToCategory.containsKey(itemCategoryId))
+            {
+                return categoryIdToCategory.get(itemCategoryId);
+            }
+        }
+
+        return null;
+    }
+
+
 
     private void verifyUser(UserManager userMgr, Organization org)
     {

@@ -14,6 +14,10 @@ import xyz.cleangone.e2.web.vaadin.desktop.banner.BannerCarousel;
 import xyz.cleangone.e2.web.vaadin.desktop.banner.BannerSingle;
 
 import java.util.Date;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static xyz.cleangone.e2.web.manager.PageStats.*;
 
 
@@ -21,6 +25,8 @@ public abstract class BasePage extends Panel implements View
 {
     protected static boolean COLORS = false;
     protected enum BannerStyle { Carousel, Single };
+
+    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     private VerticalLayout pageLayout = new VerticalLayout();
     private BannerComponent banner;
@@ -102,6 +108,11 @@ public abstract class BasePage extends Panel implements View
     {
         banner.reset(sessionMgr);
         return actionBar.set(sessionMgr);
+    }
+
+    protected void schedule(Runnable runnable)
+    {
+        scheduler.schedule(runnable, 1, SECONDS);
     }
 
     protected void navigateTo(OrgEvent event)

@@ -1,9 +1,11 @@
 package xyz.cleangone.e2.web.vaadin.desktop.org.event;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.S3Link;
+import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.navigator.View;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
+import com.vaadin.ui.renderers.DateRenderer;
 import xyz.cleangone.data.aws.dynamo.entity.action.Action;
 import xyz.cleangone.data.aws.dynamo.entity.bid.ItemBid;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
@@ -12,6 +14,9 @@ import xyz.cleangone.data.aws.dynamo.entity.item.PurchaseItem;
 import xyz.cleangone.data.aws.dynamo.entity.purchase.Cart;
 import xyz.cleangone.data.manager.ActionManager;
 import xyz.cleangone.data.manager.event.BidManager;
+import xyz.cleangone.data.manager.event.BidStatus;
+import xyz.cleangone.e2.web.manager.OutbidEmailSender;
+import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.disclosure.BaseDisclosure;
 import xyz.cleangone.e2.web.vaadin.desktop.image.ImageDimension;
 import xyz.cleangone.e2.web.vaadin.desktop.image.ImageLabel;
 import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
@@ -19,16 +24,19 @@ import xyz.cleangone.e2.web.vaadin.util.DollarField;
 import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class ItemPage extends CatalogPage implements View
 {
     public static final String NAME = "Item";
-    private BidManager bidManager = new BidManager();
+    private static SimpleDateFormat SDF = new SimpleDateFormat("EEE MMM d, hh:mm:ss aaa");
+    private BidManager bidManager;
 
     protected PageDisplayType set()
     {
         imageMgr = itemMgr.getImageManager();
+        bidManager = orgMgr.getBidManager();
 
         leftLayout.set(category);
         setCenterLayout();
@@ -62,13 +70,35 @@ public class ItemPage extends CatalogPage implements View
 
         VerticalLayout detailslayout = new VerticalLayout();
         detailslayout.setMargin(false);
+        detailslayout.setWidth("100%");
         layout.addComponent(detailslayout);
 
         detailslayout.addComponent(new Label(item.getName()));
 
         String displayPrice = item.getDisplayPrice();
-        if (highBid != null && highBid.getUserId().equals(user.getId())) { displayPrice += " (you are high bidder)"; }
-        detailslayout.addComponent(new Label(displayPrice));
+        if (item.isBid())
+        {
+            if (item.isAvailable())
+            {
+                String bidDesc = (highBid == null ? "Starting" : "Current");
+                detailslayout.addComponent(new Label(bidDesc + " Bid: " + displayPrice));
+                if (highBid != null && highBid.getUserId().equals(user.getId()))
+                {
+                    detailslayout.addComponent(new Label("You are the high bidder, with a max bid of $" + highBid.getMaxAmount()));
+                }
+
+                detailslayout.addComponent(new Label("Auction ends " + SDF.format(item.getAvailabilityEnd())));
+            }
+            else
+            {
+                detailslayout.addComponent(new Label(displayPrice));
+                detailslayout.addComponent(new Label("Auction has ended"));
+            }
+        }
+        else
+        {
+            detailslayout.addComponent(new Label(displayPrice));
+        }
 
         Integer quantity = item.getQuantity();
         if (quantity != null)
@@ -76,25 +106,13 @@ public class ItemPage extends CatalogPage implements View
             detailslayout.addComponent(quantity == 0 ? EventUtils.getSoldLabel() : new Label(quantity + " remaining"));
         }
 
-        if (quantity == null || quantity > 0)
+        if (item.isAvailable())
         {
-            if (item.getSaleType() == PurchaseItem.SaleType.Bid)
+            if (item.isBid())
             {
                 DollarField maxBidField = new DollarField("Max Bid");
                 detailslayout.addComponent(maxBidField);
-                detailslayout.addComponent(VaadinUtils.createTextButton("Bid", ev ->
-                {
-                    BigDecimal maxBid = maxBidField.getDollarValue();
-                    if (maxBid.compareTo(item.getPrice()) > 0)
-                    {
-                        bidManager.createBid(user, item, maxBid);
-                        ActionManager actionMgr = orgMgr.getActionManager();
-                        Action bid = actionMgr.createBid(user, item, event);
-                        actionMgr.save(bid);
-                        actionBar.displayMessage("Bid submitted");
-                        setCenterLayout();
-                    }
-                }));
+                detailslayout.addComponent(VaadinUtils.createTextButton("Bid", ev -> handleBid(item, maxBidField)));
             }
             else if (item.getSaleType() == PurchaseItem.SaleType.Purchase)
             {
@@ -110,6 +128,107 @@ public class ItemPage extends CatalogPage implements View
             }
         }
 
+        if (item.getSaleType() == PurchaseItem.SaleType.Bid)
+        {
+            List<ItemBid> bids = bidManager.getItemBids(item);
+            detailslayout.addComponent(new BidsDisclosure(bids));
+        }
+
         return layout;
     }
+
+    private void handleBid(CatalogItem item, DollarField maxBidField)
+    {
+        BigDecimal maxBid = maxBidField.getDollarValue();
+        if (maxBid.compareTo(item.getPrice()) > 0)
+        {
+            // todo - item will be updated in-place with any new bid - good/bad?
+            BidStatus bidStatus = bidManager.createBid(user, item, maxBid);
+
+            if (bidStatus.getUserBid() != null)
+            {
+                ActionManager actionMgr = orgMgr.getActionManager();
+                Action bid = actionMgr.createBid(user, bidStatus.getUserBid(), item, event);
+                actionMgr.save(bid);
+                actionBar.displayMessage("Bid submitted");
+
+                if (bidStatus.getPreviousHighBid() != null)
+                {
+                    schedule(new OutbidEmailSender(bidStatus.getPreviousHighBid(), sessionMgr));
+                }
+
+                setCenterLayout();
+            }
+        }
+    }
+
+    class BidsDisclosure extends BaseDisclosure
+    {
+        List<FormattedBid> formattedBids = new ArrayList<>();
+
+        BidsDisclosure(List<ItemBid> bids)
+        {
+            super("", new VerticalLayout());
+            setWidth("100%");
+
+            Map<String, String> userIdToAnonName = new HashMap<>();
+            for (ItemBid bid : bids)
+            {
+                if (!userIdToAnonName.containsKey(bid.getUserId()))
+                {
+                    String anonName = bid.getUserId().equals(user.getId()) ? "You" : "Bidder " + (userIdToAnonName.size() + 1);
+                    userIdToAnonName.put(bid.getUserId(), anonName);
+                }
+
+                // formattedBids is sorted latest first
+                formattedBids.add(0, new FormattedBid(userIdToAnonName.get(bid.getUserId()), "$" + bid.getCurrAmount(), bid.getCreatedDate()));
+            }
+
+            Grid<FormattedBid> grid = new Grid<>();
+            grid.setWidth("100%");
+            grid.addColumn(FormattedBid::getBidder);
+            grid.addColumn(FormattedBid::getAmount);
+            grid.addColumn(FormattedBid::getDate).setRenderer(new DateRenderer(SDF));
+
+            grid.removeHeaderRow(0);
+            grid.setHeightByRows(formattedBids.size());
+            grid.setDataProvider(new ListDataProvider<>(formattedBids));
+
+            setDisclosureCaption();
+            mainLayout.addComponents(grid);
+        }
+
+        public void setDisclosureCaption()
+        {
+             setDisclosureCaption(formattedBids.size() + " " + (formattedBids.size() == 1 ? "Bid" : "Bids"));
+        }
+
+        class FormattedBid
+        {
+            String bidder;
+            String amount;
+            Date date;
+
+            FormattedBid(String bidder, String amount, Date date)
+            {
+                this.bidder = bidder;
+                this.amount = amount;
+                this.date = date;
+            }
+
+            String getBidder()
+            {
+                return bidder;
+            }
+            String getAmount()
+            {
+                return amount;
+            }
+            Date getDate()
+            {
+                return date;
+            }
+        }
+    }
+
 }

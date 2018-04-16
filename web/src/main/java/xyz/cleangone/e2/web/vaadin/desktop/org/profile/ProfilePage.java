@@ -57,10 +57,11 @@ public class ProfilePage extends BasePage implements View
         centerLayout.setHeight("100%");
         if (COLORS) { centerLayout.addStyleName("backBlue"); }
 
-        components.put(ProfilePageType.GENERAL, new ProfileAdmin(actionBar));
-        components.put(ProfilePageType.DONATIONS, new ActionsAdmin(actionBar, ProfilePageType.DONATIONS));
-        components.put(ProfilePageType.PURCHASES, new ActionsAdmin(actionBar, ProfilePageType.PURCHASES));
-        components.put(ProfilePageType.BIDS,      new ActionsAdmin(actionBar, ProfilePageType.BIDS));
+        components.put(ProfilePageType.GENERAL,     new ProfileAdmin(actionBar));
+        components.put(ProfilePageType.BIDS,        new BidsAdmin(actionBar));
+        components.put(ProfilePageType.DONATIONS,   new ActionsAdmin(actionBar, ProfilePageType.DONATIONS));
+        components.put(ProfilePageType.PURCHASES,   new ActionsAdmin(actionBar, ProfilePageType.PURCHASES));
+        components.put(ProfilePageType.BID_HISTORY, new ActionsAdmin(actionBar, ProfilePageType.BIDS));
 
         mainLayout.addComponents(leftWrapper, centerLayout);
         mainLayout.setExpandRatio(centerLayout, 1.0f);
@@ -72,9 +73,10 @@ public class ProfilePage extends BasePage implements View
         sessionMgr.resetEventManager();
         org = orgMgr.getOrg();
 
+        UI ui = getUI();
         for (BaseAdmin component : components.values())
         {
-            component.set(sessionMgr);
+            component.set(sessionMgr, ui);
         }
 
         setMenuLeftStyle(org);
@@ -120,9 +122,11 @@ public class ProfilePage extends BasePage implements View
         linkLayout.setSpacing(false);
 
         linkLayout.addComponent(getLink(ProfilePageType.GENERAL));
+        linkLayout.addComponent(getLink(ProfilePageType.BIDS));
+        linkLayout.addComponent(new Label(""));
         linkLayout.addComponent(getLink(ProfilePageType.DONATIONS));
         linkLayout.addComponent(getLink(ProfilePageType.PURCHASES));
-        linkLayout.addComponent(getLink(ProfilePageType.BIDS));
+        linkLayout.addComponent(getLink(ProfilePageType.BID_HISTORY));
 
         Label label = new Label("User Profile");
         label.setStyleName(STYLE_FONT_BOLD);

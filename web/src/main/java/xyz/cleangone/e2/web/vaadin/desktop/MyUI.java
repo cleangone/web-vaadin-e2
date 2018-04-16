@@ -102,6 +102,9 @@ public class MyUI extends UI
         verifyEmail(vaadinRequest, userMgr);
 
         String initialPage = getInitialPage(vaadinRequest, sessionMgr);
+
+        //sessionMgr.startNotifications();
+
         if (initialPage == null && userMgr.userIsSuper())
         {
             initialPage = SuperAdminPage.NAME;

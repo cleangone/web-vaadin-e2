@@ -23,6 +23,7 @@ import static xyz.cleangone.e2.web.manager.PageStats.*;
 
 public abstract class BasePage extends Panel implements View
 {
+    protected static int BANNER_HEIGHT = 300;  // includes actionBar
     protected static boolean COLORS = false;
     protected enum BannerStyle { Carousel, Single };
 

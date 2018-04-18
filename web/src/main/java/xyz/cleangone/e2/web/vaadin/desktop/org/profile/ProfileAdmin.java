@@ -27,7 +27,7 @@ import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
 public class ProfileAdmin extends BaseAdmin
 {
-    private final FormLayout formLayout = new FormLayout();
+    protected final FormLayout formLayout = new FormLayout();
     private EmailSender emailSender = new EmailSender();
 
     private SessionManager sessionMgr;

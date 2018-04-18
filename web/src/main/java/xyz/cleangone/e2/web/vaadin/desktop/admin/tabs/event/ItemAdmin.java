@@ -20,10 +20,7 @@ import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
 import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 
 import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.util.Date;
 
 import static xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem.*;
@@ -184,9 +181,9 @@ public class ItemAdmin extends VerticalLayout
     private static LocalDateTime getLocalDateTime(Date date)
     {
         if (date == null) { return null; }
-
-        Instant instant = Instant.ofEpochMilli(date.getTime());
-        return LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
+        return date.toInstant()
+            .atZone(ZoneId.systemDefault())
+            .toLocalDateTime();
     }
 
     private static Date getDate(DateTimeField dateField)
@@ -196,14 +193,10 @@ public class ItemAdmin extends VerticalLayout
     private static Date getDate(LocalDateTime date)
     {
         if (date == null) { return null; }
-
         return java.util.Date
-            .from(date.atZone(ZoneOffset.UTC)
+            .from(date.atZone(ZoneOffset.systemDefault())
             .toInstant());
     }
-
-
-
 
 //    class StatusDisclosure extends BaseOrgDisclosure
 //    {

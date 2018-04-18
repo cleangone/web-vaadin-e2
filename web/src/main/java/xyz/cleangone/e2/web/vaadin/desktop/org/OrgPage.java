@@ -83,25 +83,24 @@ public class OrgPage extends BasePage implements View
         orgLayout.setSpacing(false);
 
         setOrgLayout(orgLayout);
-        pageWidth = UI.getCurrent().getPage().getBrowserWindowWidth();
-        UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> {
-            int newPageWidth = e.getWidth();
-
-            if ((pageWidth < oneColPageWidth && newPageWidth > oneColPageWidth) ||
-                (pageWidth > oneColPageWidth && pageWidth < twoColPageWidth &&
-                    (newPageWidth < oneColPageWidth || newPageWidth > twoColPageWidth)) ||
-                (pageWidth > twoColPageWidth && newPageWidth < twoColPageWidth))
-            {
-                setOrgLayout(orgLayout);
-            }
-
-            pageWidth = newPageWidth;
-        });
+        UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> setOrgLayout(orgLayout, e.getWidth()));
 
         mainLayout.addComponent(orgLayout);
         return PageDisplayType.ObjectRetrieval;
     }
 
+
+    // set orglayout if page has crossed a width boundary and must be laid out differently
+    private void setOrgLayout(HorizontalLayout orgLayout, int newPageWidth)
+    {
+        if ((pageWidth < oneColPageWidth && newPageWidth > oneColPageWidth) ||
+            (pageWidth > oneColPageWidth && pageWidth < twoColPageWidth &&
+                (newPageWidth < oneColPageWidth || newPageWidth > twoColPageWidth)) ||
+            (pageWidth > twoColPageWidth && newPageWidth < twoColPageWidth))
+        {
+            setOrgLayout(orgLayout);
+        }
+    }
 
     private void setOrgLayout(HorizontalLayout orgLayout)
     {
@@ -124,9 +123,9 @@ public class OrgPage extends BasePage implements View
         boolean useCenterCol = centerWidth > 0;
         boolean useRightCol = rightWidth > 0;
 
-        int windowWidth = UI.getCurrent().getPage().getBrowserWindowWidth();
-        if (windowWidth < twoColPageWidth) { useRightCol = false; }
-        if (windowWidth < oneColPageWidth) { useCenterCol = false; }
+        pageWidth = UI.getCurrent().getPage().getBrowserWindowWidth();
+        if (pageWidth < twoColPageWidth) { useRightCol = false; }
+        if (pageWidth < oneColPageWidth) { useCenterCol = false; }
 
         VerticalLayout leftLayout = new VerticalLayout();
 

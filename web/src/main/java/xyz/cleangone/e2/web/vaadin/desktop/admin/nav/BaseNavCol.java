@@ -1,10 +1,7 @@
 package xyz.cleangone.e2.web.vaadin.desktop.admin.nav;
 
 import com.vaadin.event.LayoutEvents;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 
 public abstract class BaseNavCol extends VerticalLayout
@@ -22,7 +19,8 @@ public abstract class BaseNavCol extends VerticalLayout
         setMargin(true);
         setSpacing(true);
         setWidthUndefined();
-        setHeight("100%");
+        setHeight((UI.getCurrent().getPage().getBrowserWindowHeight() - 100) + "px");
+
         setStyleName(STYLE_ADMIN_NAV);
     }
 

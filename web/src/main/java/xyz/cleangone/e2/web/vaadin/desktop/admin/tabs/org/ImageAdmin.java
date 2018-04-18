@@ -3,7 +3,6 @@ package xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org;
 import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.S3Link;
-import com.vaadin.event.LayoutEvents;
 import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.shared.ui.AlignmentInfo;
 import com.vaadin.ui.*;
@@ -88,23 +87,16 @@ public class ImageAdmin implements ImageDisplayer
             layout.addComponent(imageLabel);
 
             // can delete images other than the primary (used for banner, etc)
-            if (!imageUrl.equals(primaryUrl))
-            {
-                popupLayout.addComponent(buildDeleteButton(image));
-                layout.addLayoutClickListener(new LayoutEvents.LayoutClickListener()
-                {
-                    public void layoutClick(LayoutEvents.LayoutClickEvent event)
-                    {
-                        if (event.getButton() == MouseEventDetails.MouseButton.RIGHT)
-                        {
-                            popup.setPopupVisible(true);
-                        }
-                    }
-                });
+            Button deleteButton = buildDeleteButton(image);
+            if (imageUrl.equals(primaryUrl)) { deleteButton.setEnabled(false); }
 
-                layout.addComponent(popup);
-                layout.setComponentAlignment(popup, new Alignment(AlignmentInfo.Bits.ALIGNMENT_VERTICAL_CENTER));
-            }
+            popupLayout.addComponent(deleteButton);
+            layout.addLayoutClickListener(event -> {
+                if (event.getButton() == MouseEventDetails.MouseButton.RIGHT) { popup.setPopupVisible(true); }
+            });
+
+            layout.addComponent(popup);
+            layout.setComponentAlignment(popup, new Alignment(AlignmentInfo.Bits.ALIGNMENT_VERTICAL_CENTER));
 
             imagesLayout.addComponent(layout);
         }

@@ -9,6 +9,7 @@ import com.vaadin.shared.ui.AlignmentInfo;
 import com.vaadin.ui.*;
 import com.vaadin.ui.components.grid.FooterRow;
 import com.vaadin.ui.components.grid.HeaderRow;
+import com.vaadin.ui.renderers.DateRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 import org.vaadin.dialogs.ConfirmDialog;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
@@ -18,18 +19,17 @@ import xyz.cleangone.data.manager.event.ItemManager;
 import xyz.cleangone.e2.web.vaadin.util.*;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static xyz.cleangone.data.aws.dynamo.entity.base.BaseMixinEntity.NAME_FIELD;
-import static xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem.CATEGORIES_FIELD;
-import static xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem.PRICE_FIELD;
-import static xyz.cleangone.data.aws.dynamo.entity.item.PurchaseItem.AVAIL_START_FIELD;
+import static xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem.*;
 import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
-
 
 public class ItemsAdmin extends BaseEventTagsAdmin implements MultiSelectionListener<CatalogItem>
 {
+    private static SimpleDateFormat SDF = new SimpleDateFormat("EEE MMM d, h:mmaaa z");
     private ItemManager itemMgr;
 
     private List<OrgTag> categories;
@@ -167,13 +167,8 @@ public class ItemsAdmin extends BaseEventTagsAdmin implements MultiSelectionList
         addColumn(grid, CATEGORIES_FIELD, CatalogItem::getCategoriesCsv, 2);
         addColumn(grid, PRICE_FIELD, CatalogItem::getDisplayPrice, 1);
         addDateColumn(grid, AVAIL_START_FIELD, CatalogItem::getAvailabilityStart, 1);
-
-        //addBigDecimalColumn(grid, PRICE_FIELD, CatalogItem::getPrice, 1);
-
-
-        DollarField dollars = new DollarField("Amount");
-
-        grid.addComponentColumn(this::buildDeleteButton);
+        Grid.Column endDateCol = addDateColumn(grid, AVAIL_END_FIELD, CatalogItem::getAvailabilityEnd, 1);
+        Grid.Column deleteCol = grid.addComponentColumn(this::buildDeleteButton);
 
         grid.setColumnReorderingAllowed(true);
         grid.setSelectionMode(Grid.SelectionMode.MULTI);
@@ -194,6 +189,11 @@ public class ItemsAdmin extends BaseEventTagsAdmin implements MultiSelectionList
             msgDisplayer.displayMessage("Item saved");
             grid.setDataProvider(new ListDataProvider<>(items));
         });
+
+        grid.getColumns().stream()
+            .filter(col -> col != nameCol && col != deleteCol)
+            .forEach(column -> column.setHidable(true));
+        endDateCol.setHidden(true);
 
         HeaderRow filterHeader = grid.appendHeaderRow();
         setColumnFiltering(filterHeader, dataProvider);
@@ -236,7 +236,9 @@ public class ItemsAdmin extends BaseEventTagsAdmin implements MultiSelectionList
         EntityField entityField, ValueProvider<CatalogItem, Date> valueProvider, int expandRatio)
     {
         return grid.addColumn(valueProvider)
-            .setId(entityField.getName()).setCaption(entityField.getDisplayName()).setExpandRatio(expandRatio);
+            .setId(entityField.getName()).setCaption(entityField.getDisplayName())
+            .setRenderer(new DateRenderer(SDF))
+            .setExpandRatio(expandRatio);
     }
 
     private void setColumnFiltering(HeaderRow filterHeader, CountingDataProvider<CatalogItem> dataProvider)

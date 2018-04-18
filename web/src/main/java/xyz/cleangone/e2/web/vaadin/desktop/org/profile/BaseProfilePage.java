@@ -14,8 +14,7 @@ import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 import java.util.HashMap;
 import java.util.Map;
 
-import static xyz.cleangone.e2.web.vaadin.util.PageUtils.getMarginLayout;
-import static xyz.cleangone.e2.web.vaadin.util.PageUtils.setNavStyle;
+import static xyz.cleangone.e2.web.vaadin.util.PageUtils.*;
 
 public abstract class BaseProfilePage extends BasePage implements View
 {
@@ -43,7 +42,7 @@ public abstract class BaseProfilePage extends BasePage implements View
         leftWrapper.setMargin(false);
         leftWrapper.setSpacing(false);
         leftWrapper.setSizeUndefined();
-        leftWrapper.addComponents(getMarginLayout(getMainLayoutHeight()), leftLayout);
+        leftWrapper.addComponents(getMarginLayout(UI.getCurrent(), BANNER_HEIGHT), leftLayout);
         if (COLORS) { leftWrapper.addStyleName("backRed"); }
 
         leftLayout.setSpacing(false);

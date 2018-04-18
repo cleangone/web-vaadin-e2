@@ -74,7 +74,6 @@ public class ActionBar extends HorizontalLayout implements MessageDisplayer
         return leftMenuBar.addItem(caption, null, null);
     }
 
-
     public void setStyle(SessionManager sessionMgr)
     {
         BaseOrg baseOrg = sessionMgr.getOrg();
@@ -94,27 +93,6 @@ public class ActionBar extends HorizontalLayout implements MessageDisplayer
             setStyleName(styleName);
         }
     }
-
-
-//    private String addActionBarStyle(Organization org)
-//    {
-//        if (org.getBarBackgroundColor() == null) { return ACTION_BAR_STYLE_NAME; }
-//
-//        String styleName = ACTION_BAR_STYLE_NAME + "-" + org.getTag();
-//        addActionBarStyle(styleName, org.getBarBackgroundColor());
-//
-//        return styleName;
-//    }
-//
-//    private String addActionBarStyle(Organization org, OrgEvent event)
-//    {
-//        if (event.getBarBackgroundColor() == null) { return ACTION_BAR_STYLE_NAME; }
-//
-//        String styleName = ACTION_BAR_STYLE_NAME + "-" + org.getTag() + "-" + event.getTag();
-//        addActionBarStyle(styleName, event.getBarBackgroundColor());
-//
-//        return styleName;
-//    }
 
     public static void addActionBarStyle()
     {

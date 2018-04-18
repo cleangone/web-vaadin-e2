@@ -68,8 +68,9 @@ public class EventsAdmin extends BaseEventAdmin
         HorizontalLayout layout = new HorizontalLayout();
         layout.setSizeUndefined();
 
-        TextField addNameField = VaadinUtils.createGridTextField("Event Name");
-        Button button = createTextButton("Add Event", e -> {
+        String eventCaption = orgMgr.getOrg().getEventCaption() == null ? "Event" : orgMgr.getOrg().getEventCaption();
+        TextField addNameField = VaadinUtils.createGridTextField(eventCaption + " Name");
+        Button button = createTextButton("Add " + eventCaption, e -> {
             OrgEvent event = eventMgr.createEvent(addNameField.getValue());
             tagMgr.createTag(OrgTag.ADMIN_ROLE_NAME, OrgTag.TagType.UserRole, event);
 

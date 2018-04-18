@@ -32,7 +32,9 @@ import java.util.*;
 public class ItemPage extends CatalogPage implements View
 {
     public static final String NAME = "Item";
-    private static SimpleDateFormat SDF = new SimpleDateFormat("EEE MMM d, hh:mm:ss aaa");
+    private static SimpleDateFormat SDF = new SimpleDateFormat("EEE MMM d, h:mmaaa z");
+    private static SimpleDateFormat SDF_THIS_WEEK = new SimpleDateFormat("EEEE h:mmaaa z");
+    private static long FIVE_DAYS = 1000 * 60 * 60 * 24 * 5;
     private BidManager bidManager;
 
     protected PageDisplayType set()
@@ -100,7 +102,12 @@ public class ItemPage extends CatalogPage implements View
                     }
                 }
 
-                detailslayout.addComponent(new Label("Auction ends " + SDF.format(item.getAvailabilityEnd())));
+                Date endDate = item.getAvailabilityEnd();
+                if (endDate != null)
+                {
+                    SimpleDateFormat sdf = (endDate.getTime() - FIVE_DAYS < (new Date()).getTime()) ? SDF_THIS_WEEK : SDF;
+                    detailslayout.addComponent(new Label("Auction ends " + sdf.format(endDate)));
+                }
             }
             else
             {

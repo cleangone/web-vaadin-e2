@@ -22,14 +22,12 @@ public abstract class BaseAdminPage extends Panel implements View
 
     public BaseAdminPage()
     {
-        // components fills the browser screen
+        // panel fills the browser screen
         setSizeFull();
 
         // pageLayout sits in components, scrolls if doesn't fit
         pageLayout.setMargin(false);
         pageLayout.setSpacing(true);
-        pageLayout.setHeight("100%");
-        pageLayout.setWidth("100%");
         setContent(pageLayout);
 
         pageLayout.addComponent(actionBar);

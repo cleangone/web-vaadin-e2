@@ -6,6 +6,7 @@ import org.vaadin.viritin.fields.IntegerField;
 import xyz.cleangone.data.aws.dynamo.dao.DynamoBaseDao;
 import xyz.cleangone.data.aws.dynamo.dao.OrgDao;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
+import xyz.cleangone.data.aws.dynamo.entity.organization.BaseOrg;
 import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
 import xyz.cleangone.data.manager.OrgManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
@@ -17,6 +18,8 @@ import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static xyz.cleangone.data.aws.dynamo.entity.organization.Organization.EVENT_CAPTION_FIELD;
+import static xyz.cleangone.data.aws.dynamo.entity.organization.Organization.EVENT_CAPTION_PLURAL_FIELD;
 import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.createIntegerField;
 import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.createTextField;
 
@@ -62,6 +65,7 @@ public class OrgAdmin extends BaseOrgAdmin
         formLayout.addComponent(new LayoutDisclosure(org, dao));
         formLayout.addComponent(new ImagesDisclosure(imageAdmin));
         formLayout.addComponent(new IntroHtmlDisclosure(org, dao));
+        formLayout.addComponent(new EventDisclosure(org, dao));
         formLayout.addComponent(new PaymentProcessorDisclosure(org, dao));
     }
 
@@ -140,6 +144,25 @@ public class OrgAdmin extends BaseOrgAdmin
         public void setDisclosureCaption()
         {
             setDisclosureCaption(org.getPaymentProcessorType() == null ? "Not set" :  org.getPaymentProcessorType().toString());
+        }
+    }
+
+    protected class EventDisclosure extends BaseOrgDisclosure
+    {
+        public EventDisclosure(Organization org, DynamoBaseDao dao)
+        {
+            super("Event Caption", new FormLayout(), org);
+            setDisclosureCaption();
+            mainLayout.addComponents(
+                createListeningTextField(EVENT_CAPTION_FIELD, baseOrg, dao, msgDisplayer, event -> setDisclosureCaption()),
+                createListeningTextField(EVENT_CAPTION_PLURAL_FIELD, baseOrg, dao, msgDisplayer, event -> setDisclosureCaption()));
+        }
+
+        public void setDisclosureCaption()
+        {
+            setDisclosureCaption(org.getEventCaption() == null && org.getEventCaptionPlural() == null ?
+                "Event/Events (Default)" :
+                org.getEventCaption() + "/" + org.getEventCaptionPlural());
         }
     }
 

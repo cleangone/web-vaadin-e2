@@ -28,7 +28,11 @@ public class CenterMenuBar extends BaseMenuBar
     private PageDisplayType set()
     {
         Organization org = sessionMgr.getOrg();
-        if (org == null ) { return PageDisplayType.NotApplicable; }
+        if (org == null )
+        {
+            removeItems();
+            return PageDisplayType.NotApplicable;
+        }
 
         if (changeManager.unchanged(org) &&
             changeManager.unchanged(org, EntityType.Entity, EntityType.Event))
@@ -45,7 +49,8 @@ public class CenterMenuBar extends BaseMenuBar
         List<OrgEvent> events = eventMgr.getActiveEvents();
         if (!events.isEmpty())
         {
-            MenuBar.MenuItem eventsItem = addItem("Events", null, null);
+            String caption = org.getEventCaptionPlural() == null ? "Events" : org.getEventCaptionPlural();
+            MenuBar.MenuItem eventsItem = addItem(caption, null, null);
             for (OrgEvent event : events)
             {
                 if (!event.getUseOrgBanner())

@@ -5,6 +5,7 @@ import xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.data.manager.EventManager;
+import xyz.cleangone.data.manager.OrgManager;
 import xyz.cleangone.data.manager.TagManager;
 import xyz.cleangone.data.manager.UserManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
@@ -22,6 +23,7 @@ public class NavCol extends BaseNavCol
     protected final EventsAdminLayout eventsAdminLayout;
 
     protected SessionManager sessionMgr;
+    protected OrgManager orgMgr;
     protected EventManager eventMgr;
     protected UserManager userMgr;
 
@@ -33,6 +35,7 @@ public class NavCol extends BaseNavCol
     public void set(SessionManager sessionMgr)
     {
         this.sessionMgr = sessionMgr;
+        orgMgr = sessionMgr.getOrgManager();
         eventMgr = sessionMgr.getEventManager();
         userMgr = sessionMgr.getUserManager();
     }
@@ -42,7 +45,10 @@ public class NavCol extends BaseNavCol
         OrgEvent currEvent = eventMgr.getEvent();
 
         String allEventsStyle = currEvent == null ? STYLE_LINK_ACTIVE : STYLE_LINK;
-        addComponent(getLink(EventAdminPageType.EVENTS.toString(), allEventsStyle, e -> {
+
+        String eventsCaptionPlural = orgMgr.getOrg().getEventCaptionPlural();
+        String allEventsCaption = eventsCaptionPlural == null ? EventAdminPageType.EVENTS.toString() : "All " + eventsCaptionPlural;
+        addComponent(getLink(allEventsCaption, allEventsStyle, e -> {
             sessionMgr.resetEventManager();
             setPage(EventAdminPageType.EVENTS);
         }));

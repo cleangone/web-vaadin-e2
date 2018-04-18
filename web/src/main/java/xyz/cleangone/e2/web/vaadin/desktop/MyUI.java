@@ -20,13 +20,13 @@ import xyz.cleangone.data.manager.EventManager;
 import xyz.cleangone.data.manager.OrgManager;
 import xyz.cleangone.data.manager.TagManager;
 import xyz.cleangone.data.manager.UserManager;
-import xyz.cleangone.data.manager.event.ItemManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.manager.VaadinSessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.EventAdminPage;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.OrgAdminPage;
-import xyz.cleangone.e2.web.vaadin.desktop.admin.SuperAdminPage;
+import xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin.SuperAdminPageNew;
 import xyz.cleangone.e2.web.vaadin.desktop.actionbar.ActionBar;
+import xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin.SuperAdminProfilePage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.*;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.CatalogPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.EventPage;
@@ -60,6 +60,8 @@ public class MyUI extends UI
     protected void init(VaadinRequest vaadinRequest)
     {
         new Navigator(this, this);
+
+        UI.getCurrent().setResizeLazy(true);
         ActionBar.addActionBarStyle();
 
         SessionManager sessionMgr = VaadinSessionManager.createSessionManager();
@@ -77,7 +79,8 @@ public class MyUI extends UI
         Navigator nav = getNavigator();
         nav.addView(LoginPage.NAME, loginPage);
         nav.addView(OrgPage.NAME, orgPage);
-        nav.addView(SuperAdminPage.NAME, new SuperAdminPage());
+        nav.addView(SuperAdminPageNew.NAME, new SuperAdminPageNew());
+        nav.addView(SuperAdminProfilePage.NAME, new SuperAdminProfilePage());
         nav.addView(OrgAdminPage.NAME, new OrgAdminPage());
         nav.addView(EventAdminPage.NAME, new EventAdminPage());
         nav.addView(CalendarPage.NAME, new CalendarPage());
@@ -102,8 +105,8 @@ public class MyUI extends UI
                 sessionMgr.getOrgManager().setOrgById(user.getOrgId());
                 sessionMgr.resetEventManager();
 
-                getNavigator().setErrorView(orgPage);
-                getNavigator().navigateTo(PasswordResetPage.NAME);
+                nav.setErrorView(orgPage);
+                nav.navigateTo(PasswordResetPage.NAME);
                 return;
             }
         }
@@ -114,15 +117,15 @@ public class MyUI extends UI
         String initialPage = getInitialPage(vaadinRequest, sessionMgr);  // parse url /<orgTag>/<eventTag>
         if (initialPage == null && userMgr.userIsSuper())
         {
-            initialPage = SuperAdminPage.NAME;
+            initialPage = SuperAdminPageNew.NAME;
         }
 
         // check for direct link to item
         String itemPage = getItemPage(vaadinRequest, sessionMgr);
         if (itemPage != null) { initialPage = itemPage; }
 
-        getNavigator().setErrorView(initialPage == null ? loginPage : orgPage);
-        getNavigator().navigateTo(initialPage == null ? LoginPage.NAME : initialPage);
+        nav.setErrorView(initialPage == null ? loginPage : orgPage);
+        nav.navigateTo(initialPage == null ? LoginPage.NAME : initialPage);
     }
 
     private boolean loginByCookie(UserManager userMgr)
@@ -242,8 +245,6 @@ public class MyUI extends UI
         return null;
     }
 
-
-
     private void verifyUser(UserManager userMgr, Organization org)
     {
         User user = userMgr.getUser();
@@ -254,5 +255,4 @@ public class MyUI extends UI
             userMgr.logout();
         }
     }
-
 }

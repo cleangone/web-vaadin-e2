@@ -58,6 +58,9 @@ public class OrgAdminPage extends BaseAdminPage
             tab.setEnabled(isAdmin);
         }
 
+        String eventTabCaption = orgMgr.getOrg().getEventCaptionPlural();
+        if (eventTabCaption != null) { eventsTab.setCaption(eventTabCaption); }
+
         if (isAdmin)
         {
             // org is the initial tab

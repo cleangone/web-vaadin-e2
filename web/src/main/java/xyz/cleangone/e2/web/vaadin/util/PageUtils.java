@@ -1,6 +1,7 @@
 package xyz.cleangone.e2.web.vaadin.util;
 
 import com.vaadin.server.Page;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity;
 import xyz.cleangone.data.aws.dynamo.entity.organization.BaseOrg;
@@ -48,14 +49,30 @@ public class PageUtils
         else { return type1; }
     }
 
+
+    public static VerticalLayout getMarginLayout(UI ui, int bannerHeight)
+    {
+        VerticalLayout margin = getMarginLayout(ui.getPage().getBrowserWindowHeight() - bannerHeight);
+        ui.getPage().addBrowserWindowResizeListener(e ->
+            margin.setHeight(getPx(ui.getPage().getBrowserWindowHeight() - bannerHeight))
+        );
+
+        return margin;
+    }
+
     public static VerticalLayout getMarginLayout() { return getMarginLayout(COL_MIN_HEIGHT); }
     public static VerticalLayout getMarginLayout(int colHeight)
     {
         VerticalLayout layout = new VerticalLayout();
         layout.setMargin(false);
         layout.setWidth("25px");
-        layout.setHeight(colHeight + "px");
+        layout.setHeight(getPx(colHeight));
 
         return layout;
+    }
+
+    private static String getPx(int i)
+    {
+        return i + "px";
     }
 }

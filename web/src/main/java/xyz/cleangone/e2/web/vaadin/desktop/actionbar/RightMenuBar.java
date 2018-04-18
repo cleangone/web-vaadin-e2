@@ -1,12 +1,16 @@
 package xyz.cleangone.e2.web.vaadin.desktop.actionbar;
 
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.shared.ui.AlignmentInfo;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.themes.ValoTheme;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityType;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.aws.dynamo.entity.purchase.Cart;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.manager.VaadinSessionManager;
+import xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin.SuperAdminProfilePage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.*;
 import xyz.cleangone.e2.web.vaadin.desktop.org.profile.BidsPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.profile.ProfilePage;
@@ -38,8 +42,11 @@ public class RightMenuBar extends BaseMenuBar
         changeManager.reset(user);
         removeItems();
 
-        cartMenuItem = addItem(" ", VaadinIcons.CART, getNavigateCmd(CartPage.NAME));
-        setCartMenuItem();
+        if (sessionMgr.hasOrg())
+        {
+            cartMenuItem = addItem(" ", VaadinIcons.CART, getNavigateCmd(CartPage.NAME));
+            setCartMenuItem();
+        }
 
         if (userMgr.hasUser())
         {
@@ -47,8 +54,15 @@ public class RightMenuBar extends BaseMenuBar
             profileItem.setIcon(VaadinIcons.USER);
             profileItem.setDescription(ProfilePage.DISPLAY_NAME);
 
-            profileItem.addItem(ProfilePage.NAME, null, getNavigateCmd(ProfilePage.NAME));
-            profileItem.addItem(BidsPage.NAME, null, getNavigateCmd(BidsPage.NAME));
+            if (sessionMgr.hasOrg())
+            {
+                profileItem.addItem(ProfilePage.NAME, null, getNavigateCmd(ProfilePage.NAME));
+                profileItem.addItem(BidsPage.NAME, null, getNavigateCmd(BidsPage.NAME));
+            }
+            else
+            {
+                profileItem.addItem(SuperAdminProfilePage.DISPLAY_NAME, null, getNavigateCmd(SuperAdminProfilePage.NAME));
+            }
 
             MenuBar.Command logoutCmd = new MenuBar.Command() {
                 public void menuSelected(MenuBar.MenuItem selectedItem) {

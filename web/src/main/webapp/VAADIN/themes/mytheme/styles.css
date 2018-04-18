@@ -15410,6 +15410,10 @@ div.v-layout.v-horizontal.v-widget {
 	float: right;
 }
 
+.mytheme .text-right {
+	text-align: right;
+}
+
 .mytheme .category {
 	cursor: pointer;
 	font-weight: bold;

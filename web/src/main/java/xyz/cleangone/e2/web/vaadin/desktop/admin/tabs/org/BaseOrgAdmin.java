@@ -1,5 +1,6 @@
 package xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org;
 
+import com.vaadin.data.HasValue;
 import com.vaadin.shared.ui.colorpicker.Color;
 import com.vaadin.ui.*;
 import com.vaadin.ui.dnd.DropTargetExtension;
@@ -13,6 +14,7 @@ import xyz.cleangone.data.manager.ImageContainerManager;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.disclosure.BaseOrgDisclosure;
 import xyz.cleangone.e2.web.vaadin.desktop.image.ImageLabel;
 import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
+import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 
 import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 import static xyz.cleangone.data.aws.dynamo.entity.organization.BaseOrg.*;
@@ -194,6 +196,14 @@ public abstract class BaseOrgAdmin extends BaseAdmin
         {
             setDisclosureCaption("Intro HTML " + (baseOrg.getIntroHtml() == null ? " not" : "") + " set");
         }
+    }
+
+    public TextField createListeningTextField(
+        EntityField field, BaseEntity entity, DynamoBaseDao dao, MessageDisplayer msgDisplayer, HasValue.ValueChangeListener<String> listener)
+    {
+        TextField textField = VaadinUtils.createTextField(field, entity, dao, msgDisplayer, null);
+        textField.addValueChangeListener(listener);
+        return textField;
     }
 
     class ColorPickerComponent extends CustomComponent

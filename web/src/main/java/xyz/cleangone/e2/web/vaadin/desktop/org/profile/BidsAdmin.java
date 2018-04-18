@@ -1,6 +1,5 @@
 package xyz.cleangone.e2.web.vaadin.desktop.org.profile;
 
-
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
@@ -102,7 +101,7 @@ public class BidsAdmin extends BaseAdmin
         grid.addColumn(UserBid::getDisplayCurrAmount).setCaption("Curr Bid");
         grid.addColumn(this::getStatus).setCaption("Status");
 
-        grid.setHeightByRows(bids.size());
+        if (!bids.isEmpty()) { grid.setHeightByRows(bids.size()); }
         grid.setDataProvider(new ListDataProvider<>(bids));
 
         addComponents(grid);

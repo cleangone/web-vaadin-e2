@@ -8,11 +8,10 @@ import xyz.cleangone.data.manager.TagManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.EventAdminPage;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.OrgAdminPage;
-import xyz.cleangone.e2.web.vaadin.desktop.admin.SuperAdminPage;
+import xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin.SuperAdminPageNew;
 import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 
 import java.util.List;
-
 
 public class LeftMenuBar extends BaseMenuBar
 {
@@ -38,7 +37,10 @@ public class LeftMenuBar extends BaseMenuBar
         changeManager.reset(user);
         removeItems();
 
-        if (sessionMgr.hasSuperUser()) { addNavigateItem(SuperAdminPage.NAME, SuperAdminPage.DISPLAY_NAME, this); }
+        if (sessionMgr.hasSuperUser())
+        {
+            addNavigateItem(SuperAdminPageNew.NAME, SuperAdminPageNew.DISPLAY_NAME, this);
+        }
 
         PageDisplayType pageDisplayType = PageDisplayType.NoChange;
         if (sessionMgr.hasOrg() && sessionMgr.hasUser())

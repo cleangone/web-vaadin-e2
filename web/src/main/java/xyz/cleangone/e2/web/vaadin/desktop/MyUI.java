@@ -24,7 +24,7 @@ import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.manager.VaadinSessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.EventAdminPage;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.OrgAdminPage;
-import xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin.SuperAdminPageNew;
+import xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin.SuperAdminPage;
 import xyz.cleangone.e2.web.vaadin.desktop.actionbar.ActionBar;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin.SuperAdminProfilePage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.*;
@@ -79,7 +79,7 @@ public class MyUI extends UI
         Navigator nav = getNavigator();
         nav.addView(LoginPage.NAME, loginPage);
         nav.addView(OrgPage.NAME, orgPage);
-        nav.addView(SuperAdminPageNew.NAME, new SuperAdminPageNew());
+        nav.addView(SuperAdminPage.NAME, new SuperAdminPage());
         nav.addView(SuperAdminProfilePage.NAME, new SuperAdminProfilePage());
         nav.addView(OrgAdminPage.NAME, new OrgAdminPage());
         nav.addView(EventAdminPage.NAME, new EventAdminPage());
@@ -117,7 +117,7 @@ public class MyUI extends UI
         String initialPage = getInitialPage(vaadinRequest, sessionMgr);  // parse url /<orgTag>/<eventTag>
         if (initialPage == null && userMgr.userIsSuper())
         {
-            initialPage = SuperAdminPageNew.NAME;
+            initialPage = SuperAdminPage.NAME;
         }
 
         // check for direct link to item

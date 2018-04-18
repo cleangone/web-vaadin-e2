@@ -11,7 +11,7 @@ import xyz.cleangone.data.manager.OrgManager;
 import xyz.cleangone.data.manager.UserManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.manager.VaadinSessionManager;
-import xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin.SuperAdminPageNew;
+import xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin.SuperAdminPage;
 import xyz.cleangone.e2.web.vaadin.desktop.actionbar.ActionBar;
 import xyz.cleangone.e2.web.vaadin.desktop.org.OrgPage;
 
@@ -78,7 +78,7 @@ public class LoginPage extends Panel implements View
 
                 if (sessionMgr.hasSuperUser())
                 {
-                    getUI().getNavigator().navigateTo(SuperAdminPageNew.NAME);
+                    getUI().getNavigator().navigateTo(SuperAdminPage.NAME);
                 }
                 else
                 {
@@ -143,7 +143,7 @@ public class LoginPage extends Panel implements View
                     VaadinSessionManager.clearUserCookie();
                 }
 
-                if (sessionMgr.hasSuperUser()) { getUI().getNavigator().navigateTo(SuperAdminPageNew.NAME); }
+                if (sessionMgr.hasSuperUser()) { getUI().getNavigator().navigateTo(SuperAdminPage.NAME); }
                 else { Notification.show("User not a super user", Notification.Type.ERROR_MESSAGE); }
             }
             else

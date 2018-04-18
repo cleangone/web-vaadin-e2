@@ -18,7 +18,7 @@ import static xyz.cleangone.data.aws.dynamo.entity.base.BaseMixinEntity.*;
 import static xyz.cleangone.data.aws.dynamo.entity.organization.Organization.*;
 import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
-public class SuperAdminPageNew extends BaseSuperAdminPage
+public class SuperAdminPage extends BaseSuperAdminPage
 {
     public static final String NAME = "Super";
     public static final String DISPLAY_NAME = "SuperAdmin";

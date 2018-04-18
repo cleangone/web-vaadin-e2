@@ -12,7 +12,6 @@ import xyz.cleangone.data.aws.dynamo.entity.bid.UserBid;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
 import xyz.cleangone.data.aws.dynamo.entity.item.CartItem;
 import xyz.cleangone.data.aws.dynamo.entity.item.PurchaseItem;
-import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.aws.dynamo.entity.purchase.Cart;
 import xyz.cleangone.data.manager.ActionManager;
 import xyz.cleangone.data.manager.event.BidManager;
@@ -23,6 +22,7 @@ import xyz.cleangone.e2.web.vaadin.desktop.image.ImageDimension;
 import xyz.cleangone.e2.web.vaadin.desktop.image.ImageLabel;
 import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 import xyz.cleangone.e2.web.vaadin.util.DollarField;
+import xyz.cleangone.e2.web.vaadin.util.PageUtils;
 import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 
 import java.math.BigDecimal;
@@ -32,8 +32,6 @@ import java.util.*;
 public class ItemPage extends CatalogPage implements View
 {
     public static final String NAME = "Item";
-    private static SimpleDateFormat SDF = new SimpleDateFormat("EEE MMM d, h:mmaaa z");
-    private static SimpleDateFormat SDF_THIS_WEEK = new SimpleDateFormat("EEEE h:mmaaa z");
     private static long FIVE_DAYS = 1000 * 60 * 60 * 24 * 5;
     private BidManager bidManager;
 
@@ -105,7 +103,7 @@ public class ItemPage extends CatalogPage implements View
                 Date endDate = item.getAvailabilityEnd();
                 if (endDate != null)
                 {
-                    SimpleDateFormat sdf = (endDate.getTime() - FIVE_DAYS < (new Date()).getTime()) ? SDF_THIS_WEEK : SDF;
+                    SimpleDateFormat sdf = (endDate.getTime() - FIVE_DAYS < (new Date()).getTime()) ? PageUtils.SDF_THIS_WEEK : PageUtils.SDF_NEXT_WEEK;
                     detailslayout.addComponent(new Label("Auction ends " + sdf.format(endDate)));
                 }
             }
@@ -208,7 +206,7 @@ public class ItemPage extends CatalogPage implements View
             grid.setWidth("100%");
             grid.addColumn(FormattedBid::getBidder);
             grid.addColumn(FormattedBid::getAmount);
-            grid.addColumn(FormattedBid::getDate).setRenderer(new DateRenderer(SDF));
+            grid.addColumn(FormattedBid::getDate).setRenderer(new DateRenderer(PageUtils.SDF_NEXT_WEEK));
 
             grid.removeHeaderRow(0);
             grid.setHeightByRows(formattedBids.size());

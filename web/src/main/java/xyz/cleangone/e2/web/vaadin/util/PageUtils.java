@@ -1,21 +1,39 @@
 package xyz.cleangone.e2.web.vaadin.util;
 
 import com.vaadin.server.Page;
+import com.vaadin.ui.DateTimeField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity;
 import xyz.cleangone.data.aws.dynamo.entity.organization.BaseOrg;
 import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.getOrDefault;
 
 public class PageUtils
 {
     private static int COL_MIN_HEIGHT = 700;
+
+    public static ZoneId TIME_ZONE_ID = ZoneId.of("America/Los_Angeles");
+
+    public static SimpleDateFormat SDF_ADMIN = new SimpleDateFormat("EEE MMM d, h:mmaaa z");
+    public static SimpleDateFormat SDF_THIS_WEEK = new SimpleDateFormat("EEEE h:mmaaa z");
+    public static SimpleDateFormat SDF_NEXT_WEEK = new SimpleDateFormat("EEE MMM d, h:mmaaa z");
+    static
+    {
+        SDF_ADMIN.setTimeZone(TimeZone.getTimeZone(TIME_ZONE_ID));
+        SDF_THIS_WEEK.setTimeZone(TimeZone.getTimeZone(TIME_ZONE_ID));
+        SDF_NEXT_WEEK.setTimeZone(TimeZone.getTimeZone(TIME_ZONE_ID));
+    }
+
 
     public static PageDisplayType getPageDisplayType(PageDisplayType... types)
     {
@@ -69,6 +87,25 @@ public class PageUtils
         layout.setHeight(getPx(colHeight));
 
         return layout;
+    }
+
+    public static LocalDateTime getLocalDateTime(Date date)
+    {
+        if (date == null) { return null; }
+        return date.toInstant()
+            .atZone(TIME_ZONE_ID)
+            .toLocalDateTime();
+    }
+
+    public static Date getDate(DateTimeField dateField)
+    {
+        return getDate(dateField.getValue());
+    }
+    public static Date getDate(LocalDateTime date)
+    {
+        if (date == null) { return null; }
+        return java.util.Date
+            .from(date.atZone(TIME_ZONE_ID).toInstant());
     }
 
     private static String getPx(int i)

@@ -1,7 +1,6 @@
 package xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event;
 
 import com.vaadin.shared.ui.ValueChangeMode;
-import com.vaadin.shared.ui.datefield.DateResolution;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.vaadin.viritin.fields.IntegerField;
@@ -11,16 +10,15 @@ import xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
 import xyz.cleangone.data.aws.dynamo.entity.item.PurchaseItem;
-import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.manager.event.ItemManager;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.ImageAdmin;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.disclosure.ImagesDisclosure;
 import xyz.cleangone.e2.web.vaadin.util.DollarField;
 import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
+import xyz.cleangone.e2.web.vaadin.util.PageUtils;
 import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 
 import java.math.BigDecimal;
-import java.time.*;
 import java.util.Date;
 
 import static xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem.*;
@@ -120,7 +118,7 @@ public class ItemAdmin extends VerticalLayout
     {
         DateTimeField dateField = createDateField(field.getDisplayName(), entity.getDate(field));
         dateField.addValueChangeListener(event -> {
-            entity.setDate(field, getDate(dateField));
+            entity.setDate(field, PageUtils.getDate(dateField));
             dao.save(entity);
             msgDisplayer.displayMessage(field.getDisplayName() + " saved");
         });
@@ -149,7 +147,7 @@ public class ItemAdmin extends VerticalLayout
         field.addStyleName(ValoTheme.LABEL_TINY);
         field.addStyleName(ValoTheme.LABEL_NO_MARGIN);
 
-        if (value != null) { field.setValue(getLocalDateTime(value)); }
+        if (value != null) { field.setValue(PageUtils.getLocalDateTime(value)); }
 
         return field;
     }
@@ -178,25 +176,26 @@ public class ItemAdmin extends VerticalLayout
         return checkBox;
     }
 
-    private static LocalDateTime getLocalDateTime(Date date)
-    {
-        if (date == null) { return null; }
-        return date.toInstant()
-            .atZone(ZoneId.systemDefault())
-            .toLocalDateTime();
-    }
-
-    private static Date getDate(DateTimeField dateField)
-    {
-        return getDate(dateField.getValue());
-    }
-    private static Date getDate(LocalDateTime date)
-    {
-        if (date == null) { return null; }
-        return java.util.Date
-            .from(date.atZone(ZoneOffset.systemDefault())
-            .toInstant());
-    }
+//    private static LocalDateTime getLocalDateTime(Date date)
+//    {
+//        if (date == null) { return null; }
+//        return date.toInstant()
+////            .atZone(ZoneId.systemDefault())
+//            .atZone(TIMEZONE)
+//            .toLocalDateTime();
+//    }
+//
+//    private static Date getDate(DateTimeField dateField)
+//    {
+//        return getDate(dateField.getValue());
+//    }
+//    private static Date getDate(LocalDateTime date)
+//    {
+//        if (date == null) { return null; }
+//        return java.util.Date
+////            .from(date.atZone(ZoneOffset.systemDefault())
+//            .from(date.atZone(TIMEZONE).toInstant());
+//    }
 
 //    class StatusDisclosure extends BaseOrgDisclosure
 //    {

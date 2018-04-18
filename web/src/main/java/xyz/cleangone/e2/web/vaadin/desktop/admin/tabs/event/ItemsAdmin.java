@@ -20,6 +20,7 @@ import xyz.cleangone.e2.web.vaadin.util.*;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -29,7 +30,6 @@ import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
 public class ItemsAdmin extends BaseEventTagsAdmin implements MultiSelectionListener<CatalogItem>
 {
-    private static SimpleDateFormat SDF = new SimpleDateFormat("EEE MMM d, h:mmaaa z");
     private ItemManager itemMgr;
 
     private List<OrgTag> categories;
@@ -237,7 +237,7 @@ public class ItemsAdmin extends BaseEventTagsAdmin implements MultiSelectionList
     {
         return grid.addColumn(valueProvider)
             .setId(entityField.getName()).setCaption(entityField.getDisplayName())
-            .setRenderer(new DateRenderer(SDF))
+            .setRenderer(new DateRenderer(PageUtils.SDF_ADMIN))
             .setExpandRatio(expandRatio);
     }
 

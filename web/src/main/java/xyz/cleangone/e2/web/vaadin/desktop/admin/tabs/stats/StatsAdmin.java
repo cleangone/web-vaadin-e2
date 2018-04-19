@@ -18,6 +18,7 @@ public class StatsAdmin extends HorizontalLayout
         navCol = new NavCol(this);
         statComponents.put(StatsAdminPageType.CACHE, new CacheStatsAdmin());
         statComponents.put(StatsAdminPageType.PAGE, new PageStatsAdmin());
+        statComponents.put(StatsAdminPageType.BROWSER, new BrowserStatsAdmin());
 
         mainLayout.setMargin(new MarginInfo(false, true, false, false)); // T/R/B/L margins
 

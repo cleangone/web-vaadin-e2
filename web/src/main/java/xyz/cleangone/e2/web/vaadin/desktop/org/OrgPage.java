@@ -5,16 +5,11 @@ import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 import com.vaadin.navigator.View;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
-import xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
-import xyz.cleangone.e2.web.manager.EntityChangeManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
-import xyz.cleangone.e2.web.vaadin.util.PageUtils;
 
-import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class OrgPage extends BasePage implements View
 {
@@ -30,8 +25,8 @@ public class OrgPage extends BasePage implements View
     private List<OrgEvent> events;
 
     private int pageWidth;
-    private int oneColPageWidth = LEFT_WIDTH_DEFAULT + CENTER_RIGHT_WIDTH_DEFAULT;
-    private int twoColPageWidth = oneColPageWidth + CENTER_RIGHT_WIDTH_DEFAULT;
+    private int min2ColPageWidth = LEFT_WIDTH_DEFAULT + CENTER_RIGHT_WIDTH_DEFAULT;
+    private int min3ColPageWidth = min2ColPageWidth + CENTER_RIGHT_WIDTH_DEFAULT;
 
     public OrgPage()
     {
@@ -80,7 +75,8 @@ public class OrgPage extends BasePage implements View
         HorizontalLayout orgLayout = new HorizontalLayout();
         orgLayout.setWidth("100%");
         orgLayout.setMargin(false);
-        orgLayout.setSpacing(false);
+        orgLayout.setSpacing(true);
+//        orgLayout.addStyleName("backYellow");
 
         setOrgLayout(orgLayout);
         UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> setOrgLayout(orgLayout, e.getWidth()));
@@ -89,14 +85,13 @@ public class OrgPage extends BasePage implements View
         return PageDisplayType.ObjectRetrieval;
     }
 
-
     // set orglayout if page has crossed a width boundary and must be laid out differently
     private void setOrgLayout(HorizontalLayout orgLayout, int newPageWidth)
     {
-        if ((pageWidth < oneColPageWidth && newPageWidth > oneColPageWidth) ||
-            (pageWidth > oneColPageWidth && pageWidth < twoColPageWidth &&
-                (newPageWidth < oneColPageWidth || newPageWidth > twoColPageWidth)) ||
-            (pageWidth > twoColPageWidth && newPageWidth < twoColPageWidth))
+        if ((pageWidth < min2ColPageWidth && newPageWidth > min2ColPageWidth) ||
+            (pageWidth > min2ColPageWidth && pageWidth < min3ColPageWidth &&
+                (newPageWidth < min2ColPageWidth || newPageWidth > min3ColPageWidth)) ||
+            (pageWidth > min3ColPageWidth && newPageWidth < min3ColPageWidth))
         {
             setOrgLayout(orgLayout);
         }
@@ -116,25 +111,32 @@ public class OrgPage extends BasePage implements View
             centerWidth = org.getCenterColWidth();
             rightWidth = org.getRightColWidth();
 
-            oneColPageWidth = leftWidth + centerWidth;
-            twoColPageWidth = oneColPageWidth + rightWidth;
+            min2ColPageWidth = leftWidth + centerWidth + 20;
+            min3ColPageWidth = min2ColPageWidth + rightWidth + 40;
         }
 
         boolean useCenterCol = centerWidth > 0;
         boolean useRightCol = rightWidth > 0;
 
         pageWidth = UI.getCurrent().getPage().getBrowserWindowWidth();
-        if (pageWidth < twoColPageWidth) { useRightCol = false; }
-        if (pageWidth < oneColPageWidth) { useCenterCol = false; }
+        if (pageWidth < min3ColPageWidth) { useRightCol = false; }
+        if (pageWidth < min2ColPageWidth) { useCenterCol = false; }
+        if (!useRightCol) { centerWidth = Math.max(centerWidth, rightWidth); }
 
         VerticalLayout leftLayout = new VerticalLayout();
+        leftLayout.setWidth(leftWidth, Unit.PIXELS);
+        leftLayout.setMargin(true);
+//        leftLayout.addStyleName("backBlue");
 
         VerticalLayout centerLayout = new VerticalLayout();
-        centerLayout.setMargin(new MarginInfo(true, false, true, false)); // T/R/B/L margins
+        centerLayout.setMargin(new MarginInfo(true, true, true, false)); // T/R/B/L margins
         centerLayout.setWidth(centerWidth, Unit.PIXELS);
+//        centerLayout.addStyleName("backOrange");
 
         VerticalLayout rightLayout = new VerticalLayout();
         rightLayout.setWidth(rightWidth, Unit.PIXELS);
+        rightLayout.setMargin(new MarginInfo(true, true, true, false)); // T/R/B/L margins
+//        rightLayout.addStyleName("backGreen");
 
         OrgEvent bottomLeftEvent = null;
         OrgEvent bottomCenterEvent = null;
@@ -159,22 +161,25 @@ public class OrgPage extends BasePage implements View
         {
             if (event.getEnabled())
             {
-                if (useRightCol && event.getDisplayCol() == OrgEvent.ColType.RightCol) {
+                if (useRightCol && event.getDisplayCol() == OrgEvent.ColType.RightCol)
+                {
                     rightLayout.addComponent(getEventBlurb(event, bottomRightEvent));
                 }
-                else if (useCenterCol && event.getDisplayCol() != OrgEvent.ColType.LeftCol ) {
+                else if (useCenterCol && event.getDisplayCol() != OrgEvent.ColType.LeftCol )
+                {
                     centerLayout.addComponent(getEventBlurb(event, bottomCenterEvent));
                 }
-                else {
+                else
+                {
                     leftLayout.addComponent(getEventBlurb(event, bottomLeftEvent));
                 }
             }
         }
 
-        orgLayout.addComponents(leftLayout);
+        orgLayout.addComponent(leftLayout);
+        orgLayout.setExpandRatio(leftLayout, 1.0f);
         if (useCenterCol) { orgLayout.addComponent(centerLayout); }
         if (useRightCol) { orgLayout.addComponent(rightLayout); }
-        orgLayout.setExpandRatio(leftLayout, 1.0f);
     }
 
     private Component getEventBlurb(OrgEvent event, OrgEvent bottomEvent)

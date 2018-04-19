@@ -5,7 +5,8 @@ import xyz.cleangone.e2.web.vaadin.desktop.admin.nav.AdminPageType;
 public enum StatsAdminPageType implements AdminPageType
 {
     CACHE("Cache Stats"),
-    PAGE("Page Stats");
+    PAGE("Page Stats"),
+    BROWSER("Browsers");
 
     private final String text;
     StatsAdminPageType(final String text)

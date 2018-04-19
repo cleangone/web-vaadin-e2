@@ -27,6 +27,7 @@ import xyz.cleangone.e2.web.vaadin.desktop.admin.OrgAdminPage;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin.SuperAdminPage;
 import xyz.cleangone.e2.web.vaadin.desktop.actionbar.ActionBar;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin.SuperAdminProfilePage;
+import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.stats.browser.BrowserStats;
 import xyz.cleangone.e2.web.vaadin.desktop.org.*;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.CatalogPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.EventPage;
@@ -49,6 +50,7 @@ public class MyUI extends UI
     public static final String RESET_PASSWORD_URL_PARAM = "reset";
     public static final String VERIFY_EMAIL_URL_PARAM = "verify";
     public static final String ITEM_URL_PARAM = "item";
+    public static final BrowserStats BROWSER_STATS = new BrowserStats();
 
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
     @VaadinServletConfiguration(ui = MyUI.class, productionMode = false)
@@ -59,8 +61,9 @@ public class MyUI extends UI
     @Override
     protected void init(VaadinRequest vaadinRequest)
     {
-        new Navigator(this, this);
+        BROWSER_STATS.addPage(getCurrent().getPage());
 
+        new Navigator(this, this);
         UI.getCurrent().setResizeLazy(true);
         ActionBar.addActionBarStyle();
 

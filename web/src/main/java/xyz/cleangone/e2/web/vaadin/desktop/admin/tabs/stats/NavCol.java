@@ -18,6 +18,7 @@ public class NavCol extends BaseNavCol
         VerticalLayout layout = getTightLayout();
         layout.addComponent(getLink(StatsAdminPageType.CACHE));
         layout.addComponent(getLink(StatsAdminPageType.PAGE));
+        layout.addComponent(getLink(StatsAdminPageType.BROWSER));
 
         addComponent(layout);
         addSpacer(15);

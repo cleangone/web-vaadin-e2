@@ -1,6 +1,7 @@
 package xyz.cleangone.e2.web.vaadin.desktop.org;
 
 import com.vaadin.navigator.View;
+import com.vaadin.shared.ui.AlignmentInfo;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
@@ -16,6 +17,7 @@ public class OrgPage extends BasePage implements View
     private static String STYLE_ARTICLE_BOTTOM = "link wordWrap backgroundWhite";
     private static String STYLE_ARTICLE = STYLE_ARTICLE_BOTTOM + " dividerBot";
     private static String STYLE_LINK = "link";
+    private static boolean COLORS = false;
 
     private static int LEFT_WIDTH_DEFAULT = 550;
     private static int CENTER_RIGHT_WIDTH_DEFAULT = 250;
@@ -63,6 +65,7 @@ public class OrgPage extends BasePage implements View
         events = sessionMgr.getResetEventManager().getEvents();
         changeManager.reset(org, events.size());
         mainLayout.removeAllComponents();
+        if (COLORS) { mainLayout.addStyleName("backPurple"); }
 
         String introHtml = org.getIntroHtml();
         if (introHtml != null)
@@ -74,15 +77,15 @@ public class OrgPage extends BasePage implements View
         }
 
         HorizontalLayout orgLayout = new HorizontalLayout();
-        orgLayout.setWidth("100%");
         orgLayout.setMargin(false);
-        orgLayout.setSpacing(true);
-        // orgLayout.addStyleName("backYellow");
+        orgLayout.setSpacing(false);
+        if (COLORS) { orgLayout.addStyleName("backYellow"); }
 
         setOrgLayout(orgLayout);
         UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> setOrgLayout(orgLayout, e.getWidth()));
 
         mainLayout.addComponent(orgLayout);
+        mainLayout.setComponentAlignment(orgLayout, new Alignment(AlignmentInfo.Bits.ALIGNMENT_HORIZONTAL_CENTER));
         return PageDisplayType.ObjectRetrieval;
     }
 
@@ -112,8 +115,8 @@ public class OrgPage extends BasePage implements View
             centerWidth = org.getCenterColWidth();
             rightWidth = org.getRightColWidth();
 
-            min2ColPageWidth = leftWidth + centerWidth + 20;
-            min3ColPageWidth = min2ColPageWidth + rightWidth + 40;
+            min2ColPageWidth = leftWidth + centerWidth;
+            min3ColPageWidth = min2ColPageWidth + rightWidth;
         }
 
         boolean useCenterCol = centerWidth > 0;
@@ -125,6 +128,7 @@ public class OrgPage extends BasePage implements View
 
         VerticalLayout leftLayout = new VerticalLayout();
         leftLayout.setMargin(true);
+        if (COLORS) { leftLayout.addStyleName("backBlue"); }
         if (sessionMgr.isMobileBrowser())
         {
             useCenterCol = false;
@@ -134,18 +138,17 @@ public class OrgPage extends BasePage implements View
         else
         {
             leftLayout.setWidth(leftWidth, Unit.PIXELS);
-            // leftLayout.addStyleName("backBlue");
         }
 
         VerticalLayout centerLayout = new VerticalLayout();
         centerLayout.setMargin(new MarginInfo(true, true, true, false)); // T/R/B/L margins
         centerLayout.setWidth(centerWidth, Unit.PIXELS);
-        // centerLayout.addStyleName("backOrange");
+        if (COLORS) { centerLayout.addStyleName("backOrange"); }
 
         VerticalLayout rightLayout = new VerticalLayout();
         rightLayout.setMargin(new MarginInfo(true, true, true, false)); // T/R/B/L margins
         rightLayout.setWidth(rightWidth, Unit.PIXELS);
-        // rightLayout.addStyleName("backGreen");
+        if (COLORS) { rightLayout.addStyleName("backGreen"); }
 
         // events are sorted by displayOrder - bottom ones will be last
         EventBlurbLayout bottomLeftEventLayout = null;
@@ -178,9 +181,8 @@ public class OrgPage extends BasePage implements View
         if (bottomRightEventLayout != null)  { bottomRightEventLayout.setStyleNameBottom(); }
 
         orgLayout.addComponent(leftLayout);
-        orgLayout.setExpandRatio(leftLayout, 1.0f);
         if (useCenterCol) { orgLayout.addComponent(centerLayout); }
-        if (useRightCol) { orgLayout.addComponent(rightLayout); }
+        if (useRightCol)  { orgLayout.addComponent(rightLayout); }
     }
 
     private EventBlurbLayout addEventBlurb(OrgEvent event, VerticalLayout colLayout)
@@ -210,7 +212,7 @@ public class OrgPage extends BasePage implements View
             setMargin(isTop ? new MarginInfo(false) : new MarginInfo(true, false, false, false)); // T/R/B/L margins
             setSpacing(false);
             addStyleName(STYLE_LINK);
-            // addStyleName("backGreen");
+            if (COLORS) { addStyleName("backRed"); }
 
             label = getHtmlLabel(event.getBlurbHtml());
             label.setStyleName(STYLE_ARTICLE);

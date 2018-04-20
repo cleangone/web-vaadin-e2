@@ -8,6 +8,7 @@ import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
+import com.vaadin.server.WebBrowser;
 import com.vaadin.ui.*;
 import xyz.cleangone.data.aws.dynamo.dao.CatalogItemDao;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
@@ -44,6 +45,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+@Viewport("user-scalable=yes,initial-scale=1.0")
 @Theme("mytheme")
 public class MyUI extends UI
 {
@@ -70,6 +72,9 @@ public class MyUI extends UI
         SessionManager sessionMgr = VaadinSessionManager.createSessionManager();
         sessionMgr.resetEventViews();
 
+        WebBrowser webBrowser = getCurrent().getPage().getWebBrowser();
+        sessionMgr.setIsMobileBrowser(webBrowser.isIOS() || webBrowser.isAndroid() || webBrowser.isWindowsPhone());
+
         // strip off # qualifier and/or ? params
         String uri = vaadinRequest.getParameter("v-loc");
         if (uri.contains("?")) { uri = uri.substring(0, uri.indexOf("?")); }
@@ -77,7 +82,7 @@ public class MyUI extends UI
         sessionMgr.setUrl(uri);
 
         View loginPage = new LoginPage();
-        OrgPage orgPage = new OrgPage();
+        OrgPage orgPage = new OrgPage(sessionMgr.isMobileBrowser());
 
         Navigator nav = getNavigator();
         nav.addView(LoginPage.NAME, loginPage);

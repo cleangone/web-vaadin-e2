@@ -7,7 +7,7 @@ import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.EventsAdminLayout;
 public class EventAdminPage extends BaseAdminPage
 {
     public static final String NAME = "EventAdmin";
-    public static final String DISPLAY_NAME = "Admin";
+    public static final String DISPLAY_NAME = "Event Admin";
 
     private EventsAdminLayout eventsAdmin = new EventsAdminLayout(actionBar);
 
@@ -25,4 +25,7 @@ public class EventAdminPage extends BaseAdminPage
         actionBar.set(sessionMgr);
         eventsAdmin.set(sessionMgr);
     }
+
+    public static String getName() { return NAME; }
+    public static String getDisplayName() { return DISPLAY_NAME; }
 }

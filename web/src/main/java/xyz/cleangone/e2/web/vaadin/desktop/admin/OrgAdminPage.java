@@ -84,4 +84,7 @@ public class OrgAdminPage extends BaseAdminPage
             eventsAdmin.set(sessionMgr);
         }
     }
+
+    public static String getName() { return NAME; }
+    public static String getDisplayName() { return DISPLAY_NAME; }
 }

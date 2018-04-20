@@ -21,7 +21,7 @@ import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 public class SuperAdminPage extends BaseSuperAdminPage
 {
     public static final String NAME = "Super";
-    public static final String DISPLAY_NAME = "SuperAdmin";
+    public static final String DISPLAY_NAME = "Super Admin";
 
     protected void set()
     {
@@ -103,4 +103,6 @@ public class SuperAdminPage extends BaseSuperAdminPage
         });
     }
 
+    public static String getName() { return NAME; }
+    public static String getDisplayName() { return DISPLAY_NAME; }
 }

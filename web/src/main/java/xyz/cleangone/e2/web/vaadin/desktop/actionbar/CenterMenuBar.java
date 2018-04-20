@@ -40,11 +40,16 @@ public class CenterMenuBar extends BaseMenuBar
             return PageDisplayType.NoChange;
         }
 
+        // todo - move cart to right of events (old calendar spot)
+
+
         changeManager.reset(org);
         removeItems();
 
-        MenuBar.MenuItem homeItem = addItem("", null, getNavigateCmd(OrgPage.NAME));
-        setMenuItem(homeItem, VaadinIcons.HOME, "Home");
+        if (!sessionMgr.isMobileBrowser())
+        {
+            addIconOnlyItem("Home", VaadinIcons.HOME, getNavigateCmd(OrgPage.NAME));
+        }
 
         List<OrgEvent> events = eventMgr.getActiveEvents();
         if (!events.isEmpty())
@@ -64,7 +69,11 @@ public class CenterMenuBar extends BaseMenuBar
             }
         }
 
-        addNavigateItem(CalendarPage.NAME, VaadinIcons.CALENDAR, this);
+        if (!sessionMgr.isMobileBrowser())
+        {
+            addIconOnlyItem(CalendarPage.NAME, VaadinIcons.CALENDAR, getNavigateCmd(CalendarPage.NAME));
+        }
+
         msgMenuItem = addItem(sessionMgr.getAndClearMsg(), null, null);
 
         return PageDisplayType.ObjectRetrieval;

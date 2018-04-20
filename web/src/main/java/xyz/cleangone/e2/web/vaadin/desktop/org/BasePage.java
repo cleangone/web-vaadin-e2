@@ -2,6 +2,7 @@ package xyz.cleangone.e2.web.vaadin.desktop.org;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.WebBrowser;
 import com.vaadin.ui.*;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.manager.OrgManager;

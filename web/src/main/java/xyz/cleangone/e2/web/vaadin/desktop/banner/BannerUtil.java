@@ -43,22 +43,33 @@ public class BannerUtil
         return layout;
     }
 
-    public static Component getHtml(Organization org, UI ui)
+//    public static Component getHtml(OrgEvent event, SessionManager sessionMgr, UI ui)
+//    {
+//        return getLabelButton(event, e -> sessionMgr.navigateTo(event, ui.getNavigator()));
+//    }
+
+
+    public static Component getHtml(Organization org, boolean isMobileBrowser, UI ui)
     {
-        return getLabelButton(org, e -> ui.getNavigator().navigateTo(OrgPage.NAME));
+        return getLabelButton(org, isMobileBrowser, e -> ui.getNavigator().navigateTo(OrgPage.NAME));
+    }
+
+    public static Component getHtml(OrgEvent event, SessionManager sessionMgr)
+    {
+        return getLabelButton(event, sessionMgr.isMobileBrowser());
     }
 
     public static Component getHtml(OrgEvent event, SessionManager sessionMgr, UI ui)
     {
-        return getLabelButton(event, e -> sessionMgr.navigateTo(event, ui.getNavigator()));
+        return getLabelButton(event, sessionMgr.isMobileBrowser(),  e -> sessionMgr.navigateTo(event, ui.getNavigator()));
     }
 
-    private static LabelButton getLabelButton(BaseOrg baseOrg, LabelClickListener listener)
+    private static LabelButton getLabelButton(BaseOrg baseOrg, boolean isMobileBrowser)
     {
         String bannerHtml = baseOrg.getBannerHtml() == null ? baseOrg.getName() : baseOrg.getBannerHtml();
 
         String textColor = getOrDefault(baseOrg.getBannerTextColor(), "white");
-        String textSize = getOrDefault(baseOrg.getBannerTextSize(), "30");
+        String textSize = isMobileBrowser ? "24" : getOrDefault(baseOrg.getBannerTextSize(), "30");
 
         String shadowColor = baseOrg.getBannerTextDropshadowColor();
         String textShadow = shadowColor == null ? "" : "text-shadow: 3px 3px " + shadowColor + ";";
@@ -66,8 +77,14 @@ public class BannerUtil
         LabelButton labelButton = new LabelButton(
             "<div style=\"" + textShadow + " color:" + textColor + ";font-size:" + textSize + "px\"><b>" + bannerHtml + "</b></div>");
         labelButton.setContentMode(ContentMode.HTML);
-        labelButton.addStyleName(LabelButtonStyles.POINTER_WHEN_CLICKABLE);
 
+        return labelButton;
+    }
+
+    private static LabelButton getLabelButton(BaseOrg baseOrg, boolean isMobileBrowser, LabelClickListener listener)
+    {
+        LabelButton labelButton = getLabelButton(baseOrg, isMobileBrowser);
+        labelButton.addStyleName(LabelButtonStyles.POINTER_WHEN_CLICKABLE);
         labelButton.addLabelClickListener(listener);
 
         return labelButton;
@@ -75,10 +92,19 @@ public class BannerUtil
 
     public static void addComponentToLayout(Component component, AbsoluteLayout layout)
     {
+        addComponentToLayout(component, layout, false);
+    }
+
+    public static void addComponentToLayout(Component component, AbsoluteLayout layout, boolean isMobile)
+    {
+        int leftOffset = isMobile ? 5 : 75;
+
         if (component != null && layout != null)
         {
-            layout.addComponent(component, "left: 75px; bottom: 20px;");
+            layout.addComponent(component, "left: " + leftOffset + "px; bottom: 20px;");
         }
     }
+
+
 
 }

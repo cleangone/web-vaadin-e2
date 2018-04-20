@@ -38,6 +38,7 @@ public class SessionManager
     private Cart cart = new Cart(OrgPage.NAME);
 
     private String url;
+    private boolean isMobileBrowser;
     private String initialOrgTag;
     private String navToAfterLogin;
     private String msg;
@@ -251,5 +252,15 @@ public class SessionManager
     public void addCartItem(CartItem item)
     {
         cart.addItem(item);
+    }
+
+
+    public boolean isMobileBrowser()
+    {
+        return isMobileBrowser;
+    }
+    public void setIsMobileBrowser(boolean mobileBrowser)
+    {
+        isMobileBrowser = mobileBrowser;
     }
 }

@@ -29,6 +29,7 @@ public class ActionBar extends HorizontalLayout implements MessageDisplayer
         setSpacing(false);
         setStyleName(ACTION_BAR_STYLE_NAME);
 
+        // todo - may need to adjust thes %'s on the fly to adapt to mobile
         HorizontalLayout leftLayout = getLayout(leftMenuBar, "10%");
         HorizontalLayout centerLayout = getLayout(centerMenuBar, "50%");
         HorizontalLayout rightLayout = getLayout(rightMenuBar, "40%");

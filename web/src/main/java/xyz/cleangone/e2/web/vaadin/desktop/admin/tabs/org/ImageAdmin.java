@@ -8,6 +8,7 @@ import com.vaadin.shared.ui.AlignmentInfo;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.vaadin.dialogs.ConfirmDialog;
+import xyz.cleangone.data.aws.dynamo.entity.image.ImageType;
 import xyz.cleangone.data.manager.ImageContainerManager;
 import xyz.cleangone.data.manager.ImageManager;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.disclosure.ImagesDisclosure;
@@ -68,7 +69,8 @@ public class ImageAdmin implements ImageDisplayer
         List<S3Link> images = icMgr.getImages();
         if (images == null) { return; }
 
-        String primaryUrl = icMgr.getPrimaryUrl();
+        String bannerUrl = icMgr.getImageUrl(ImageType.Banner);
+        String blurbUrl  = icMgr.getImageUrl(ImageType.Blurb);
 
         for (S3Link image : images)
         {
@@ -86,11 +88,13 @@ public class ImageAdmin implements ImageDisplayer
             ImageLabel imageLabel = new ImageLabel(imageUrl).withHref();
             layout.addComponent(imageLabel);
 
-            // can delete images other than the primary (used for banner, etc)
-            Button deleteButton = buildDeleteButton(image);
-            if (imageUrl.equals(primaryUrl)) { deleteButton.setEnabled(false); }
+            popupLayout.addComponent(buildBlurbCheckBox(imageUrl, blurbUrl));
 
+            // can delete images not in use
+            Button deleteButton = buildDeleteButton(image);
+            if (imageUrl.equals(bannerUrl) || imageUrl.equals(blurbUrl)) { deleteButton.setEnabled(false); }
             popupLayout.addComponent(deleteButton);
+
             layout.addLayoutClickListener(event -> {
                 if (event.getButton() == MouseEventDetails.MouseButton.RIGHT) { popup.setPopupVisible(true); }
             });
@@ -112,6 +116,20 @@ public class ImageAdmin implements ImageDisplayer
         button.addClickListener(e -> confirmDelete(image));
 
         return button;
+    }
+
+    private CheckBox buildBlurbCheckBox(String imageUrl, String blurbUrl)
+    {
+        CheckBox checkBox = new CheckBox("Blurb", imageUrl.equals(blurbUrl));
+        checkBox.addValueChangeListener(event -> {
+            boolean isBlurb = event.getValue();
+            String newBlurbUrl = isBlurb ? imageUrl : null;
+            icMgr.setImageUrl(ImageType.Blurb, newBlurbUrl);
+            icMgr.save();
+            msgDisplayer.displayMessage("Blurb Image updated");
+        });
+
+        return checkBox;
     }
 
     private void confirmDelete(S3Link image)

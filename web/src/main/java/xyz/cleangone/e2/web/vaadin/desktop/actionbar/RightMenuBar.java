@@ -42,16 +42,19 @@ public class RightMenuBar extends BaseMenuBar
         changeManager.reset(user);
         removeItems();
 
-        if (sessionMgr.hasOrg())
+        if (!sessionMgr.isMobileBrowser())
         {
-            cartMenuItem = addItem(" ", VaadinIcons.CART, getNavigateCmd(CartPage.NAME));
-            setCartMenuItem();
+            if (sessionMgr.hasOrg())
+            {
+                cartMenuItem = addItem(" ", VaadinIcons.CART, getNavigateCmd(CartPage.NAME));
+                setCartMenuItem();
+            }
         }
 
         if (userMgr.hasUser())
         {
-            MenuBar.MenuItem profileItem = addItem(" " + userMgr.getPersonFirstName(), null, null);
-            profileItem.setIcon(VaadinIcons.USER);
+            MenuBar.MenuItem profileItem = addItem((sessionMgr.isMobileBrowser() ? "" : " " + userMgr.getPersonFirstName()), null, null);
+            profileItem.setIcon(VaadinIcons.USER_CHECK);
             profileItem.setDescription(ProfilePage.DISPLAY_NAME);
 
             if (sessionMgr.hasOrg())
@@ -76,7 +79,8 @@ public class RightMenuBar extends BaseMenuBar
         }
         else
         {
-            MenuBar.MenuItem signinItem = addItem(SigninPage.DISPLAY_NAME, null, null);
+            MenuBar.MenuItem signinItem = addItem((sessionMgr.isMobileBrowser() ? "" : SigninPage.DISPLAY_NAME), null, null);
+            signinItem.setIcon(VaadinIcons.USER);
             signinItem.addItem("Login", null, getNavigateCmd(SigninPage.NAME));
             signinItem.addItem(CreateAccountPage.DISPLAY_NAME, null, getNavigateCmd(CreateAccountPage.NAME));
             signinItem.addItem("Reset Password", null, getNavigateCmd(PasswordRequestPage.NAME));
@@ -95,5 +99,4 @@ public class RightMenuBar extends BaseMenuBar
             cartMenuItem.setIcon(cart.isEmpty() ? VaadinIcons.CART_O : VaadinIcons.CART);
         }
     }
-
 }

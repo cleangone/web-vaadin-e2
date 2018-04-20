@@ -78,7 +78,7 @@ public class BannerCarousel extends HorizontalCarousel implements BannerComponen
         // add org last so we can see scrolling
         orgBanner = getBanner(org);
         addComponent(orgBanner);
-        addComponentToLayout(getHtml(org, getUI()), orgBanner);
+        addComponentToLayout(getHtml(org, sessionMgr.isMobileBrowser(), getUI()), orgBanner);
     }
 
     // todo - doesn't work - only scrolls once an arrow clicked

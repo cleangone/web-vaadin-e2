@@ -1,6 +1,7 @@
 package xyz.cleangone.e2.web.vaadin.util;
 
 import com.vaadin.server.Page;
+import com.vaadin.server.WebBrowser;
 import com.vaadin.ui.DateTimeField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;

@@ -1,14 +1,19 @@
 package xyz.cleangone.e2.web.vaadin.desktop.actionbar;
 
+import com.vaadin.icons.VaadinIcons;
+import com.vaadin.server.Resource;
+import com.vaadin.ui.MenuBar;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityType;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.manager.TagManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
+import xyz.cleangone.e2.web.vaadin.desktop.admin.BaseAdminPage;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.EventAdminPage;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.OrgAdminPage;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin.SuperAdminPage;
+import xyz.cleangone.e2.web.vaadin.desktop.org.OrgPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 
 import java.util.List;
@@ -37,24 +42,41 @@ public class LeftMenuBar extends BaseMenuBar
         changeManager.reset(user);
         removeItems();
 
-        if (sessionMgr.hasSuperUser())
-        {
-            addNavigateItem(SuperAdminPage.NAME, SuperAdminPage.DISPLAY_NAME, this);
-        }
+        return sessionMgr.isMobileBrowser() ?  addMobileItems() : addItems(org);
+    }
 
+    private PageDisplayType addItems(Organization org)
+    {
         PageDisplayType pageDisplayType = PageDisplayType.NoChange;
         if (sessionMgr.hasOrg() && sessionMgr.hasUser())
         {
             TagManager tagMgr = sessionMgr.getOrgManager().getTagManager();
-            if (userMgr.userIsAdmin(org)) { addNavigateItem(OrgAdminPage.NAME, OrgAdminPage.DISPLAY_NAME, this); }
+            if (userMgr.userIsAdmin(org))
+            {
+                addIconOnlyItem(OrgAdminPage.DISPLAY_NAME, VaadinIcons.WRENCH, getNavigateCmd(OrgAdminPage.NAME));
+            }
             else
             {
                 List<OrgTag> tags = tagMgr.getEventAdminRoleTags();
                 pageDisplayType = PageDisplayType.ObjectRetrieval;
-                if (userMgr.userHasEventAdmin(org, tags)) { addNavigateItem(EventAdminPage.NAME, EventAdminPage.DISPLAY_NAME, this); }
+                if (userMgr.userHasEventAdmin(org, tags))
+                {
+                    addIconOnlyItem(EventAdminPage.DISPLAY_NAME, VaadinIcons.WRENCH, getNavigateCmd(EventAdminPage.NAME));
+                }
             }
         }
 
+        if (sessionMgr.hasSuperUser())
+        {
+            addIconOnlyItem(SuperAdminPage.DISPLAY_NAME, VaadinIcons.SITEMAP, getNavigateCmd(SuperAdminPage.NAME));
+        }
+
         return pageDisplayType;
+    }
+
+    private PageDisplayType addMobileItems()
+    {
+        addIconOnlyItem("Home", VaadinIcons.HOME, getNavigateCmd(OrgPage.NAME));
+        return PageDisplayType.NoChange;
     }
 }

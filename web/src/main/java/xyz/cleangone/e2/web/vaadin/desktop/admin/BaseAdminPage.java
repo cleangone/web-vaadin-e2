@@ -33,6 +33,9 @@ public abstract class BaseAdminPage extends Panel implements View
         pageLayout.addComponent(actionBar);
     }
 
+    public static String getName() { return ""; }
+    public static String getDisplayName() { return ""; }
+
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event)
     {

@@ -1,7 +1,5 @@
 package xyz.cleangone.e2.web.vaadin.desktop.org;
 
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
-
 import com.vaadin.navigator.View;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
@@ -11,10 +9,13 @@ import xyz.cleangone.e2.web.manager.SessionManager;
 
 import java.util.List;
 
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+
 public class OrgPage extends BasePage implements View
 {
     private static String STYLE_ARTICLE_BOTTOM = "link wordWrap backgroundWhite";
     private static String STYLE_ARTICLE = STYLE_ARTICLE_BOTTOM + " dividerBot";
+    private static String STYLE_LINK = "link";
 
     private static int LEFT_WIDTH_DEFAULT = 550;
     private static int CENTER_RIGHT_WIDTH_DEFAULT = 250;
@@ -28,9 +29,9 @@ public class OrgPage extends BasePage implements View
     private int min2ColPageWidth = LEFT_WIDTH_DEFAULT + CENTER_RIGHT_WIDTH_DEFAULT;
     private int min3ColPageWidth = min2ColPageWidth + CENTER_RIGHT_WIDTH_DEFAULT;
 
-    public OrgPage()
+    public OrgPage(boolean isMobileBrowser)
     {
-        super(BannerStyle.Carousel);
+        super(isMobileBrowser ? BannerStyle.Single : BannerStyle.Carousel);
     }
 
     protected String getPageName()
@@ -76,7 +77,7 @@ public class OrgPage extends BasePage implements View
         orgLayout.setWidth("100%");
         orgLayout.setMargin(false);
         orgLayout.setSpacing(true);
-//        orgLayout.addStyleName("backYellow");
+        // orgLayout.addStyleName("backYellow");
 
         setOrgLayout(orgLayout);
         UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> setOrgLayout(orgLayout, e.getWidth()));
@@ -121,60 +122,60 @@ public class OrgPage extends BasePage implements View
         pageWidth = UI.getCurrent().getPage().getBrowserWindowWidth();
         if (pageWidth < min3ColPageWidth) { useRightCol = false; }
         if (pageWidth < min2ColPageWidth) { useCenterCol = false; }
-        if (!useRightCol) { centerWidth = Math.max(centerWidth, rightWidth); }
 
         VerticalLayout leftLayout = new VerticalLayout();
-        leftLayout.setWidth(leftWidth, Unit.PIXELS);
         leftLayout.setMargin(true);
-//        leftLayout.addStyleName("backBlue");
+        if (sessionMgr.isMobileBrowser())
+        {
+            useCenterCol = false;
+            useRightCol = false;
+            leftLayout.setWidth(UI.getCurrent().getPage().getBrowserWindowWidth(), Unit.PIXELS);
+        }
+        else
+        {
+            leftLayout.setWidth(leftWidth, Unit.PIXELS);
+            // leftLayout.addStyleName("backBlue");
+        }
 
         VerticalLayout centerLayout = new VerticalLayout();
         centerLayout.setMargin(new MarginInfo(true, true, true, false)); // T/R/B/L margins
         centerLayout.setWidth(centerWidth, Unit.PIXELS);
-//        centerLayout.addStyleName("backOrange");
+        // centerLayout.addStyleName("backOrange");
 
         VerticalLayout rightLayout = new VerticalLayout();
-        rightLayout.setWidth(rightWidth, Unit.PIXELS);
         rightLayout.setMargin(new MarginInfo(true, true, true, false)); // T/R/B/L margins
-//        rightLayout.addStyleName("backGreen");
+        rightLayout.setWidth(rightWidth, Unit.PIXELS);
+        // rightLayout.addStyleName("backGreen");
 
-        OrgEvent bottomLeftEvent = null;
-        OrgEvent bottomCenterEvent = null;
-        OrgEvent bottomRightEvent = null;
-
-        // events are sorted by displayOrder
+        // events are sorted by displayOrder - bottom ones will be last
+        EventBlurbLayout bottomLeftEventLayout = null;
+        EventBlurbLayout bottomCenterEventLayout = null;
+        EventBlurbLayout bottomRightEventLayout = null;
         for (OrgEvent event : events)
         {
             if (event.getEnabled())
             {
-                if (useRightCol && event.getDisplayCol() == OrgEvent.ColType.RightCol) {
-                    bottomRightEvent = event;
-                }
-                else if (useCenterCol && event.getDisplayCol() != OrgEvent.ColType.LeftCol ) {
-                    bottomCenterEvent = event;
-                }
-                else { bottomLeftEvent = event; }
-            }
-        }
-
-        for (OrgEvent event : events)
-        {
-            if (event.getEnabled())
-            {
-                if (useRightCol && event.getDisplayCol() == OrgEvent.ColType.RightCol)
+                if (event.getDisplayCol() == OrgEvent.ColType.RightCol)
                 {
-                    rightLayout.addComponent(getEventBlurb(event, bottomRightEvent));
+                    if (useRightCol) { bottomRightEventLayout = addEventBlurb(event, rightLayout); }
+                    else if (useCenterCol) { bottomCenterEventLayout = addEventBlurb(event, centerLayout, rightLayout); }
+                    else { bottomLeftEventLayout = addEventBlurb(event, leftLayout, rightLayout); }
                 }
-                else if (useCenterCol && event.getDisplayCol() != OrgEvent.ColType.LeftCol )
+                else if (event.getDisplayCol() == OrgEvent.ColType.CenterCol)
                 {
-                    centerLayout.addComponent(getEventBlurb(event, bottomCenterEvent));
+                    if (useCenterCol) { bottomCenterEventLayout = addEventBlurb(event, centerLayout); }
+                    else { bottomLeftEventLayout = addEventBlurb(event, leftLayout, centerLayout); }
                 }
                 else
                 {
-                    leftLayout.addComponent(getEventBlurb(event, bottomLeftEvent));
+                    bottomLeftEventLayout = addEventBlurb(event, leftLayout);
                 }
             }
         }
+
+        if (bottomLeftEventLayout != null)   { bottomLeftEventLayout.setStyleNameBottom(); }
+        if (bottomCenterEventLayout != null) { bottomCenterEventLayout.setStyleNameBottom(); }
+        if (bottomRightEventLayout != null)  { bottomRightEventLayout.setStyleNameBottom(); }
 
         orgLayout.addComponent(leftLayout);
         orgLayout.setExpandRatio(leftLayout, 1.0f);
@@ -182,17 +183,50 @@ public class OrgPage extends BasePage implements View
         if (useRightCol) { orgLayout.addComponent(rightLayout); }
     }
 
-    private Component getEventBlurb(OrgEvent event, OrgEvent bottomEvent)
+    private EventBlurbLayout addEventBlurb(OrgEvent event, VerticalLayout colLayout)
     {
-        VerticalLayout layout = new VerticalLayout();
-        layout.setMargin(false);
+        return addEventBlurb(event, colLayout, colLayout);
+    }
 
-        Label label = getHtmlLabel(event.getBlurbHtml());
-        label.setStyleName(event == bottomEvent ? STYLE_ARTICLE_BOTTOM : STYLE_ARTICLE);
+    private EventBlurbLayout addEventBlurb(OrgEvent event, VerticalLayout colLayout, VerticalLayout origColLayout)
+    {
+        float bannerWidth = Math.min(colLayout.getWidth(), origColLayout.getWidth());
+        if (colLayout.getMargin().hasLeft())  { bannerWidth -= 37; } // approx. margin width
+        if (colLayout.getMargin().hasRight()) { bannerWidth -= 37; }
 
-        layout.addComponent(label);
-        layout.addLayoutClickListener(e -> navigateTo(event));
+        boolean isTop = colLayout.getComponentCount() == 0;
+        EventBlurbLayout blurbLayout = new EventBlurbLayout(event, bannerWidth, isTop);
 
-        return(layout);
+        colLayout.addComponent(blurbLayout);
+        return blurbLayout;
+    }
+
+    class EventBlurbLayout extends VerticalLayout
+    {
+        Label label;
+
+        EventBlurbLayout(OrgEvent event, float bannerWidth, boolean isTop)
+        {
+            setMargin(isTop ? new MarginInfo(false) : new MarginInfo(true, false, false, false)); // T/R/B/L margins
+            setSpacing(false);
+            addStyleName(STYLE_LINK);
+            // addStyleName("backGreen");
+
+            label = getHtmlLabel(event.getBlurbHtml());
+            label.setStyleName(STYLE_ARTICLE);
+
+            if (event.getBlurbBannerUrl() != null)
+            {
+                addComponent(getHtmlLabel("<img src=" + event.getBlurbBannerUrl() + " width=" + bannerWidth + ">"));
+            }
+
+            addComponent(label);
+            addLayoutClickListener(e -> navigateTo(event));
+        }
+
+        void setStyleNameBottom()
+        {
+            label.setStyleName(STYLE_ARTICLE_BOTTOM);
+        }
     }
 }

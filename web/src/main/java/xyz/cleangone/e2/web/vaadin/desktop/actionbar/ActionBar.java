@@ -13,22 +13,14 @@ import xyz.cleangone.e2.web.vaadin.util.PageUtils;
 
 import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
-public class ActionBar extends HorizontalLayout implements MessageDisplayer
+public class ActionBar extends BaseActionBar implements MessageDisplayer
 {
-    public static String ACTION_BAR_STYLE_NAME = "actionBarMain";
-    private static String DEFAULT_BACKGROUND_COLOR = "whitesmoke";
-
     private LeftMenuBar leftMenuBar = new LeftMenuBar();
     private CenterMenuBar centerMenuBar = new CenterMenuBar();
     private RightMenuBar rightMenuBar = new RightMenuBar();
 
     public ActionBar()
     {
-        setWidth("100%");
-        setMargin(false);
-        setSpacing(false);
-        setStyleName(ACTION_BAR_STYLE_NAME);
-
         // todo - may need to adjust thes %'s on the fly to adapt to mobile
         HorizontalLayout leftLayout = getLayout(leftMenuBar, "10%");
         HorizontalLayout centerLayout = getLayout(centerMenuBar, "50%");
@@ -37,14 +29,6 @@ public class ActionBar extends HorizontalLayout implements MessageDisplayer
 
         addComponents(leftLayout, centerLayout, rightLayout);
         setComponentAlignment(rightLayout, new Alignment(AlignmentInfo.Bits.ALIGNMENT_RIGHT));
-    }
-
-    private HorizontalLayout getLayout(MenuBar menuBar, String pct)
-    {
-        HorizontalLayout layout = new HorizontalLayout();
-        layout.setWidth(pct);
-        layout.addComponent(menuBar);
-        return layout;
     }
 
     public PageDisplayType set(SessionManager sessionMgr)
@@ -73,36 +57,5 @@ public class ActionBar extends HorizontalLayout implements MessageDisplayer
         rightMenuBar.removeItems();
 
         return leftMenuBar.addItem(caption, null, null);
-    }
-
-    public void setStyle(SessionManager sessionMgr)
-    {
-        BaseOrg baseOrg = sessionMgr.getOrg();
-        if (baseOrg == null) { return; }
-
-        String styleName = ACTION_BAR_STYLE_NAME + "-" + baseOrg.getTag();
-        OrgEvent currEvent = sessionMgr.getEventManager().getEvent();
-        if (currEvent != null)
-        {
-            styleName += "-" + currEvent.getTag();
-            baseOrg = currEvent;
-        }
-
-        if (baseOrg.getBarBackgroundColor() != null)
-        {
-            addActionBarStyle(styleName, baseOrg.getBarBackgroundColor());
-            setStyleName(styleName);
-        }
-    }
-
-    public static void addActionBarStyle()
-    {
-        addActionBarStyle(ACTION_BAR_STYLE_NAME, DEFAULT_BACKGROUND_COLOR);
-    }
-    public static void addActionBarStyle(String styleName, String backgroundColor)
-    {
-        Page.Styles styles = Page.getCurrent().getStyles();
-        styles.add("." + styleName +
-            " { background: " + backgroundColor + "; border-top: 1px solid silver; border-bottom: 1px solid silver; }");
     }
 }

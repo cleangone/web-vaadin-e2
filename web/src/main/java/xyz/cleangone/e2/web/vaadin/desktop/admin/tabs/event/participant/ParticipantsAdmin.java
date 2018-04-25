@@ -1,4 +1,4 @@
-package xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event;
+package xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.participant;
 
 import com.vaadin.data.ValueProvider;
 import com.vaadin.data.provider.ListDataProvider;
@@ -16,6 +16,9 @@ import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
 import xyz.cleangone.data.aws.dynamo.entity.organization.EventParticipant;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.data.aws.dynamo.entity.person.Person;
+import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.BaseEventTagsAdmin;
+import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.EventsAdminLayout;
+import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.item.ItemMenuBar;
 import xyz.cleangone.e2.web.vaadin.util.*;
 
 import java.util.*;
@@ -26,23 +29,22 @@ import static xyz.cleangone.data.aws.dynamo.entity.organization.EventParticipant
 import static xyz.cleangone.data.aws.dynamo.entity.person.Person.TAGS_FIELD;
 import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.createDeleteButton;
 
-
 public class ParticipantsAdmin extends BaseEventTagsAdmin implements MultiSelectionListener<EventParticipant>
 {
+    private final ParticipantMenuBar participantMenuBar;
+
+    private Map<String, OrgTag> allEventVisiblePersonTagsById;
     private List<OrgTag> eventPersonTags;
     private Map<String, OrgTag> eventPersonTagsById;
-
-    private ComboBox<OrgTag> addTagComboBox = new ComboBox<>();
-    private ComboBox<OrgTag> removeTagComboBox = new ComboBox<>();
     private List<EventParticipant> selectedParticipants;
-
 
     public ParticipantsAdmin(EventsAdminLayout eventsAdminLayout, MessageDisplayer msgDisplayer)
     {
         super(eventsAdminLayout, OrgTag.TagType.PersonTag, msgDisplayer);
+        participantMenuBar = new ParticipantMenuBar(this);
 
         setSizeFull();
-        setMargin(new MarginInfo(true, false, false, false)); // T/R/B/L
+        setMargin(false);
         setSpacing(true);
         setWidth("100%");
     }
@@ -51,93 +53,53 @@ public class ParticipantsAdmin extends BaseEventTagsAdmin implements MultiSelect
     {
         super.set();
 
-        eventPersonTags = tagMgr.getEventVisibleTags(tagType, event);
+        List<OrgTag> allEventVisiblePersonTags = tagMgr.getEventVisibleTags(tagType, event);
+        allEventVisiblePersonTagsById = tagMgr.getTagsById(allEventVisiblePersonTags);
+        eventPersonTags = allEventVisiblePersonTags.stream()
+            .filter(t -> event.getId().equals(t.getEventId()))
+            .collect(Collectors.toList());
         eventPersonTagsById = tagMgr.getTagsById(eventPersonTags);
+
+        List<OrgTag> orgTagsExposedToEvent = allEventVisiblePersonTags.stream()
+            .filter(t -> !eventPersonTags.contains(t))
+            .collect(Collectors.toList());
 
         removeAllComponents();
 
         Component grid = getParticipantGrid();
-        addComponents(getAddParticipantLayout(), grid, new Label());
-        setExpandRatio(grid, 1.0f);
 
-        addTagComboBox.setItems(eventPersonTags);
-        addTagComboBox.setValue(null);  // todo - there is a bug with setValue that is being fixed
-        removeTagComboBox.setValue(null);
+        participantMenuBar.setTagsForAddingParticipant(orgTagsExposedToEvent);
+        participantMenuBar.setTagsToAdd(null);
+        participantMenuBar.setTagsToRemove(null);
+
+        VerticalLayout gridLayout = new VerticalLayout();
+        gridLayout.setMargin(false);
+        gridLayout.setSpacing(true);
+        gridLayout.setStyleName("marginLeft");
+        gridLayout.addComponents(grid);
+
+        addComponents(participantMenuBar, gridLayout, new Label());
+        setExpandRatio(gridLayout, 1.0f);
     }
 
-    private Component getAddParticipantLayout()
+    void addPeopleWithTag(OrgTag tag)
     {
-        GridLayout barLayout = new GridLayout(2, 1);
-        barLayout.setSizeUndefined();
-        barLayout.setWidth("100%");
-
-        HorizontalLayout leftLayout = new HorizontalLayout();
-        barLayout.addComponent(leftLayout);
-
-        HorizontalLayout rightLayout = new HorizontalLayout();
-        barLayout.addComponent(rightLayout);
-        barLayout.setComponentAlignment(rightLayout, new Alignment(AlignmentInfo.Bits.ALIGNMENT_RIGHT));
-
-        ComboBox<OrgTag> tagComboBox = new ComboBox<>();
-        tagComboBox.addStyleName(ValoTheme.TEXTFIELD_TINY);
-        tagComboBox.setPlaceholder("Tag");
-        tagComboBox.setItems(tagMgr.getOrgTags(tagType));
-        tagComboBox.setItemCaptionGenerator(OrgTag::getName);
-
-        Button button = new Button("Add People with Tag");
-        button.addStyleName(ValoTheme.TEXTFIELD_TINY);
-        button.addClickListener(new Button.ClickListener()
-        {
-            @Override
-            public void buttonClick(Button.ClickEvent event)
-            {
-                OrgTag tag = tagComboBox.getValue();
-                if (tag == null) { return; }
-
-                List<Person> people = orgMgr.getPeopleByTag(tag.getId());
-                eventMgr.addEventParticipants(people);
-                msgDisplayer.displayMessage("Participants added");
-                set();
-            }
-        });
-
-        leftLayout.addComponents(tagComboBox, button);
-
-        addTagComboBox.addStyleName(ValoTheme.TEXTFIELD_TINY);
-        addTagComboBox.setPlaceholder("Add Tag");
-        addTagComboBox.setItemCaptionGenerator(OrgTag::getName);
-        addTagComboBox.setEnabled(false);
-        addTagComboBox.addValueChangeListener(event -> addTagToSelectedPeople());
-
-        removeTagComboBox.addStyleName(ValoTheme.TEXTFIELD_TINY);
-        removeTagComboBox.setPlaceholder("Remove Tag");
-        removeTagComboBox.setItemCaptionGenerator(OrgTag::getName);
-        removeTagComboBox.setEnabled(false);
-        removeTagComboBox.addValueChangeListener(event -> removeTagFromSelectedPeople());
-
-        rightLayout.addComponents(new Label("Tags"), addTagComboBox, removeTagComboBox);
-        rightLayout.setComponentAlignment(addTagComboBox, new Alignment(AlignmentInfo.Bits.ALIGNMENT_RIGHT));
-        rightLayout.setComponentAlignment(removeTagComboBox, new Alignment(AlignmentInfo.Bits.ALIGNMENT_RIGHT));
-
-        return barLayout;
+        List<Person> people = orgMgr.getPeopleByTag(tag.getId());
+        eventMgr.addEventParticipants(people);
+        msgDisplayer.displayMessage("Participants added");
+        set();
     }
 
-    private void addTagToSelectedPeople()
+    void addTagToSelectedPeople(OrgTag tag)
     {
-        OrgTag tag = addTagComboBox.getValue();
-        if (tag == null) { return; }
-
         eventMgr.addTagId(tag.getId(), selectedParticipants);
         set();
     }
 
-    private void removeTagFromSelectedPeople()
+    void removeTagFromSelectedPeople(OrgTag tag)
     {
-        OrgTag tag = removeTagComboBox.getValue();
-        if (tag == null) { return; }
-
         eventMgr.removeTagId(tag.getId(), selectedParticipants);
-        set(); // at least one participant will have been updated // TODO - overkill
+        set();
     }
 
     private Grid<EventParticipant> getParticipantGrid()
@@ -167,7 +129,7 @@ public class ParticipantsAdmin extends BaseEventTagsAdmin implements MultiSelect
 
         List<EventParticipant> participants = eventMgr.getEventParticipants();
         participants.forEach(participant ->
-            participant.setPerson(peopleById.get(participant.getPersonId()), eventPersonTagsById));
+            participant.setPerson(peopleById.get(participant.getPersonId()), allEventVisiblePersonTagsById));
 
         Label countLabel = new Label();
         CountingDataProvider<EventParticipant> dataProvider = new CountingDataProvider<>(participants, countLabel);
@@ -248,14 +210,13 @@ public class ParticipantsAdmin extends BaseEventTagsAdmin implements MultiSelect
         selectedParticipants = new ArrayList<>(event.getAllSelectedItems());
         if (selectedParticipants.isEmpty())
         {
-            addTagComboBox.setEnabled(false);
+            participantMenuBar.setTagsToAdd(null);
+            participantMenuBar.setTagsToRemove(null);
 
-            removeTagComboBox.setItems(Collections.emptyList());
-            removeTagComboBox.setEnabled(false);
             return;
         }
 
-        addTagComboBox.setEnabled(true);
+        participantMenuBar.setTagsToAdd(eventPersonTags);
 
         Set<String> selectedTagIds = new HashSet<>();
         for (EventParticipant participant : selectedParticipants)
@@ -272,7 +233,6 @@ public class ParticipantsAdmin extends BaseEventTagsAdmin implements MultiSelect
             .map(tagId -> eventPersonTagsById.get(tagId))
             .collect(Collectors.toList());
 
-        removeTagComboBox.setItems(selectedTags);
-        removeTagComboBox.setEnabled(!selectedTags.isEmpty());
+        participantMenuBar.setTagsToRemove(selectedTags);
     }
 }

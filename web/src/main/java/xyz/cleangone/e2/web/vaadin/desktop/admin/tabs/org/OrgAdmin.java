@@ -79,7 +79,10 @@ public class OrgAdmin extends BaseOrgAdmin
             mainLayout.addComponents(
                 createIntegerField(Organization.LEFT_WIDTH_FIELD, dao),
                 createIntegerField(Organization.CENTER_WIDTH_FIELD, dao),
-                createIntegerField(Organization.RIGHT_WIDTH_FIELD, dao));
+                createIntegerField(Organization.RIGHT_WIDTH_FIELD, dao),
+                createIntegerField(Organization.MAX_LEFT_WIDTH_FIELD, dao),
+                createIntegerField(Organization.MAX_CENTER_WIDTH_FIELD, dao),
+                createIntegerField(Organization.MAX_RIGHT_WIDTH_FIELD, dao));
         }
 
         public Component createIntegerField(EntityField field, OrgDao dao)
@@ -93,10 +96,10 @@ public class OrgAdmin extends BaseOrgAdmin
         {
             String msg = (org.getLeftColWidth() == 0 && org.getCenterColWidth() == 0 && org.getRightColWidth() == 0) ?
                 "Not set" :
-                "Left: "  + org.getLeftColWidth() +
-                    (org.getCenterColWidth() == 0 ? "" : ", Center: " + org.getCenterColWidth()) +
-                    (org.getRightColWidth() == 0  ? "" : ", Right: "  + org.getRightColWidth()) +
-                    " pixels";
+                "Left: "     + org.getLeftColWidth()   + (org.getMaxLeftColWidth() == 0   ? "" : "/" + org.getMaxLeftColWidth()) +
+                ", Center: " + org.getCenterColWidth() + (org.getMaxCenterColWidth() == 0 ? "" : "/" + org.getMaxCenterColWidth()) +
+                ",  Right: " + org.getRightColWidth()  + (org.getMaxRightColWidth() == 0  ? "" : "/" + org.getMaxRightColWidth()) +
+                " pixels";
             setDisclosureCaption(msg);
         }
     }

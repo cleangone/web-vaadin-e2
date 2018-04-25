@@ -1,11 +1,10 @@
-package xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event;
+package xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.item;
 
 import com.vaadin.data.ValueProvider;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.event.selection.MultiSelectionEvent;
 import com.vaadin.event.selection.MultiSelectionListener;
 import com.vaadin.server.Setter;
-import com.vaadin.shared.ui.AlignmentInfo;
 import com.vaadin.ui.*;
 import com.vaadin.ui.components.grid.FooterRow;
 import com.vaadin.ui.components.grid.HeaderRow;
@@ -14,13 +13,16 @@ import com.vaadin.ui.themes.ValoTheme;
 import org.vaadin.dialogs.ConfirmDialog;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
+import xyz.cleangone.data.aws.dynamo.entity.item.SaleStatus;
+import xyz.cleangone.data.aws.dynamo.entity.item.SaleType;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.data.manager.event.ItemManager;
+import xyz.cleangone.e2.web.manager.SessionManager;
+import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.BaseEventTagsAdmin;
+import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.EventsAdminLayout;
 import xyz.cleangone.e2.web.vaadin.util.*;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -34,14 +36,19 @@ public class ItemsAdmin extends BaseEventTagsAdmin implements MultiSelectionList
 
     private List<OrgTag> categories;
     private Map<String, OrgTag> categoriesById;
+    private Map<EntityField, String> previousFilterValues = new HashMap<>();
 
-    private ComboBox<OrgTag> addCategoryComboBox = new ComboBox<>();
-    private ComboBox<OrgTag> removeCategoryComboBox = new ComboBox<>();;
+    private final ItemMenuBar itemMenuBar;
     private List<CatalogItem> selectedItems;
 
+    private Map<EntityField, String> filterValues;
+
+
+    // pass eventsAdminLayout so msg can be sent to nav col
     public ItemsAdmin(EventsAdminLayout eventsAdminLayout, MessageDisplayer msgDisplayer)
     {
         super(eventsAdminLayout, OrgTag.TagType.Category, msgDisplayer);
+        itemMenuBar = new ItemMenuBar(this);
 
         setSizeFull();
         setMargin(false);
@@ -49,18 +56,22 @@ public class ItemsAdmin extends BaseEventTagsAdmin implements MultiSelectionList
         setWidth("100%");
     }
 
+    public void set(SessionManager sessionMgr)
+    {
+        filterValues = new HashMap<>();
+        super.set(sessionMgr);
+    }
+
     public void set()
     {
         super.set();
 
-        // todo - this is a list of all categories, not just ones available to event
-        categories = tagMgr.getCategories();
+        event.getCategoryIds();
+        categories = tagMgr.getCategories().stream()
+            .filter(category -> event.getId().equals(category.getEventId()) || event.getCategoryIds().contains(category.getId()) )
+            .collect(Collectors.toList());
         categoriesById = tagMgr.getTagsById(categories);
         itemMgr = eventMgr.getItemManager(); // todo - work on caching
-
-        addCategoryComboBox.setItems(categories);
-        addCategoryComboBox.setValue(null);  // todo - there is a bug with setValue that is being fixed
-        removeCategoryComboBox.setValue(null);
 
         setContent();
     }
@@ -69,10 +80,19 @@ public class ItemsAdmin extends BaseEventTagsAdmin implements MultiSelectionList
     {
         removeAllComponents();
 
-        Component tagDisclosure = getTagDisclosure(new DescriptionGenerator("Category", "Categories"));
         Component grid = getItemsGrid();
-        addComponents(tagDisclosure, getAddItemLayout(), grid, new Label());
-        setExpandRatio(grid, 1.0f);
+        itemMenuBar.setItemsSelected(false);
+        itemMenuBar.setAddCategories(null);
+        itemMenuBar.setRemoveCategories(null);
+
+        VerticalLayout gridLayout = new VerticalLayout();
+        gridLayout.setMargin(false);
+        gridLayout.setSpacing(true);
+        gridLayout.setStyleName("marginLeft"); // todo - marginRight doesn't work, menu stack is collapsed to vertical ...
+        gridLayout.addComponents(grid);
+
+        addComponents(itemMenuBar, gridLayout, new Label());
+        setExpandRatio(gridLayout, 1.0f);
     }
 
     private void setContent(ItemAdmin itemAdmin)
@@ -81,78 +101,51 @@ public class ItemsAdmin extends BaseEventTagsAdmin implements MultiSelectionList
         addComponent(itemAdmin);
     }
 
-    private Component getAddItemLayout()
+    void addItem(String name)
     {
-        GridLayout barLayout = new GridLayout(2, 1);
-        barLayout.setSizeUndefined();
-        barLayout.setWidth("100%");
-
-        HorizontalLayout leftLayout = new HorizontalLayout();
-        barLayout.addComponent(leftLayout);
-
-        HorizontalLayout rightLayout = new HorizontalLayout();
-        barLayout.addComponent(rightLayout);
-        barLayout.setComponentAlignment(rightLayout, new Alignment(AlignmentInfo.Bits.ALIGNMENT_RIGHT));
-
-        ComboBox<OrgTag> categoryComboBox = new ComboBox<>();
-        categoryComboBox.addStyleName(ValoTheme.TEXTFIELD_TINY);
-        categoryComboBox.setPlaceholder("Category");
-        categoryComboBox.setItems(tagMgr.getTags(OrgTag.TagType.Category));
-        categoryComboBox.setItemCaptionGenerator(OrgTag::getName);
-
-        TextField nameField = VaadinUtils.createGridTextField("Name");
-
-        Button button = new Button("Add Product");
-        button.addStyleName(ValoTheme.TEXTFIELD_TINY);
-        button.addClickListener(new Button.ClickListener()
-        {
-            @Override
-            public void buttonClick(Button.ClickEvent event)
-            {
-                OrgTag category = categoryComboBox.getValue();
-                String categoryId = category == null ? null : category.getId();
-                itemMgr.createItem(nameField.getValue(), categoryId);
-
-                msgDisplayer.displayMessage("Item added");
-                set();
-            }
-        });
-
-        leftLayout.addComponents(categoryComboBox, nameField, button);
-
-        addCategoryComboBox.addStyleName(ValoTheme.TEXTFIELD_TINY);
-        addCategoryComboBox.setPlaceholder("Add Category");
-        addCategoryComboBox.setItemCaptionGenerator(OrgTag::getName);
-        addCategoryComboBox.setEnabled(false);
-        addCategoryComboBox.addValueChangeListener(event -> addCategoryToSelectedItems());
-
-        removeCategoryComboBox.addStyleName(ValoTheme.TEXTFIELD_TINY);
-        removeCategoryComboBox.setPlaceholder("Remove Category");
-        removeCategoryComboBox.setItemCaptionGenerator(OrgTag::getName);
-        removeCategoryComboBox.setEnabled(false);
-        removeCategoryComboBox.addValueChangeListener(event -> removeCategoryFromSelectedItems());
-
-        rightLayout.addComponents(new Label("Categories"), addCategoryComboBox, removeCategoryComboBox);
-        rightLayout.setComponentAlignment(addCategoryComboBox, new Alignment(AlignmentInfo.Bits.ALIGNMENT_RIGHT));
-        rightLayout.setComponentAlignment(removeCategoryComboBox, new Alignment(AlignmentInfo.Bits.ALIGNMENT_RIGHT));
-
-        return barLayout;
+        itemMgr.createItem(name, null);
+        msgDisplayer.displayMessage("Item added");
+        set();
     }
 
-    private void addCategoryToSelectedItems()
+    void setSelectedItems(EntityField field, Date date)
     {
-        OrgTag category = addCategoryComboBox.getValue();
-        if (category == null) { return; }
+        for (CatalogItem item : selectedItems)
+        {
+            item.setDate(field, date);
+            itemMgr.save(item);
+        }
+        set();
+    }
 
+    void setSelectedItems(SaleType saleType)
+    {
+        for (CatalogItem item : selectedItems)
+        {
+            item.setSaleType(saleType);
+            itemMgr.save(item);
+        }
+        set();
+    }
+
+    void setSelectedItems(SaleStatus status)
+    {
+        for (CatalogItem item : selectedItems)
+        {
+            item.setSaleStatus(status);
+            itemMgr.save(item);
+        }
+        set();
+    }
+
+    void addCategoryToSelectedItems(OrgTag category)
+    {
         itemMgr.addCategoryId(category.getId(), selectedItems);
         set();
     }
 
-    private void removeCategoryFromSelectedItems()
+    void removeCategoryFromSelectedItems(OrgTag category)
     {
-        OrgTag category = removeCategoryComboBox.getValue();
-        if (category == null) { return; }
-
         itemMgr.removeCategoryId(category.getId(), selectedItems);
         set();
     }
@@ -162,10 +155,13 @@ public class ItemsAdmin extends BaseEventTagsAdmin implements MultiSelectionList
         Grid<CatalogItem> grid = new Grid<>();
         grid.setSizeFull();
 
-        Grid.Column nameCol = grid.addComponentColumn(this::buildNameLinkButton);
+        Grid.Column<CatalogItem, LinkButton> nameCol = grid.addComponentColumn(this::buildNameLinkButton);
         nameCol.setId(NAME_FIELD.getName());
+        nameCol.setComparator((link1, link2) -> link1.getName().compareTo(link2.getName()));
+
         addColumn(grid, CATEGORIES_FIELD, CatalogItem::getCategoriesCsv, 2);
         addColumn(grid, PRICE_FIELD, CatalogItem::getDisplayPrice, 1);
+        addColumn(grid, COMBINED_STATUS_FIELD, CatalogItem::getCombinedStatus, 1);
         addDateColumn(grid, AVAIL_START_FIELD, CatalogItem::getAvailabilityStart, 1);
         Grid.Column endDateCol = addDateColumn(grid, AVAIL_END_FIELD, CatalogItem::getAvailabilityEnd, 1);
         Grid.Column deleteCol = grid.addComponentColumn(this::buildDeleteButton);
@@ -237,7 +233,7 @@ public class ItemsAdmin extends BaseEventTagsAdmin implements MultiSelectionList
     {
         return grid.addColumn(valueProvider)
             .setId(entityField.getName()).setCaption(entityField.getDisplayName())
-            .setRenderer(new DateRenderer(PageUtils.SDF_ADMIN))
+            .setRenderer(new DateRenderer(PageUtils.SDF_ADMIN_GRID))
             .setExpandRatio(expandRatio);
     }
 
@@ -245,23 +241,27 @@ public class ItemsAdmin extends BaseEventTagsAdmin implements MultiSelectionList
     {
         MultiFieldFilter<CatalogItem> filter = new MultiFieldFilter<>(dataProvider);
 
-        addFilterField(CATEGORIES_FIELD, CatalogItem::getName, filter, filterHeader);
-        addFilterField(NAME_FIELD, CatalogItem::getCategoriesCsv, filter, filterHeader);
+        addFilterField(NAME_FIELD,            CatalogItem::getName,           filter, filterHeader);
+        addFilterField(COMBINED_STATUS_FIELD, CatalogItem::getCombinedStatus, filter, filterHeader);
+        addFilterField(CATEGORIES_FIELD,      CatalogItem::getCategoriesCsv,  filter, filterHeader);
+
+        previousFilterValues = filter.getFilterValues();
     }
 
     private void addFilterField(EntityField entityField,
         ValueProvider<CatalogItem, String> valueProvider, MultiFieldFilter<CatalogItem> filter, HeaderRow filterHeader)
     {
         filter.addField(entityField, valueProvider);
-        VaadinUtils.addFilterField(entityField, filter, filterHeader);
+        TextField filterField = VaadinUtils.addFilterField(entityField, filter, filterHeader);
+
+        if (previousFilterValues.containsKey(entityField)) { filterField.setValue(previousFilterValues.get(entityField)); }
     }
 
-    private Component buildNameLinkButton(CatalogItem item)
+    private LinkButton buildNameLinkButton(CatalogItem item)
     {
-        Button nameLinkButton = VaadinUtils.createLinkButton(
-            item.getName(), e -> setContent(new ItemAdmin(eventMgr.getItemManager(item), msgDisplayer, this, ui)));
-
-        return nameLinkButton;
+        LinkButton linkButton = new LinkButton(item);
+        linkButton.addClickListener(e -> setContent(new ItemAdmin(eventMgr.getItemManager(item), msgDisplayer, this, ui)));
+        return linkButton;
     }
 
     private Component buildDeleteButton(CatalogItem item)
@@ -280,16 +280,16 @@ public class ItemsAdmin extends BaseEventTagsAdmin implements MultiSelectionList
     public void selectionChange(MultiSelectionEvent<CatalogItem> selectionEvent)
     {
         selectedItems = new ArrayList<>(selectionEvent.getAllSelectedItems());
+        itemMenuBar.setItemsSelected(!selectedItems.isEmpty());
+
         if (selectedItems.isEmpty())
         {
-            addCategoryComboBox.setEnabled(false);
-
-            removeCategoryComboBox.setItems(Collections.emptyList());
-            removeCategoryComboBox.setEnabled(false);
+            itemMenuBar.setAddCategories(null);
+            itemMenuBar.setRemoveCategories(null);
             return;
         }
 
-        addCategoryComboBox.setEnabled(true);
+        itemMenuBar.setAddCategories(categories);
 
         Set<String> selectedCategoryIds = new HashSet<>();
         for (CatalogItem selectedItem : selectedItems)
@@ -301,7 +301,23 @@ public class ItemsAdmin extends BaseEventTagsAdmin implements MultiSelectionList
             .map(id -> categoriesById.get(id))
             .collect(Collectors.toList());
 
-        removeCategoryComboBox.setItems(selectedCategories);
-        removeCategoryComboBox.setEnabled(!selectedCategories.isEmpty());
+        itemMenuBar.setRemoveCategories(selectedCategories);
+    }
+
+    class LinkButton extends Button
+    {
+        String name;
+
+        LinkButton(CatalogItem item)
+        {
+            super(item.getName());
+            name = item.getName();
+            addStyleName(ValoTheme.BUTTON_LINK);
+        }
+
+        String getName()
+        {
+            return name;
+        }
     }
 }

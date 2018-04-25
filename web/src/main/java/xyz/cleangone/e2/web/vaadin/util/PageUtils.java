@@ -26,11 +26,13 @@ public class PageUtils
     public static ZoneId TIME_ZONE_ID = ZoneId.of("America/Los_Angeles");
 
     public static SimpleDateFormat SDF_ADMIN = new SimpleDateFormat("EEE MMM d, h:mmaaa z");
+    public static SimpleDateFormat SDF_ADMIN_GRID = new SimpleDateFormat("MM/dd h:mmaaa");
     public static SimpleDateFormat SDF_THIS_WEEK = new SimpleDateFormat("EEEE h:mmaaa z");
     public static SimpleDateFormat SDF_NEXT_WEEK = new SimpleDateFormat("EEE MMM d, h:mmaaa z");
     static
     {
         SDF_ADMIN.setTimeZone(TimeZone.getTimeZone(TIME_ZONE_ID));
+        SDF_ADMIN_GRID.setTimeZone(TimeZone.getTimeZone(TIME_ZONE_ID));
         SDF_THIS_WEEK.setTimeZone(TimeZone.getTimeZone(TIME_ZONE_ID));
         SDF_NEXT_WEEK.setTimeZone(TimeZone.getTimeZone(TIME_ZONE_ID));
     }

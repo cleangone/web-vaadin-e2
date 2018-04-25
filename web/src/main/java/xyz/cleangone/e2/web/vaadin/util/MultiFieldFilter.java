@@ -4,7 +4,6 @@ import com.vaadin.data.ValueProvider;
 import xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
 
-
 import java.util.*;
 
 public class MultiFieldFilter<T extends BaseEntity>
@@ -79,5 +78,10 @@ public class MultiFieldFilter<T extends BaseEntity>
         }
 
         return stringToCheck.toLowerCase().contains(contains);
+    }
+
+    public Map<EntityField, String> getFilterValues()
+    {
+        return filterValues;
     }
 }

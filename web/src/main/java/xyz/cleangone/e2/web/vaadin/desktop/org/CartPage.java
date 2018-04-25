@@ -70,6 +70,8 @@ public class CartPage extends BasePage implements View
         mainLayout.addComponent(cartPanel);
 
         String pageName = orgMgr.getOrg().isPaymentProcessor(Organization.PaymentProcessorType.iATS) ? IatsPaymentPage.NAME : PaymentPage.NAME;
+
+        // todo - check if items still all available
         if (!cart.isEmpty()) { mainLayout.addComponent(createTextButton("Checkout", e -> navigateTo(pageName))); }
 
         return PageDisplayType.NotApplicable;

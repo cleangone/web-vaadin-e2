@@ -17,21 +17,31 @@ public class NotificationScheduler
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     private NotificationManager notificationMgr;
-    private ScheduledFuture<?> future;
+    private QueuedNotification lastNotificationScheduled;
 
-    public NotificationScheduler(NotificationManager notificationMgr)
+    public NotificationScheduler(String orgId)
     {
-        this.notificationMgr = notificationMgr;
+        notificationMgr = new NotificationManager(orgId);
     }
 
     public void schedule()
     {
-        if (future != null) { future.cancel(true); }
-
         QueuedNotification notification = notificationMgr.getEarliestNotification();
-        if (notification == null) { return; }
+        if (notification == null)
+        {
+            System.out.println("No notifications to schedule for orgId " + notificationMgr.getOrgId());
+            return;
+        }
 
-        System.out.println("Scheduling notification for " + SDF.format(notification.getNotificationDate()));
+        if (lastNotificationScheduled != null &&
+            notification.getId().equals(lastNotificationScheduled.getId()) &&
+            notification.getNotificationDate().equals(lastNotificationScheduled.getNotificationDate()))
+        {
+            System.out.println("Notification already scheduled: " + notification.toFriendlyString());
+            return;
+        }
+
+        System.out.println("Scheduling " +  notification.toFriendlyString());
 
         Date now = new Date();
         long waitSecs = notification.getNotificationDate().after(now) ?
@@ -39,18 +49,9 @@ public class NotificationScheduler
             1;  // was in the past - do immediately - probably were multiple at same time
 
         NotificationHandler handler = new NotificationHandler(notification, this);
-        future = scheduler.schedule(handler, waitSecs, SECONDS);
+        scheduler.schedule(handler, waitSecs, SECONDS);
+
+        lastNotificationScheduled = notification;
         System.out.println("Notification scheduled");
-    }
-
-    public void reset()
-    {
-        // schedule next one if it exists
-        schedule();
-    }
-
-    public NotificationManager getNotificationMgr()
-    {
-        return notificationMgr;
     }
 }

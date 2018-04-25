@@ -15443,6 +15443,10 @@ div.v-layout.v-horizontal.v-widget {
 	margin-left: 15px;
 }
 
+.mytheme .marginRight {
+	margin-right: 15px;
+}
+
 .mytheme .fontBold {
 	font-weight: bold;
 }

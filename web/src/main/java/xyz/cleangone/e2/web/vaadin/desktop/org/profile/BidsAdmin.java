@@ -3,7 +3,9 @@ package xyz.cleangone.e2.web.vaadin.desktop.org.profile;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
+import com.vaadin.ui.renderers.DateRenderer;
 import xyz.cleangone.data.aws.dynamo.dao.CatalogItemDao;
+import xyz.cleangone.data.aws.dynamo.entity.action.Action;
 import xyz.cleangone.data.aws.dynamo.entity.bid.UserBid;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
@@ -17,11 +19,16 @@ import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.BaseAdmin;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.ItemPage;
 import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
+import xyz.cleangone.e2.web.vaadin.util.PageUtils;
 import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity.CREATED_DATE_FIELD;
 
 public class BidsAdmin extends BaseAdmin
 {
@@ -97,6 +104,7 @@ public class BidsAdmin extends BaseAdmin
         grid.setWidth("100%");
 
         grid.addComponentColumn(this::buildItemLinkButton).setCaption("Item");;
+        grid.addColumn(this::getEndDate).setCaption("Auction End").setRenderer(new DateRenderer(PageUtils.SDF_NEXT_WEEK));
         grid.addColumn(UserBid::getDisplayMaxAmount).setCaption("Max Bid");
         grid.addColumn(UserBid::getDisplayCurrAmount).setCaption("Curr Bid");
         grid.addColumn(this::getStatus).setCaption("Status");
@@ -127,8 +135,17 @@ public class BidsAdmin extends BaseAdmin
         });
     }
 
+    private Date getEndDate(UserBid bid)
+    {
+        CatalogItem item = itemIdToItem.get(bid.getItemId());
+        return item.getAvailabilityEnd();
+    }
+
     private String getStatus(UserBid bid)
     {
-        return bid.getIsHighBid() ? "High Bid" : "Outbid";
+        CatalogItem item = itemIdToItem.get(bid.getItemId());
+
+        if (bid.getIsHighBid()) { return item.isSold() ? "Winning Bid" : "High Bid"; }
+        else return "Outbid";
     }
 }

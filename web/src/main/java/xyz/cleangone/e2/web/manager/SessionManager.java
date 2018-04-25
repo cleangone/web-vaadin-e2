@@ -2,20 +2,15 @@ package xyz.cleangone.e2.web.manager;
 
 import com.vaadin.navigator.Navigator;
 import xyz.cleangone.data.aws.dynamo.entity.action.Action;
-import xyz.cleangone.data.aws.dynamo.entity.base.EntityType;
 import xyz.cleangone.data.aws.dynamo.entity.item.CartItem;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
-import xyz.cleangone.data.aws.dynamo.entity.person.Person;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.aws.dynamo.entity.person.UserToken;
 import xyz.cleangone.data.aws.dynamo.entity.purchase.Cart;
-import xyz.cleangone.data.cache.EntityCache;
 import xyz.cleangone.data.manager.EventManager;
-import xyz.cleangone.data.manager.NotificationManager;
 import xyz.cleangone.data.manager.OrgManager;
 import xyz.cleangone.data.manager.UserManager;
-import xyz.cleangone.e2.web.manager.notification.NotificationScheduler;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.EventPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.OrgPage;
 
@@ -30,8 +25,6 @@ import java.util.*;
  */
 public class SessionManager
 {
-    public static final Map<String, NotificationScheduler> ORG_ID_TO_SCHEDULER = new HashMap<>();
-
     private UserManager userMgr = new UserManager();
     private OrgManager orgMgr = new OrgManager();
     private EventManager eventMgr = new EventManager();
@@ -44,26 +37,6 @@ public class SessionManager
     private String msg;
     private Set<String> eventViews = new HashSet<>();
     private Action currentAction;
-
-    public SessionManager()
-    {
-        if (ORG_ID_TO_SCHEDULER.isEmpty())
-        {
-            List<Organization> orgs = getOrgs();
-            for (Organization org : orgs)
-            {
-                NotificationManager notificationMgr = new NotificationManager(org.getId());
-                NotificationScheduler scheduler = new NotificationScheduler(notificationMgr);
-                ORG_ID_TO_SCHEDULER.put(org.getId(), scheduler);
-            }
-        }
-    }
-
-    public void startNotifications(String orgId)
-    {
-        NotificationScheduler scheduler = ORG_ID_TO_SCHEDULER.get(orgId);
-        if (scheduler != null) { scheduler.schedule(); }
-    }
 
     public void reset()
     {

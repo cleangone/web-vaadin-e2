@@ -2,10 +2,13 @@ package xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event;
 
 import com.vaadin.data.ValueProvider;
 import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.event.selection.SelectionEvent;
+import com.vaadin.event.selection.SelectionListener;
 import com.vaadin.server.Setter;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.data.util.BeanItem;
 import org.vaadin.dialogs.ConfirmDialog;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
@@ -66,7 +69,6 @@ public class TagsAdmin extends BaseEventAdmin
         event = requireNonNull(eventMgr.getEvent());
 
         removeAllComponents();
-
         if (showDisclosure())
         {
             addComponent(getTagDisclosure(new DescriptionGenerator(tagTypeName, TagManager.getPluralName(tagType))));
@@ -77,7 +79,7 @@ public class TagsAdmin extends BaseEventAdmin
         setExpandRatio(grid, 1.0f);
     }
 
-    private boolean showDisclosure() { return tagType == OrgTag.TagType.PersonTag; }
+    private boolean showDisclosure() { return tagType == OrgTag.TagType.PersonTag || tagType == OrgTag.TagType.Category; }
 
     private Component getAddTagLayout()
     {
@@ -111,24 +113,36 @@ public class TagsAdmin extends BaseEventAdmin
         Grid<OrgTag> grid = new Grid<>();
         grid.setSizeFull();
 
-        addColumn(grid, NAME_FIELD, OrgTag::getName, OrgTag::setName);
-        addColumn(grid, DISPLAY_ORDER_FIELD, OrgTag::getDisplayOrder, OrgTag::setDisplayOrder);
-        addBooleanColumn(grid, USER_VISIBLE_FIELD, OrgTag::getUserVisible, OrgTag::setUserVisible);
+        List<Component> editComponents = new ArrayList<>();
+        addColumn(grid, NAME_FIELD, OrgTag::getName, OrgTag::setName, editComponents);
+        addColumn(grid, DISPLAY_ORDER_FIELD, OrgTag::getDisplayOrder, OrgTag::setDisplayOrder, editComponents);
+        addBooleanColumn(grid, USER_VISIBLE_FIELD, OrgTag::getUserVisible, OrgTag::setUserVisible, editComponents);
 
         grid.addComponentColumn(this::buildDeleteButton);
         grid.setColumnReorderingAllowed(true);
 
-        List<OrgTag> tags = tagMgr.getEventTags(tagType, event.getId());
+        List orgWideIds = Collections.emptyList();
+        if (tagType == OrgTag.TagType.PersonTag) { orgWideIds = event.getTagIds(); }
+        else if (tagType == OrgTag.TagType.Category) { orgWideIds = event.getCategoryIds(); }
+        List<OrgTag> tags = tagMgr.getEventTags(tagType, event.getId(), orgWideIds);
         grid.setDataProvider(new ListDataProvider<>(tags));
+
 
         grid.getEditor().setEnabled(true);
         grid.getEditor().setBuffered(true);
+        grid.getEditor().addOpenListener(ev -> {
+            OrgTag tag = ev.getBean();
+            editComponents.forEach(c -> c.setEnabled(event.getId().equals(tag.getEventId())));
+        });
         grid.getEditor().addSaveListener(ev -> {
             OrgTag tag = ev.getBean();
-            tagMgr.save(tag);
-            msgDisplayer.displayMessage("Tag saved");
-            set();
-        });
+            if (event.getId().equals(tag.getEventId()))
+            {
+                tagMgr.save(tag);
+                msgDisplayer.displayMessage("Tag saved");
+                set();
+            }
+         });
 
         return grid;
     }
@@ -140,21 +154,25 @@ public class TagsAdmin extends BaseEventAdmin
     }
 
     private Grid.Column<OrgTag, String> addColumn(
-        Grid<OrgTag> grid, EntityField entityField, ValueProvider<OrgTag, String> valueProvider, Setter<OrgTag, String> setter)
+        Grid<OrgTag> grid, EntityField entityField, ValueProvider<OrgTag, String> valueProvider, Setter<OrgTag, String> setter, List<Component> editComponents)
     {
-        return addColumn(grid, entityField, valueProvider).setEditorComponent(new TextField(), setter);
+        TextField textField = new TextField();
+        editComponents.add(textField);
+        return addColumn(grid, entityField, valueProvider).setEditorComponent(textField, setter);
     }
 
     private Grid.Column<OrgTag, Boolean> addBooleanColumn(
-        Grid<OrgTag> grid, EntityField entityField, ValueProvider<OrgTag, Boolean> valueProvider, Setter<OrgTag, Boolean> setter)
+        Grid<OrgTag> grid, EntityField entityField, ValueProvider<OrgTag, Boolean> valueProvider, Setter<OrgTag, Boolean> setter, List<Component> editComponents)
     {
+        CheckBox checkBox = new CheckBox();
+        editComponents.add(checkBox);
         return grid.addColumn(valueProvider)
-            .setId(entityField.getName()).setCaption(entityField.getDisplayName()).setEditorComponent(new CheckBox(), setter);
+            .setId(entityField.getName()).setCaption(entityField.getDisplayName()).setEditorComponent(checkBox, setter);
     }
 
     private Button buildDeleteButton(OrgTag tag)
     {
-        if (tag.isAdminRole()) { return null; }
+        if (tag.isAdminRole() || tag.getEventId() == null) { return null; }
 
         Button button = createDeleteButton("Delete Event Tag");
         button.addClickListener(e -> {

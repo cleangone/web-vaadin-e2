@@ -8,6 +8,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityType;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
+import xyz.cleangone.data.aws.dynamo.entity.item.SaleStatus;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
@@ -23,6 +24,7 @@ import xyz.cleangone.e2.web.vaadin.desktop.org.event.CatalogPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.EventPage;
 import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,10 +85,16 @@ public class LeftColLayout extends HorizontalLayout
 
         changeManager.reset(user, event);
         removeAllComponents();
+
+
+        // also need any categories that have eventId set
+
         List<String> categoryIds = event.getCategoryIds();
         if (categoryIds == null || categoryIds.isEmpty()) { return PageDisplayType.NoRetrieval; }
 
-        List<OrgTag> categories = tagMgr.getTags(categoryIds);
+
+        //List<OrgTag> categories = tagMgr.getTags(categoryIds);
+        List<OrgTag> categories = tagMgr.getEventVisibleTags(OrgTag.TagType.Category, event);
         if (!categories.isEmpty())
         {
             leftLayout.removeAllComponents();
@@ -121,17 +129,25 @@ public class LeftColLayout extends HorizontalLayout
         List<CatalogItem> items = itemMgr.getItems();
         for (CatalogItem item : items)
         {
-            for (String categoryId : item.getCategoryIds())
+            if (item.getEnabled() &&
+                item.getSaleStatus() != SaleStatus.Preview &&
+                (item.getAvailabilityStart() == null || item.getAvailabilityStart().before(new Date())))
             {
-                int count = itemCountByCategoryId.getOrDefault(categoryId, 0);
-                itemCountByCategoryId.put(categoryId, count + 1);
+                for (String categoryId : item.getCategoryIds())
+                {
+                    int count = itemCountByCategoryId.getOrDefault(categoryId, 0);
+                    itemCountByCategoryId.put(categoryId, count + 1);
+                }
             }
         }
 
         for (OrgTag category : categories)
         {
-            layout.addComponent(getCategoryLink(
-                category, itemCountByCategoryId.getOrDefault(category.getId(), 0), currentCategory, textStyleName, selectedTextStyleName));
+            int itemCount = itemCountByCategoryId.getOrDefault(category.getId(), 0);
+            if (itemCount != 0)
+            {
+                layout.addComponent(getCategoryLink(category, itemCount, currentCategory, textStyleName, selectedTextStyleName));
+            }
         }
 
         return layout;

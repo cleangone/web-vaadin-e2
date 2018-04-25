@@ -138,7 +138,6 @@ public class VaadinUtils
         return intField;
     }
 
-
     public static IntegerField createIntegerField(String caption)
     {
         IntegerField field = new IntegerField(caption);
@@ -147,7 +146,6 @@ public class VaadinUtils
 
         return field;
     }
-
 
     public static CheckBox createCheckBox(EntityField field, BaseEntity entity, DynamoBaseDao dao, MessageDisplayer msgDisplayer)
     {
@@ -171,7 +169,6 @@ public class VaadinUtils
 
         return checkBox;
     }
-
 
     public static CKEditorTextField createCkEditor(
         EntityField field, BaseMixinEntity entity, DynamoBaseDao dao, MessageDisplayer messageDisplayer)
@@ -204,13 +201,14 @@ public class VaadinUtils
         return ckEditorTextField;
     }
 
-    public static void addFilterField(EntityField entityField, MultiFieldFilter filter, HeaderRow filterHeader)
+    public static TextField addFilterField(EntityField entityField, MultiFieldFilter filter, HeaderRow filterHeader)
     {
         TextField filterField = createGridTextField("Filter");
         filterField.addValueChangeListener(event ->
             filter.resetFilters(entityField, event.getValue()));
 
         filterHeader.getCell(entityField.getName()).setComponent(filterField);
+        return filterField;
     }
 
     public static Button createDeleteButton(String confirmMsg, UI ui, ConfirmDialog.Listener listener)

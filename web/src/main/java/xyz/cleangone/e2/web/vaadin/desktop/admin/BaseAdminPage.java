@@ -72,7 +72,7 @@ public abstract class BaseAdminPage extends Panel implements View
     protected VerticalLayout createLayout(Component component)
     {
         VerticalLayout layout = new VerticalLayout();
-        layout.setMargin(new MarginInfo(false, true, false, true));  // T/R/B/L margins
+        layout.setMargin(new MarginInfo(false, false, false, true));  // T/R/B/L margins
 
         layout.setSpacing(true);
         layout.addComponent(component);

@@ -97,6 +97,7 @@ public class NavCol extends BaseNavCol
                 eventAdmin.addComponent(getLink(EventAdminPageType.GENERAL));
                 eventAdmin.addComponent(getLink(EventAdminPageType.PARTICIPANTS));
                 eventAdmin.addComponent(getLink(EventAdminPageType.TAGS));
+                eventAdmin.addComponent(getLink(EventAdminPageType.CATEGORIES));
                 eventAdmin.addComponent(getLink(EventAdminPageType.ITEMS));
                 eventAdmin.addComponent(getLink(EventAdminPageType.DATES));
                 eventAdmin.addComponent(getLink(EventAdminPageType.ROLES));

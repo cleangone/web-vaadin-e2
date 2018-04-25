@@ -54,7 +54,7 @@ public class CatalogLayout extends GridLayout
         priceLayout.setMargin(false);
         priceLayout.setSizeUndefined();
         priceLayout.addComponent(new Label(item.getDisplayPrice()));
-        if (!item.isAvailable()) { priceLayout.addComponent(EventUtils.getSoldLabel()); }
+        if (item.isSold()) { priceLayout.addComponent(EventUtils.getSoldLabel()); }
 
         layout.addLayoutClickListener( e -> {
             eventMgr.setItem(item);

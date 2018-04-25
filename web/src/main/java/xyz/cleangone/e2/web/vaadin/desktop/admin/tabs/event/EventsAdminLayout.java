@@ -1,11 +1,12 @@
 package xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event;
 
-import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.actions.DonationsAdmin;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.actions.PurchasesAdmin;
+import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.item.ItemsAdmin;
+import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.participant.ParticipantsAdmin;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.BaseAdmin;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.nav.AdminPageType;
 import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
@@ -26,6 +27,7 @@ public class EventsAdminLayout extends HorizontalLayout
         adminComponents.put(EventAdminPageType.GENERAL, new GeneralAdmin(msgDisplayer));
         adminComponents.put(EventAdminPageType.PARTICIPANTS, new ParticipantsAdmin(this, msgDisplayer));
         adminComponents.put(EventAdminPageType.TAGS, new TagsAdmin(this, OrgTag.TagType.PersonTag, msgDisplayer));
+        adminComponents.put(EventAdminPageType.CATEGORIES, new TagsAdmin(this, OrgTag.TagType.Category, msgDisplayer));
         adminComponents.put(EventAdminPageType.ITEMS, new ItemsAdmin(this, msgDisplayer));
         adminComponents.put(EventAdminPageType.DATES, new DatesAdmin(this, msgDisplayer));
         adminComponents.put(EventAdminPageType.DONATIONS, new DonationsAdmin(this, msgDisplayer));
@@ -33,11 +35,11 @@ public class EventsAdminLayout extends HorizontalLayout
         adminComponents.put(EventAdminPageType.ROLES, new TagsAdmin(this, OrgTag.TagType.UserRole, msgDisplayer));
         adminComponents.put(EventAdminPageType.USERS, new UsersAdmin(this, msgDisplayer));
 
-        mainLayout.setMargin(new MarginInfo(false, true, false, false)); // T/R/B/L margins
+        mainLayout.setMargin(false);
 
         setSizeFull();
         setMargin(false);
-        setSpacing(true);
+        // note - spacing set dynamically in setAdminPage
 
         addComponents(navCol, mainLayout);
         setExpandRatio(mainLayout, 1.0f);
@@ -63,6 +65,9 @@ public class EventsAdminLayout extends HorizontalLayout
 
         BaseAdmin component = adminComponents.get(pageType);
         component.set();
+
+        setSpacing(pageType != EventAdminPageType.ITEMS && pageType != EventAdminPageType.PARTICIPANTS);
+
         mainLayout.removeAllComponents();
         mainLayout.addComponent(component);
     }

@@ -27,10 +27,6 @@ public class OrgPage extends BasePage implements View
     private Organization org;
     private List<OrgEvent> events;
 
-    private int pageWidth;
-    private int min2ColPageWidth = LEFT_WIDTH_DEFAULT + CENTER_RIGHT_WIDTH_DEFAULT;
-    private int min3ColPageWidth = min2ColPageWidth + CENTER_RIGHT_WIDTH_DEFAULT;
-
     public OrgPage(boolean isMobileBrowser)
     {
         super(isMobileBrowser ? BannerStyle.Single : BannerStyle.Carousel);
@@ -82,23 +78,11 @@ public class OrgPage extends BasePage implements View
         if (COLORS) { orgLayout.addStyleName("backYellow"); }
 
         setOrgLayout(orgLayout);
-        UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> setOrgLayout(orgLayout, e.getWidth()));
+        UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> setOrgLayout(orgLayout));
 
         mainLayout.addComponent(orgLayout);
         mainLayout.setComponentAlignment(orgLayout, new Alignment(AlignmentInfo.Bits.ALIGNMENT_HORIZONTAL_CENTER));
         return PageDisplayType.ObjectRetrieval;
-    }
-
-    // set orglayout if page has crossed a width boundary and must be laid out differently
-    private void setOrgLayout(HorizontalLayout orgLayout, int newPageWidth)
-    {
-        if ((pageWidth < min2ColPageWidth && newPageWidth > min2ColPageWidth) ||
-            (pageWidth > min2ColPageWidth && pageWidth < min3ColPageWidth &&
-                (newPageWidth < min2ColPageWidth || newPageWidth > min3ColPageWidth)) ||
-            (pageWidth > min3ColPageWidth && newPageWidth < min3ColPageWidth))
-        {
-            setOrgLayout(orgLayout);
-        }
     }
 
     private void setOrgLayout(HorizontalLayout orgLayout)
@@ -114,17 +98,42 @@ public class OrgPage extends BasePage implements View
             if (org.getLeftColWidth() != 0) { leftWidth = org.getLeftColWidth(); }
             centerWidth = org.getCenterColWidth();
             rightWidth = org.getRightColWidth();
-
-            min2ColPageWidth = leftWidth + centerWidth;
-            min3ColPageWidth = min2ColPageWidth + rightWidth;
         }
+
+        int min2ColWidth = leftWidth + centerWidth;
+        int min3ColWidth = min2ColWidth + rightWidth;
+
+        int maxLeft   = org.getMaxLeftColWidth()   == 0 ? leftWidth   : org.getMaxLeftColWidth();
+        int maxCenter = org.getMaxCenterColWidth() == 0 ? centerWidth : org.getMaxCenterColWidth();
+        int maxRight  = org.getMaxRightColWidth()  == 0 ? rightWidth  : org.getMaxRightColWidth();
 
         boolean useCenterCol = centerWidth > 0;
         boolean useRightCol = rightWidth > 0;
 
-        pageWidth = UI.getCurrent().getPage().getBrowserWindowWidth();
-        if (pageWidth < min3ColPageWidth) { useRightCol = false; }
-        if (pageWidth < min2ColPageWidth) { useCenterCol = false; }
+        int pageWidth = UI.getCurrent().getPage().getBrowserWindowWidth();
+        if (pageWidth < min3ColWidth) { useRightCol = false; }
+        if (pageWidth < min2ColWidth) { useCenterCol = false; }
+
+        if (pageWidth > min3ColWidth)
+        {
+            int contentWidth = leftWidth + centerWidth + rightWidth;
+            int diff = pageWidth - contentWidth;
+            rightWidth = Math.min(rightWidth + diff, maxRight);
+
+            contentWidth = leftWidth + centerWidth + rightWidth;
+            if (pageWidth > contentWidth)
+            {
+                diff = pageWidth - contentWidth;
+                centerWidth = Math.min(centerWidth + diff, maxCenter);
+            }
+
+            contentWidth = leftWidth + centerWidth + rightWidth;
+            if (pageWidth > contentWidth)
+            {
+                diff = pageWidth - contentWidth;
+                leftWidth = Math.min(leftWidth + diff, maxLeft);
+            }
+        }
 
         VerticalLayout leftLayout = new VerticalLayout();
         leftLayout.setMargin(true);

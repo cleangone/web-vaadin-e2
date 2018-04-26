@@ -18,9 +18,20 @@ public class EventUtils
         return comboBox;
     }
 
+
     public static Label getSoldLabel()
     {
-        return getLabel("Sold", "sold");
+        return getCautionLabel("Sold");
+    }
+
+    public static Label getCautionLabel(String text)
+    {
+        return getLabel(text, "caution");
+    }
+
+    public static Label getWinningLabel(String text)
+    {
+        return getLabel(text, "blueBold");
     }
 
     public static Label getLabel(String value, String styleName)

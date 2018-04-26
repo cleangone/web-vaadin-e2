@@ -15424,6 +15424,16 @@ div.v-layout.v-horizontal.v-widget {
 	font-weight: bold;
 }
 
+.mytheme .caution {
+	color: red;
+	font-weight: bold;
+}
+
+.mytheme .blueBold {
+	color: blue;
+	font-weight: bold;
+}
+
 .mytheme .adminNav {
 	background: whitesmoke;
 	border-left: 1px solid silver;

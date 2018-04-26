@@ -127,7 +127,6 @@ public class TagsAdmin extends BaseEventAdmin
         List<OrgTag> tags = tagMgr.getEventTags(tagType, event.getId(), orgWideIds);
         grid.setDataProvider(new ListDataProvider<>(tags));
 
-
         grid.getEditor().setEnabled(true);
         grid.getEditor().setBuffered(true);
         grid.getEditor().addOpenListener(ev -> {

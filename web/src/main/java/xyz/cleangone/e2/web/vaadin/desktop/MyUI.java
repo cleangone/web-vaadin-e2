@@ -23,13 +23,14 @@ import xyz.cleangone.data.manager.TagManager;
 import xyz.cleangone.data.manager.UserManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.manager.VaadinSessionManager;
-import xyz.cleangone.e2.web.manager.notification.NotificationScheduler;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.EventAdminPage;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.OrgAdminPage;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin.SuperAdminPage;
 import xyz.cleangone.e2.web.vaadin.desktop.actionbar.ActionBar;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin.SuperAdminProfilePage;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.stats.browser.BrowserStats;
+import xyz.cleangone.e2.web.vaadin.desktop.broadcast.BroadcastListener;
+import xyz.cleangone.e2.web.vaadin.desktop.broadcast.BroadcastListeningUI;
 import xyz.cleangone.e2.web.vaadin.desktop.org.*;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.CatalogPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.EventPage;
@@ -46,9 +47,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-@Viewport("user-scalable=yes,initial-scale=1.0")
+@Push
 @Theme("mytheme")
-public class MyUI extends UI
+@Viewport("user-scalable=yes,initial-scale=1.0")
+public class MyUI extends BroadcastListeningUI implements BroadcastListener
 {
     public static final String RESET_PASSWORD_URL_PARAM = "reset";
     public static final String VERIFY_EMAIL_URL_PARAM = "verify";
@@ -67,6 +69,7 @@ public class MyUI extends UI
         BROWSER_STATS.addPage(getCurrent().getPage());
 
         new Navigator(this, this);
+        initBroadcastListener();
         UI.getCurrent().setResizeLazy(true);
         ActionBar.addActionBarStyle();
 

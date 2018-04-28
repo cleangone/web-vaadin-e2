@@ -55,6 +55,15 @@
     font-weight: bold;
   }
 
+  .title {
+    font-size: larger;
+    font-weight: bold;
+  }
+
+  .v-grid-row.admin .v-grid-cell {
+    font-size: smaller;
+  }
+
   .sold {
     color: red;
     font-weight: bold;

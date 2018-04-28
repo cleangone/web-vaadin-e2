@@ -16,8 +16,12 @@ public class DollarField extends TextField
 
     public DollarField(String caption)
     {
+        this(caption, "$");
+    }
+    public DollarField(String caption, String placeholder)
+    {
         super(caption);
-        setPlaceholder("$");
+        setPlaceholder(placeholder);
 
         binder.forField(this)
             .withConverter(new DollarConverter())

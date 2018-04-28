@@ -77,6 +77,7 @@ public class ProfileAdmin extends BaseAdmin
         formLayout.addComponent(new PhoneDisclosure());
         formLayout.addComponent(new AddressDisclosure());
         formLayout.addComponent(new PasswordDisclosure());
+        formLayout.addComponent(new BiddingDisclosure());
 
         addComponents(formLayout);
         setExpandRatio(formLayout, 1.0f);
@@ -211,7 +212,6 @@ public class ProfileAdmin extends BaseAdmin
             super("Address", new FormLayout());
 
             setDisclosureCaption();
-
             mainLayout.addComponents(
                 createUserTextField(ADDRESS_FIELD, this),
                 createUserTextField(CITY_FIELD, this),
@@ -272,6 +272,26 @@ public class ProfileAdmin extends BaseAdmin
         public void setDisclosureCaption()
         {
             setDisclosureCaption("Password " + (user.getEncryptedPassword()==null ? " not" : "") + " set");
+        }
+    }
+
+    class BiddingDisclosure extends BaseDisclosure
+    {
+        BiddingDisclosure()
+        {
+            super("Bidding", new FormLayout());
+
+            setDisclosureCaption();
+            mainLayout.addComponents(
+                createCheckBox(SHOW_BID_CONFIRM_FIELD, user, userMgr.getUserDao(), msgDisplayer, this),
+                createCheckBox(SHOW_QUICK_BID_FIELD,   user, userMgr.getUserDao(), msgDisplayer, this));
+        }
+
+        public void setDisclosureCaption()
+        {
+            setDisclosureCaption(
+                "Bid Confirmation " + (user.getShowBidConfirm() ? "on" : "off") +
+                ", Quick-Bid Button " + (user.getShowQuickBid() ? "displayed" : "not displayed"));
         }
     }
 

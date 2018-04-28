@@ -3,6 +3,7 @@ package xyz.cleangone.e2.web.vaadin.desktop.broadcast;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.UI;
+import xyz.cleangone.e2.web.vaadin.desktop.org.event.CatalogPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.ItemPage;
 
 public abstract class BroadcastListeningUI extends UI implements BroadcastListener
@@ -32,7 +33,12 @@ public abstract class BroadcastListeningUI extends UI implements BroadcastListen
                 if (currentView instanceof ItemPage)
                 {
                     ItemPage itemPage = (ItemPage)currentView;
-                    if (notification.hasItemId(itemPage.getItemId())) { itemPage.reset(); }
+                    if (itemPage.hasItemId(notification.getItemId())) { itemPage.reset(); }
+                }
+                else if (currentView instanceof CatalogPage)
+                {
+                    CatalogPage catalogPage = (CatalogPage)currentView;
+                    if (catalogPage.hasItemId(notification.getItemId())) { catalogPage.set(); }
                 }
             }
         });

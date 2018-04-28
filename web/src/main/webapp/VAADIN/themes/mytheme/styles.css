@@ -15419,6 +15419,15 @@ div.v-layout.v-horizontal.v-widget {
 	font-weight: bold;
 }
 
+.mytheme .title {
+	font-size: larger;
+	font-weight: bold;
+}
+
+.mytheme .v-grid-row.admin .v-grid-cell {
+	font-size: smaller;
+}
+
 .mytheme .sold {
 	color: red;
 	font-weight: bold;

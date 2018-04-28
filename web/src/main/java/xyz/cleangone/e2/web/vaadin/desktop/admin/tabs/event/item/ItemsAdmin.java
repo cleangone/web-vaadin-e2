@@ -32,8 +32,10 @@ import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
 public class ItemsAdmin extends BaseEventTagsAdmin implements MultiSelectionListener<CatalogItem>
 {
-    private ItemManager itemMgr;
+    protected static String ADMIN_GRID_STYLE_NAME = "admin";
+    private static boolean COLORS = false;
 
+    private ItemManager itemMgr;
     private List<OrgTag> categories;
     private Map<String, OrgTag> categoriesById;
     private Map<EntityField, String> previousFilterValues = new HashMap<>();
@@ -54,6 +56,7 @@ public class ItemsAdmin extends BaseEventTagsAdmin implements MultiSelectionList
         setMargin(false);
         setSpacing(true);
         setWidth("100%");
+        if (COLORS) { addStyleName("backGreen"); }
     }
 
     public void set(SessionManager sessionMgr)
@@ -88,10 +91,12 @@ public class ItemsAdmin extends BaseEventTagsAdmin implements MultiSelectionList
         VerticalLayout gridLayout = new VerticalLayout();
         gridLayout.setMargin(false);
         gridLayout.setSpacing(true);
-        gridLayout.setStyleName("marginLeft"); // todo - marginRight doesn't work, menu stack is collapsed to vertical ...
+        gridLayout.addStyleName("marginLeft"); // todo - marginRight doesn't work, menu stack is collapsed to vertical ...
         gridLayout.addComponents(grid);
+        gridLayout.setSizeFull();
+        if (COLORS) { gridLayout.addStyleName("backYellow"); }
 
-        addComponents(itemMenuBar, gridLayout, new Label());
+        addComponents(itemMenuBar, gridLayout);
         setExpandRatio(gridLayout, 1.0f);
     }
 
@@ -153,6 +158,7 @@ public class ItemsAdmin extends BaseEventTagsAdmin implements MultiSelectionList
     private Grid<CatalogItem> getItemsGrid()
     {
         Grid<CatalogItem> grid = new Grid<>();
+        grid.setStyleGenerator(item -> ADMIN_GRID_STYLE_NAME);
         grid.setSizeFull();
 
         Grid.Column<CatalogItem, LinkButton> nameCol = grid.addComponentColumn(this::buildNameLinkButton);

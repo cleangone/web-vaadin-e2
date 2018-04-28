@@ -58,9 +58,10 @@ public class EventPage extends BaseEventPage implements View
             .filter(item -> item.getCategoryIds().isEmpty())
             .collect(Collectors.toList());
 
+
         if (!items.isEmpty())
         {
-            centerLayout.addComponent(new CatalogLayout(items, eventMgr, itemMgr.getImageManager()));
+            centerLayout.addComponent(new CatalogLayout(items, user, eventMgr, orgMgr.getBidManager(), itemMgr.getImageManager()));
         }
 
         return PageDisplayType.ObjectRetrieval;

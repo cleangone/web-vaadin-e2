@@ -7,19 +7,12 @@ import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
 import com.vaadin.ui.renderers.DateRenderer;
 import org.vaadin.kim.countdownclock.CountdownClock;
-import xyz.cleangone.data.aws.dynamo.entity.action.Action;
 import xyz.cleangone.data.aws.dynamo.entity.bid.ItemBid;
 import xyz.cleangone.data.aws.dynamo.entity.bid.UserBid;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
 import xyz.cleangone.data.aws.dynamo.entity.item.CartItem;
 import xyz.cleangone.data.aws.dynamo.entity.purchase.Cart;
-import xyz.cleangone.data.manager.ActionManager;
-import xyz.cleangone.data.manager.event.BidManager;
-import xyz.cleangone.data.manager.event.BidStatus;
-import xyz.cleangone.e2.web.manager.OutbidEmailSender;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.disclosure.BaseDisclosure;
-import xyz.cleangone.e2.web.vaadin.desktop.broadcast.BroadcastNotification;
-import xyz.cleangone.e2.web.vaadin.desktop.broadcast.Broadcaster;
 import xyz.cleangone.e2.web.vaadin.desktop.image.ImageDimension;
 import xyz.cleangone.e2.web.vaadin.desktop.image.ImageLabel;
 import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
@@ -31,13 +24,13 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static xyz.cleangone.e2.web.vaadin.desktop.org.event.EventUtils.*;
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+
 public class ItemPage extends CatalogPage implements View
 {
     public static final String NAME = "Item";
-    private static long ONE_HOUR = 1000 * 60 * 60;
-    private static long FIVE_DAYS = ONE_HOUR * 24 * 5;
 
-    private BidManager bidManager;
     private CatalogItem item;
 
     public void reset()
@@ -48,8 +41,9 @@ public class ItemPage extends CatalogPage implements View
 
     public PageDisplayType set()
     {
-        imageMgr = itemMgr.getImageManager();
+        // bit of a hack to not call super.set()
         bidManager = orgMgr.getBidManager();
+        imageMgr = itemMgr.getImageManager();
         item = itemMgr.getItem();
 
         leftLayout.set(category);
@@ -58,9 +52,9 @@ public class ItemPage extends CatalogPage implements View
         return PageDisplayType.NotApplicable;
     }
 
-    public String getItemId()
+    public boolean hasItemId(String itemId)
     {
-        return (item == null ? null : item.getId());
+        return (item != null && item.getId().equals(itemId));
     }
 
     protected void setCenterLayout()
@@ -71,8 +65,6 @@ public class ItemPage extends CatalogPage implements View
 
     private Component getItemLayout(CatalogItem item)
     {
-        ItemBid highBid = item.getHighBidId() == null ? null : bidManager.getItemBid(item.getHighBidId());
-
         HorizontalLayout layout = new HorizontalLayout();
         layout.setMargin(new MarginInfo(true, false, false, false)); // T/R/B/L margins
 
@@ -89,14 +81,15 @@ public class ItemPage extends CatalogPage implements View
         detailslayout.setWidth("100%");
         layout.addComponent(detailslayout);
 
-        detailslayout.addComponent(new Label(item.getName()));
+        detailslayout.addComponent(VaadinUtils.createLabel(item.getName(), "title"));
 
+        boolean userOutbid = false;
         String displayPrice = item.getDisplayPrice();
         if (item.isAuction())
         {
             if (item.isAvailable())
             {
-                addBidDetails(detailslayout, highBid, displayPrice, item);
+                userOutbid = addBidDetails(detailslayout, displayPrice, item);
             }
             else if (item.isSold() || item.isUnsold())
             {
@@ -106,22 +99,22 @@ public class ItemPage extends CatalogPage implements View
                 {
                     if (userMgr.hasUser())
                     {
-                        if (highBid.getUserId().equals(user.getId()))
+                        if (user.getId().equals(item.getHighBidderId()))
                         {
-                            detailslayout.addComponent(EventUtils.getWinningLabel("You are the winner"));
+                            detailslayout.addComponent(getGoodNewsLabel("You are the winner"));
                         }
                         else
                         {
                             UserBid userBid = bidManager.getUserBid(user, item);
                             if (userBid != null)
                             {
-                                detailslayout.addComponent(EventUtils.getCautionLabel("Your bid of " + userBid.getDisplayMaxAmount() + " was outbid"));
+                                detailslayout.addComponent(getCautionLabel("Your bid of " + userBid.getDisplayMaxAmount() + " was outbid"));
                             }
                         }
                     }
                     else
                     {
-                        detailslayout.addComponent(EventUtils.getCautionLabel("Item is Sold"));
+                        detailslayout.addComponent(getCautionLabel("Item is Sold"));
                     }
                 }
             }
@@ -130,20 +123,20 @@ public class ItemPage extends CatalogPage implements View
         {
             if (item.isAvailable())
             {
-                if (item.isInDropWindow()) { addBidDetails(detailslayout, highBid, displayPrice, item); }
+                if (item.isInDropWindow()) { userOutbid = addBidDetails(detailslayout, displayPrice, item); }
                 else { detailslayout.addComponent(new Label(displayPrice)); }
             }
             else if (item.isSold())
             {
                 detailslayout.addComponent(new Label(displayPrice));
-                detailslayout.addComponent(EventUtils.getSoldLabel());
+                detailslayout.addComponent(getSoldLabel());
             }
         }
         else if (item.isPurchase())
         {
             detailslayout.addComponent(new Label(displayPrice));
 
-            if (item.isSold()) { detailslayout.addComponent(EventUtils.getSoldLabel()); }
+            if (item.isSold()) { detailslayout.addComponent(getSoldLabel()); }
 
             Integer quantity = item.getQuantity();
             if (quantity != null && quantity > 0) { detailslayout.addComponent(new Label(quantity + " remaining")); }
@@ -162,9 +155,16 @@ public class ItemPage extends CatalogPage implements View
                 {
                     if (userMgr.hasUser())
                     {
-                        DollarField maxBidField = new DollarField("Max Bid");
-                        detailslayout.addComponent(maxBidField);
-                        detailslayout.addComponent(VaadinUtils.createTextButton("Bid", ev -> handleBid(item, maxBidField)));
+                        DollarField maxBidField = new DollarField(null, "$ Max Bid");
+                        Button bidButton = createTextButton("Bid", ev -> handleBid(item, maxBidField));
+                        addEnterKeyShortcut(bidButton, maxBidField);
+
+                        HorizontalLayout bidLayout = new HorizontalLayout(maxBidField, bidButton);
+                        bidLayout.setComponentAlignment(bidButton, Alignment.MIDDLE_LEFT);
+
+                        detailslayout.addComponent(bidLayout);
+
+                        if (userOutbid && user.getShowQuickBid()) { detailslayout.addComponent(getQuickBidButton(item)); }
                     }
                     else
                     {
@@ -175,7 +175,7 @@ public class ItemPage extends CatalogPage implements View
             else
             {
                 // purchase, or drop item that is out of window and can be purchased
-                detailslayout.addComponent(VaadinUtils.createTextButton("Purchase", ev ->
+                detailslayout.addComponent(createTextButton("Purchase", ev ->
                 {
                     // todo - has not been purchased yet, but may be in another cart - do you lock an item when you put it in the cart?
 
@@ -198,22 +198,27 @@ public class ItemPage extends CatalogPage implements View
         return layout;
     }
 
-    private void addBidDetails(VerticalLayout detailslayout, ItemBid highBid, String displayPrice, CatalogItem item)
+    // return true is user is outbid (a bit of a hack)
+    private boolean addBidDetails(VerticalLayout detailslayout, String displayPrice, CatalogItem item)
     {
+        boolean userOutbid = false;
+        ItemBid highBid = item.getHighBidId() == null ? null : bidManager.getItemBid(item.getHighBidId());
+
         String bidDesc = (highBid == null ? "Starting" : "Current");
         detailslayout.addComponent(new Label(bidDesc + " Bid: " + displayPrice));
         if (highBid != null && user != null)
         {
             if (highBid.getUserId().equals(user.getId()))
             {
-                detailslayout.addComponent(EventUtils.getWinningLabel("You are the high bidder, with a max bid of " + highBid.getDisplayMaxAmount()));
+                detailslayout.addComponent(getGoodNewsLabel("You are the high bidder, with a max bid of " + highBid.getDisplayMaxAmount()));
             }
             else
             {
                 UserBid userBid = bidManager.getUserBid(user, item);
                 if (userBid != null)
                 {
-                    detailslayout.addComponent(EventUtils.getCautionLabel("Your bid of " + userBid.getDisplayMaxAmount() + " was outbid"));
+                    detailslayout.addComponent(getCautionLabel("Your bid of " + userBid.getDisplayMaxAmount() + " was outbid"));
+                    userOutbid = true;
                 }
             }
         }
@@ -229,14 +234,13 @@ public class ItemPage extends CatalogPage implements View
                 // auc ended but item status not yet updated
                 detailslayout.addComponent(new Label(auctionDesc + " has ended"));
             }
-            else if (endDate.getTime() - ONE_HOUR < now.getTime())
+            else if (EventUtils.showCountdownClock(endDate))
             {
-                CountdownClock clock = new CountdownClock();
-                clock.setDate(endDate);
-                clock.setFormat("%m min %s sec");
+                CountdownClock clock = EventUtils.getCountdownClock(endDate);
                 clock.addEndEventListener(e -> set());
+                clock.setStyleName("fontBold");
 
-                detailslayout.addComponents(new Label(auctionDesc + " ends in"), clock);
+                detailslayout.addComponents(new HorizontalLayout(new Label(auctionDesc + " ends in"), clock));
             }
             else
             {
@@ -244,33 +248,8 @@ public class ItemPage extends CatalogPage implements View
                 detailslayout.addComponent(new Label(auctionDesc + " ends " + sdf.format(endDate)));
             }
         }
-    }
 
-    private void handleBid(CatalogItem item, DollarField maxBidField)
-    {
-        BigDecimal maxBid = maxBidField.getDollarValue();
-        if (maxBid.compareTo(item.getPrice()) > 0)
-        {
-            // note - item will be updated in-place with any new bid
-            BidStatus bidStatus = bidManager.createBid(user, item, maxBid);
-
-            if (bidStatus.getUserBid() != null)
-            {
-                ActionManager actionMgr = orgMgr.getActionManager();
-                Action bid = actionMgr.createBid(user, bidStatus.getUserBid(), item, event);
-                actionMgr.save(bid);
-                actionBar.displayMessage("Bid submitted");
-
-                if (bidStatus.getPreviousHighBid() != null)
-                {
-                    schedule(new OutbidEmailSender(bidStatus.getPreviousHighBid(), sessionMgr));
-                }
-
-                setCenterLayout();
-            }
-        }
-
-        Broadcaster.broadcast(item);
+        return userOutbid;
     }
 
     class BidsDisclosure extends BaseDisclosure

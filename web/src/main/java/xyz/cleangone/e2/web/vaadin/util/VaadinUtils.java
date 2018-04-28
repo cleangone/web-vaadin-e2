@@ -274,6 +274,13 @@ public class VaadinUtils
         return button;
     }
 
+    public static Label createLabel(String value, String styleName)
+    {
+        Label label = new Label(value);
+        label.setStyleName(styleName);
+        return label;
+    }
+
     public static Label getHtmlLabel(String value)
     {
         String labalValue = value == null ? "" : value;

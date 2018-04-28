@@ -19,6 +19,7 @@ public class EventsAdminLayout extends HorizontalLayout
     private final NavCol navCol;
     private final Map<AdminPageType, BaseAdmin> adminComponents = new HashMap<>();
     private final VerticalLayout mainLayout = new VerticalLayout();
+    private static boolean COLORS = false;
 
     public EventsAdminLayout(MessageDisplayer msgDisplayer)
     {
@@ -36,9 +37,14 @@ public class EventsAdminLayout extends HorizontalLayout
         adminComponents.put(EventAdminPageType.USERS, new UsersAdmin(this, msgDisplayer));
 
         mainLayout.setMargin(false);
+        mainLayout.setHeight((UI.getCurrent().getPage().getBrowserWindowHeight() - 100) + "px");  // hack - like navCol
+
+        if (COLORS) { mainLayout.addStyleName("backRed"); }
 
         setSizeFull();
         setMargin(false);
+        if (COLORS) { addStyleName("backBlue"); }
+
         // note - spacing set dynamically in setAdminPage
 
         addComponents(navCol, mainLayout);

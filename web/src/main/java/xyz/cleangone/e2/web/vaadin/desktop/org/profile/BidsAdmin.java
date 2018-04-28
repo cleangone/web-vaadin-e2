@@ -23,10 +23,7 @@ import xyz.cleangone.e2.web.vaadin.util.PageUtils;
 import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 
 import java.text.DateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity.CREATED_DATE_FIELD;
 
@@ -87,6 +84,7 @@ public class BidsAdmin extends BaseAdmin
         itemIdToEvent.clear();
         itemIdToCategory.clear();
 
+        List<UserBid> currentBids = new ArrayList<>();
         for (UserBid bid : bids)
         {
             String itemId = bid.getItemId();
@@ -95,9 +93,23 @@ public class BidsAdmin extends BaseAdmin
                 itemIdToItem.put(itemId, dao.getById(itemId)); // todo - hack - direct read of db
             }
 
+            // item may have been deleted
             CatalogItem item = itemIdToItem.get(itemId);
-            if (!itemIdToEvent.containsKey(itemId))    { itemIdToEvent.put(itemId, eventIdToEvent.get(item.getEventId())); }
-            if (!itemIdToCategory.containsKey(itemId)) { itemIdToCategory.put(itemId, categoryIdToCategory.get(item.getCategoryIds().get(0))); }
+            if (item != null)
+            {
+                currentBids.add(bid);
+
+                if (!itemIdToEvent.containsKey(itemId))
+                {
+                    itemIdToEvent.put(itemId, eventIdToEvent.get(item.getEventId()));
+                }
+
+                if (!itemIdToCategory.containsKey(itemId))
+                {
+                    itemIdToCategory.put(itemId, categoryIdToCategory.get(item.getCategoryIds().get(0)));
+                }
+
+            }
         }
 
         Grid<UserBid> grid = new Grid<>();
@@ -110,7 +122,7 @@ public class BidsAdmin extends BaseAdmin
         grid.addColumn(this::getStatus).setCaption("Status");
 
         if (!bids.isEmpty()) { grid.setHeightByRows(bids.size()); }
-        grid.setDataProvider(new ListDataProvider<>(bids));
+        grid.setDataProvider(new ListDataProvider<>(currentBids));
 
         addComponents(grid);
     }

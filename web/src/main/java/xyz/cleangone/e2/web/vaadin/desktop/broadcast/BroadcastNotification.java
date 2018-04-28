@@ -13,13 +13,12 @@ public class BroadcastNotification
         this.itemId = requireNonNull(itemId);
     }
 
-    public boolean hasItemId(String itemId)
-    {
-        return this.itemId.equals(itemId);
-    }
-
     public String getOrgId()
     {
         return orgId;
+    }
+    public String getItemId()
+    {
+        return itemId;
     }
 }

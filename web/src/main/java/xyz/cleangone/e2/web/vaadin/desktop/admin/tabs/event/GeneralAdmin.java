@@ -62,6 +62,9 @@ public class GeneralAdmin extends BaseOrgAdmin
 
     public void set()
     {
+        // todo - can get here directly when user navs away from admin and then back
+        // todo - display diff page?  event list?
+
         OrgEvent event = requireNonNull(eventMgr.getEvent());
         if (changeManager.unchanged(user) &&
             changeManager.unchanged(event) &&

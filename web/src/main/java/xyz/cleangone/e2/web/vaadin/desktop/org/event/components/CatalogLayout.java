@@ -3,10 +3,13 @@ package xyz.cleangone.e2.web.vaadin.desktop.org.event.components;
 import com.amazonaws.services.dynamodbv2.datamodeling.S3Link;
 import com.vaadin.shared.ui.AlignmentInfo;
 import com.vaadin.ui.*;
+import org.vaadin.kim.countdownclock.CountdownClock;
+import xyz.cleangone.data.aws.dynamo.entity.bid.UserBid;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
-import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
+import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.manager.EventManager;
 import xyz.cleangone.data.manager.ImageManager;
+import xyz.cleangone.data.manager.event.BidManager;
 import xyz.cleangone.e2.web.vaadin.desktop.image.ImageDimension;
 import xyz.cleangone.e2.web.vaadin.desktop.image.ImageLabel;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.EventUtils;
@@ -14,24 +17,44 @@ import xyz.cleangone.e2.web.vaadin.desktop.org.event.ItemPage;
 
 import java.util.List;
 
+import static xyz.cleangone.e2.web.vaadin.desktop.org.event.EventUtils.*;
+
 public class CatalogLayout extends GridLayout
 {
-    private static final int ITEM_COLS = 2;  // todo - make configurable
+    private static final int ITEM_COLS = 2;  // todo - make responsive to page size
 
-    public CatalogLayout(List<CatalogItem> items, EventManager eventMgr, ImageManager imageMgr)
+    private final EventManager eventMgr;
+    private final BidManager bidManager;
+    private final ImageManager imageMgr;
+
+    public CatalogLayout(int numItems, EventManager eventMgr, BidManager bidManager, ImageManager imageMgr)
     {
-        int rows = Math.max((items.size()+1)/ITEM_COLS, 1);
+        this.eventMgr = eventMgr;
+        this.bidManager = bidManager;
+        this.imageMgr = imageMgr;
+
+        int rows = Math.max((numItems + 1)/ITEM_COLS, 1);
         setColumns(ITEM_COLS);
         setRows(rows);
         setMargin(false);
+    }
+
+    public CatalogLayout(List<CatalogItem> items, User user, EventManager eventMgr, BidManager bidManager, ImageManager imageMgr)
+    {
+        this(items.size(), eventMgr, bidManager, imageMgr);
 
         for (CatalogItem item : items)
         {
-            addComponent(getItemLayout(item, eventMgr, imageMgr));
+            addItem(item, user, null);
         }
     }
 
-    private Component getItemLayout(CatalogItem item, EventManager eventMgr, ImageManager imageMgr)
+    public void addItem(CatalogItem item, User user, Button quickBidButton)
+    {
+        addComponent(getItemLayout(item, user, quickBidButton));
+    }
+
+    private Component getItemLayout(CatalogItem item, User user, Button quickBidButton)
     {
         VerticalLayout layout = new VerticalLayout();
         layout.setMargin(true);
@@ -49,12 +72,16 @@ public class CatalogLayout extends GridLayout
 
         layout.addComponent(new Label(item.getName()));
 
-        HorizontalLayout priceLayout = new HorizontalLayout();
+        PriceLayout priceLayout = getPriceLayout(item, user);
         layout.addComponent(priceLayout);
-        priceLayout.setMargin(false);
-        priceLayout.setSizeUndefined();
-        priceLayout.addComponent(new Label(item.getDisplayPrice()));
-        if (item.isSold()) { priceLayout.addComponent(EventUtils.getSoldLabel()); }
+
+        if (EventUtils.showCountdownClock(item.getAvailabilityEnd()))
+        {
+            CountdownClock clock = EventUtils.getCountdownClock(item.getAvailabilityEnd());
+            layout.addComponent(clock);
+        }
+
+        if (quickBidButton != null && priceLayout.userOutbid && user.getShowQuickBid()) { layout.addComponent(quickBidButton); }
 
         layout.addLayoutClickListener( e -> {
             eventMgr.setItem(item);
@@ -65,4 +92,45 @@ public class CatalogLayout extends GridLayout
         return layout;
     }
 
+    private PriceLayout getPriceLayout(CatalogItem item, User user)
+    {
+        PriceLayout layout = new PriceLayout();
+        layout.setMargin(false);
+        layout.setSizeUndefined();
+
+        layout.addComponent(new Label(item.getDisplayPrice()));
+
+        if (item.isSold())
+        {
+            layout.addComponent((user != null && user.getId().equals(item.getHighBidderId())) ?
+                getGoodNewsLabel("Won") : getSoldLabel());
+        }
+        else
+        {
+            if (item.getHighBidderId() != null && user != null)
+            {
+                if (item.getHighBidderId().equals(user.getId()))
+                {
+                    layout.addComponent(getGoodNewsLabel("Winning"));
+                }
+                else
+                {
+                    UserBid userBid = bidManager.getUserBid(user, item);
+                    if (userBid != null)
+                    {
+                        layout.addComponent(getCautionLabel("Outbid"));
+                        layout.userOutbid = true;
+                    }
+                }
+            }
+        }
+
+        return layout;
+    }
+
+
+    class PriceLayout extends HorizontalLayout
+    {
+        boolean userOutbid = false;
+    }
 }

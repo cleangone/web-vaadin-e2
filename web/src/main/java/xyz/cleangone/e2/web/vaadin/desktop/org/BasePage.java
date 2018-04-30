@@ -112,7 +112,7 @@ public abstract class BasePage extends Panel implements View
         return actionBar.set(sessionMgr);
     }
 
-    protected void schedule(Runnable runnable)
+    public void schedule(Runnable runnable)
     {
         scheduler.schedule(runnable, 1, SECONDS);
     }

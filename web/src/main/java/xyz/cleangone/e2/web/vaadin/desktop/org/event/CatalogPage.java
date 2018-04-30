@@ -5,16 +5,21 @@ import com.vaadin.ui.Button;
 import xyz.cleangone.data.aws.dynamo.entity.action.Action;
 import xyz.cleangone.data.aws.dynamo.entity.bid.BidUtils;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
+import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.data.manager.ActionManager;
 import xyz.cleangone.data.manager.ImageManager;
+import xyz.cleangone.data.manager.OrgManager;
+import xyz.cleangone.data.manager.UserManager;
 import xyz.cleangone.data.manager.event.BidManager;
 import xyz.cleangone.data.manager.event.BidStatus;
 import xyz.cleangone.e2.web.manager.OutbidEmailSender;
+import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.broadcast.Broadcaster;
 import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.components.CatalogLayout;
 import xyz.cleangone.e2.web.vaadin.util.DollarField;
+import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -22,13 +27,16 @@ import java.util.stream.Collectors;
 
 import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.createTextButton;
 
-public class CatalogPage extends BaseEventPage implements View
+public class CatalogPage extends BaseEventPage implements View, CatalogView
 {
     public static final String NAME = "Catalog";
 
     protected ImageManager imageMgr;
     protected BidManager bidManager;
     protected OrgTag category;
+
+    protected BidHandler bidHandler;
+
     Set<String> itemIds = Collections.emptySet();
 
     public CatalogPage()
@@ -44,6 +52,8 @@ public class CatalogPage extends BaseEventPage implements View
 
         imageMgr = itemMgr.getImageManager();
 
+        bidHandler = new BidHandler(this, sessionMgr, actionBar);
+
         leftLayout.set(category);
         setCenterLayout();
 
@@ -55,6 +65,10 @@ public class CatalogPage extends BaseEventPage implements View
         return (itemIds.contains(itemId));
     }
 
+    public void setCatalogLayout()
+    {
+        setCenterLayout();
+    }
     protected void setCenterLayout()
     {
         centerLayout.removeAllComponents();
@@ -67,7 +81,7 @@ public class CatalogPage extends BaseEventPage implements View
             .map(CatalogItem::getId)
             .collect(Collectors.toSet());
 
-        CatalogLayout catalogLayout = new CatalogLayout(visibleItems.size(), eventMgr, bidManager, imageMgr);
+        CatalogLayout catalogLayout = new CatalogLayout(visibleItems.size(), eventMgr, bidManager);
         for (CatalogItem item : visibleItems)
         {
             catalogLayout.addItem(item, user, getQuickBidButton(item));
@@ -78,48 +92,65 @@ public class CatalogPage extends BaseEventPage implements View
 
     protected Button getQuickBidButton(CatalogItem item)
     {
-        BigDecimal bidAmount = BidUtils.getIncrementedAmount(item.getPrice());
-        return createTextButton("Bid $" + bidAmount, ev -> handleBid(item, bidAmount));
+        return bidHandler.getQuickBidButton(item, event);
     }
-
     protected void handleWatch(CatalogItem item, boolean watch)
     {
-        if (watch) { user.addWatchedItemId(item.getId()); }
-        else  { user.removeWatchedItemId(item.getId()); }
-
-        userMgr.saveUser();
-        setCenterLayout();
+        bidHandler.handleWatch(item, watch);
     }
-
     protected void handleBid(CatalogItem item, DollarField maxBidField)
     {
         handleBid(item, maxBidField.getDollarValue());
     }
     protected void handleBid(CatalogItem item, BigDecimal maxBid)
     {
-        if (maxBid.compareTo(item.getPrice()) > 0)
-        {
-            // note - item will be updated in-place with any new bid
-            BidStatus bidStatus = bidManager.createBid(user, item, maxBid);
-
-            if (bidStatus.getUserBid() != null)
-            {
-                ActionManager actionMgr = orgMgr.getActionManager();
-                Action bid = actionMgr.createBid(user, bidStatus.getUserBid(), item, event);
-                actionMgr.save(bid);
-                actionBar.displayMessage("Bid submitted");
-
-                if (bidStatus.getPreviousHighBid() != null)
-                {
-                    schedule(new OutbidEmailSender(bidStatus.getPreviousHighBid(), sessionMgr));
-                }
-
-                setCenterLayout();
-            }
-        }
-
-        Broadcaster.broadcast(item);
+        bidHandler.handleBid(item, event, maxBid);
     }
+
+//    protected Button getQuickBidButton(CatalogItem item)
+//    {
+//        BigDecimal bidAmount = BidUtils.getIncrementedAmount(item.getPrice());
+//        return createTextButton("Bid $" + bidAmount, ev -> handleBid(item, bidAmount));
+//    }
+//
+//    protected void handleWatch(CatalogItem item, boolean watch)
+//    {
+//        if (watch) { user.addWatchedItemId(item.getId()); }
+//        else  { user.removeWatchedItemId(item.getId()); }
+//
+//        userMgr.saveUser();
+//        setCenterLayout();
+//    }
+//
+//    protected void handleBid(CatalogItem item, DollarField maxBidField)
+//    {
+//        handleBid(item, maxBidField.getDollarValue());
+//    }
+//    protected void handleBid(CatalogItem item, BigDecimal maxBid)
+//    {
+//        if (maxBid.compareTo(item.getPrice()) > 0)
+//        {
+//            // note - item will be updated in-place with any new bid
+//            BidStatus bidStatus = bidManager.createBid(user, item, maxBid);
+//
+//            if (bidStatus.getUserBid() != null)
+//            {
+//                ActionManager actionMgr = orgMgr.getActionManager();
+//                Action bid = actionMgr.createBid(user, bidStatus.getUserBid(), item, event);
+//                actionMgr.save(bid);
+//                actionBar.displayMessage("Bid submitted");
+//
+//                if (bidStatus.getPreviousHighBid() != null)
+//                {
+//                    schedule(new OutbidEmailSender(bidStatus.getPreviousHighBid(), sessionMgr));
+//                }
+//
+//                setCenterLayout();
+//            }
+//        }
+//
+//        Broadcaster.broadcast(item);
+//    }
 
 
 }

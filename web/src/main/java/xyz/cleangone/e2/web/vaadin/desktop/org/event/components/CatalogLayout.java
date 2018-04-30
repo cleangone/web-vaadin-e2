@@ -6,6 +6,7 @@ import com.vaadin.ui.*;
 import org.vaadin.kim.countdownclock.CountdownClock;
 import xyz.cleangone.data.aws.dynamo.entity.bid.UserBid;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
+import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.manager.EventManager;
 import xyz.cleangone.data.manager.ImageManager;
@@ -16,6 +17,7 @@ import xyz.cleangone.e2.web.vaadin.desktop.org.event.EventUtils;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.ItemPage;
 
 import java.util.List;
+import java.util.Map;
 
 import static xyz.cleangone.e2.web.vaadin.desktop.org.event.EventUtils.*;
 
@@ -25,13 +27,12 @@ public class CatalogLayout extends GridLayout
 
     private final EventManager eventMgr;
     private final BidManager bidManager;
-    private final ImageManager imageMgr;
+    private Map<String, OrgEvent> eventsById;
 
-    public CatalogLayout(int numItems, EventManager eventMgr, BidManager bidManager, ImageManager imageMgr)
+    public CatalogLayout(int numItems, EventManager eventMgr, BidManager bidManager)
     {
         this.eventMgr = eventMgr;
         this.bidManager = bidManager;
-        this.imageMgr = imageMgr;
 
         int rows = Math.max((numItems + 1)/ITEM_COLS, 1);
         setColumns(ITEM_COLS);
@@ -39,9 +40,15 @@ public class CatalogLayout extends GridLayout
         setMargin(false);
     }
 
-    public CatalogLayout(List<CatalogItem> items, User user, EventManager eventMgr, BidManager bidManager, ImageManager imageMgr)
+    public CatalogLayout(int numItems, EventManager eventMgr, BidManager bidManager, Map<String, OrgEvent> eventsById)
     {
-        this(items.size(), eventMgr, bidManager, imageMgr);
+        this(numItems, eventMgr, bidManager);
+        this.eventsById = eventsById;
+    }
+
+    public CatalogLayout(List<CatalogItem> items, User user, EventManager eventMgr, BidManager bidManager)
+    {
+        this(items.size(), eventMgr, bidManager);
 
         for (CatalogItem item : items)
         {
@@ -65,7 +72,7 @@ public class CatalogLayout extends GridLayout
         List<S3Link> images = item.getImages();
         if (images != null && !images.isEmpty())
         {
-            String imageUrl = imageMgr.getUrl(images.get(0));
+            String imageUrl = ImageManager.getUrl(images.get(0));
             ImageLabel imageLabel = new ImageLabel(imageUrl, ImageDimension.height(250));
             layout.addComponent(imageLabel);
         }
@@ -84,6 +91,7 @@ public class CatalogLayout extends GridLayout
         if (quickBidButton != null && priceLayout.userOutbid && user.getShowQuickBid()) { layout.addComponent(quickBidButton); }
 
         layout.addLayoutClickListener( e -> {
+            if (eventsById != null) { eventMgr.setEvent(eventsById.get(item.getEventId())); }
             eventMgr.setItem(item);
             getUI().getNavigator().addView(ItemPage.NAME, new ItemPage());
             getUI().getNavigator().navigateTo(ItemPage.NAME);

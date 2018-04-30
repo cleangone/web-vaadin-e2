@@ -1,10 +1,7 @@
 package xyz.cleangone.e2.web.vaadin.desktop.actionbar;
 
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.shared.ui.AlignmentInfo;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.themes.ValoTheme;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityType;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.aws.dynamo.entity.purchase.Cart;
@@ -14,9 +11,7 @@ import xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin.SuperAdminProfilePag
 import xyz.cleangone.e2.web.vaadin.desktop.org.*;
 import xyz.cleangone.e2.web.vaadin.desktop.org.profile.BidsPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.profile.ProfilePage;
-import xyz.cleangone.e2.web.vaadin.desktop.org.profile.WatchPage;
-
-import static xyz.cleangone.e2.web.vaadin.util.PageUtils.*;
+import xyz.cleangone.e2.web.vaadin.desktop.org.profile.WatchLayout;
 
 public class RightMenuBar extends BaseMenuBar
 {
@@ -62,7 +57,7 @@ public class RightMenuBar extends BaseMenuBar
             {
                 profileItem.addItem(ProfilePage.NAME, null, getNavigateCmd(ProfilePage.NAME));
                 profileItem.addItem(BidsPage.NAME, null, getNavigateCmd(BidsPage.NAME));
-                profileItem.addItem(WatchPage.DISPLAY_NAME, null, getNavigateCmd(WatchPage.NAME));
+                profileItem.addItem(BidsPage.WATCH_DISPLAY_NAME, null, getNavigateCmd(BidsPage.WATCH_NAME));
             }
             else
             {

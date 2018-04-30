@@ -41,10 +41,12 @@ public class ItemPage extends CatalogPage implements View
 
     public PageDisplayType set()
     {
-        // bit of a hack to not call super.set()
+        // todo - hack to not call super.set()
         bidManager = orgMgr.getBidManager();
         imageMgr = itemMgr.getImageManager();
         item = itemMgr.getItem();
+
+        bidHandler = new BidHandler(this, sessionMgr, actionBar);
 
         leftLayout.set(category);
         setCenterLayout();

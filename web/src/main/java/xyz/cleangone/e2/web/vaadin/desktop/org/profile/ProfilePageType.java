@@ -4,6 +4,7 @@ public enum ProfilePageType
 {
     GENERAL("General"),
     BIDS("Bids"),
+    WATCHED("Watched Items"),
     DONATIONS("Donations"),
     PURCHASES("Purchases"),
     BID_HISTORY("Bid History");

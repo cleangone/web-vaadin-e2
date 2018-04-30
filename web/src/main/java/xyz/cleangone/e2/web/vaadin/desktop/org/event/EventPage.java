@@ -61,7 +61,7 @@ public class EventPage extends BaseEventPage implements View
 
         if (!items.isEmpty())
         {
-            centerLayout.addComponent(new CatalogLayout(items, user, eventMgr, orgMgr.getBidManager(), itemMgr.getImageManager()));
+            centerLayout.addComponent(new CatalogLayout(items, user, eventMgr, orgMgr.getBidManager()));
         }
 
         return PageDisplayType.ObjectRetrieval;

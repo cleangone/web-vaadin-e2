@@ -39,6 +39,7 @@ import xyz.cleangone.e2.web.vaadin.desktop.org.payment.IatsPaymentPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.payment.PaymentPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.profile.BidsPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.profile.ProfilePage;
+import xyz.cleangone.e2.web.vaadin.desktop.org.profile.WatchPage;
 import xyz.cleangone.e2.web.vaadin.desktop.user.LoginPage;
 
 import java.util.Arrays;
@@ -102,6 +103,7 @@ public class MyUI extends BroadcastListeningUI implements BroadcastListener
         nav.addView(PasswordResetPage.NAME, new PasswordResetPage());
         nav.addView(ProfilePage.NAME, new ProfilePage());
         nav.addView(BidsPage.NAME, new BidsPage());
+        nav.addView(WatchPage.NAME, new WatchPage());
         nav.addView(CreateAccountPage.NAME, new CreateAccountPage());
         nav.addView(CartPage.NAME, new CartPage());
         nav.addView(PaymentPage.NAME, new PaymentPage());

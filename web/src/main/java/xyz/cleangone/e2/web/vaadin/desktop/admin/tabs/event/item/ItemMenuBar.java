@@ -1,11 +1,24 @@
 package xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.item;
 
+import com.amazonaws.AmazonClientException;
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.event.ProgressListener;
+import com.amazonaws.services.dynamodbv2.datamodeling.S3Link;
+import com.amazonaws.services.s3.transfer.*;
+import com.amazonaws.services.s3.transfer.Upload;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
 import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.shared.ui.AlignmentInfo;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
+import com.wcs.wcslib.vaadin.widget.multifileupload.ui.AllUploadFinishedHandler;
+import com.wcs.wcslib.vaadin.widget.multifileupload.ui.MultiFileUpload;
+import com.wcs.wcslib.vaadin.widget.multifileupload.ui.UploadFinishedHandler;
+import com.wcs.wcslib.vaadin.widget.multifileupload.ui.UploadStateWindow;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityType;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
@@ -16,7 +29,10 @@ import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
+import xyz.cleangone.data.manager.ImageContainerManager;
+import xyz.cleangone.data.manager.ImageManager;
 import xyz.cleangone.data.manager.TagManager;
+import xyz.cleangone.data.manager.event.ItemManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.actionbar.*;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.EventAdminPage;
@@ -28,6 +44,10 @@ import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
 import xyz.cleangone.e2.web.vaadin.util.PageUtils;
 import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -48,9 +68,8 @@ public class ItemMenuBar extends BaseActionBar
         HorizontalLayout leftLayout = getLayout(leftMenuBar, "40%");
         HorizontalLayout centerLayout = getLayout(centerMenuBar, "50%");
 
-        PopupView popup = leftMenuBar.getPopup();
-        leftLayout.addComponent(popup);
-        leftLayout.setComponentAlignment(popup, new Alignment(AlignmentInfo.Bits.ALIGNMENT_BOTTOM));
+        addPopup(leftMenuBar.getAddItemPopup(), leftLayout);
+        addPopup(leftMenuBar.getUploadItemPopup(), leftLayout);
 
         PopupView startDatePopup = centerMenuBar.getStartDatePopup();
         PopupView endDatePopup = centerMenuBar.getEndDatePopup();
@@ -61,11 +80,21 @@ public class ItemMenuBar extends BaseActionBar
         addComponents(leftLayout, centerLayout);
     }
 
+    private void addPopup(PopupView popup, HorizontalLayout layout)
+    {
+        layout.addComponent(popup);
+        layout.setComponentAlignment(popup, new Alignment(AlignmentInfo.Bits.ALIGNMENT_BOTTOM));
+    }
+
     public void setItemsSelected(boolean itemsSelected)
     {
         centerMenuBar.setItemsSelected(itemsSelected);
     }
 
+    public void setCategories(List<OrgTag> categories)
+    {
+        leftMenuBar.setCategories(categories);
+    }
     public void setAddCategories(List<OrgTag> categories)
     {
         centerMenuBar.setAddCategories(categories);
@@ -78,15 +107,17 @@ public class ItemMenuBar extends BaseActionBar
     class MyLeftMenuBar extends BaseMenuBar
     {
         MenuBar.MenuItem addItem;
-        MenuBar.MenuItem bulkAdd;
+        MenuBar.MenuItem uploadItem;
+        UploadPopup uploadPopup;
         PopupView addItemPopup;
+        PopupView uploadItemPopup;
 
         public MyLeftMenuBar(ItemsAdmin itemsAdmin)
         {
             MenuBar.MenuItem menuItem = addItem("",  VaadinIcons.PLUS, null);
             menuItem.setStyleName("icon-only");
 
-            addItemPopup = new PopupView(null, createPopupLayout());
+            addItemPopup = new PopupView(null, createAddItemPopupLayout());
             addItem = menuItem.addItem("Add Item", null, new MenuBar.Command() {
                 public void menuSelected(MenuBar.MenuItem selectedItem)
                 {
@@ -94,16 +125,31 @@ public class ItemMenuBar extends BaseActionBar
                 }
             });
 
-            bulkAdd = menuItem.addItem("Bulk Add", null, null);
-            bulkAdd.setEnabled(false);
+            uploadPopup = new UploadPopup(itemsAdmin);
+            uploadItemPopup = new PopupView(null, uploadPopup);
+            uploadItemPopup.setHideOnMouseOut(false);
+            uploadItem = menuItem.addItem("Upload Items/Images", null, new MenuBar.Command() {
+                public void menuSelected(MenuBar.MenuItem selectedItem)
+                {
+                    uploadItemPopup.setPopupVisible(true);
+                }
+            });
         }
 
-        public PopupView getPopup()
+        public void setCategories(List<OrgTag> categories)
         {
-           return addItemPopup;
+            uploadPopup.setCategories(categories);
+        }
+        public PopupView getAddItemPopup()
+        {
+            return addItemPopup;
+        }
+        public PopupView getUploadItemPopup()
+        {
+            return uploadItemPopup;
         }
 
-        private Component createPopupLayout()
+        private Component createAddItemPopupLayout()
         {
             HorizontalLayout layout = new HorizontalLayout();
             layout.setMargin(true);
@@ -123,6 +169,11 @@ public class ItemMenuBar extends BaseActionBar
 
             layout.addComponents(nameField, button);
             return layout;
+        }
+
+        private Component createUploadItemPopupLayout()
+        {
+            return new UploadPopup(itemsAdmin);
         }
     }
 

@@ -82,6 +82,15 @@ public class CatalogPage extends BaseEventPage implements View
         return createTextButton("Bid $" + bidAmount, ev -> handleBid(item, bidAmount));
     }
 
+    protected void handleWatch(CatalogItem item, boolean watch)
+    {
+        if (watch) { user.addWatchedItemId(item.getId()); }
+        else  { user.removeWatchedItemId(item.getId()); }
+
+        userMgr.saveUser();
+        setCenterLayout();
+    }
+
     protected void handleBid(CatalogItem item, DollarField maxBidField)
     {
         handleBid(item, maxBidField.getDollarValue());

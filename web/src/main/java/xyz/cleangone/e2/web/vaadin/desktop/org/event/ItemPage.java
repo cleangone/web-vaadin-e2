@@ -223,6 +223,13 @@ public class ItemPage extends CatalogPage implements View
             }
         }
 
+        if (user != null)
+        {
+            detailslayout.addComponent(user.isWatching(item.getId()) ?
+                createTextButton("Stop Watching", ev -> handleWatch(item, false)) :
+                createTextButton("Watch", ev -> handleWatch(item, true)));
+        }
+
         Date endDate = item.getAvailabilityEnd();
         if (endDate != null)
         {

@@ -59,6 +59,8 @@ public class ItemsAdmin extends BaseEventTagsAdmin implements MultiSelectionList
         if (COLORS) { addStyleName("backGreen"); }
     }
 
+
+
     public void set(SessionManager sessionMgr)
     {
         filterValues = new HashMap<>();
@@ -79,12 +81,18 @@ public class ItemsAdmin extends BaseEventTagsAdmin implements MultiSelectionList
         setContent();
     }
 
+    public ItemManager getItemManager()
+    {
+        return itemMgr;
+    }
+
     public void setContent()
     {
         removeAllComponents();
 
         Component grid = getItemsGrid();
         itemMenuBar.setItemsSelected(false);
+        itemMenuBar.setCategories(categories);
         itemMenuBar.setAddCategories(null);
         itemMenuBar.setRemoveCategories(null);
 

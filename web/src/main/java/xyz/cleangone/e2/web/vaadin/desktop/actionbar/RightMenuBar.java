@@ -14,6 +14,7 @@ import xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin.SuperAdminProfilePag
 import xyz.cleangone.e2.web.vaadin.desktop.org.*;
 import xyz.cleangone.e2.web.vaadin.desktop.org.profile.BidsPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.profile.ProfilePage;
+import xyz.cleangone.e2.web.vaadin.desktop.org.profile.WatchPage;
 
 import static xyz.cleangone.e2.web.vaadin.util.PageUtils.*;
 
@@ -61,6 +62,7 @@ public class RightMenuBar extends BaseMenuBar
             {
                 profileItem.addItem(ProfilePage.NAME, null, getNavigateCmd(ProfilePage.NAME));
                 profileItem.addItem(BidsPage.NAME, null, getNavigateCmd(BidsPage.NAME));
+                profileItem.addItem(WatchPage.DISPLAY_NAME, null, getNavigateCmd(WatchPage.NAME));
             }
             else
             {

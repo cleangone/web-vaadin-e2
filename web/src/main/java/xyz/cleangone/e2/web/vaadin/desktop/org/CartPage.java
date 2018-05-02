@@ -9,6 +9,7 @@ import org.vaadin.dialogs.ConfirmDialog;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
 import xyz.cleangone.data.aws.dynamo.entity.item.CartItem;
 import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
+import xyz.cleangone.data.aws.dynamo.entity.organization.PaymentProcessor;
 import xyz.cleangone.data.aws.dynamo.entity.purchase.Cart;
 import xyz.cleangone.data.manager.EventManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
@@ -17,6 +18,7 @@ import xyz.cleangone.e2.web.vaadin.desktop.org.event.ItemPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.payment.IatsPaymentPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.payment.PaymentPage;
 import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
+import xyz.cleangone.payment.iats.IatsClient;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -69,7 +71,8 @@ public class CartPage extends BasePage implements View
         mainLayout.removeAllComponents();
         mainLayout.addComponent(cartPanel);
 
-        String pageName = orgMgr.getOrg().isPaymentProcessor(Organization.PaymentProcessorType.iATS) ? IatsPaymentPage.NAME : PaymentPage.NAME;
+        PaymentProcessor paymentProcessor = orgMgr.getPaymentProcessor();
+        String pageName = PaymentProcessor.isValidIats(paymentProcessor) ? IatsPaymentPage.NAME : PaymentPage.NAME;
 
         // todo - check if items still all available
         if (!cart.isEmpty()) { mainLayout.addComponent(createTextButton("Checkout", e -> navigateTo(pageName))); }

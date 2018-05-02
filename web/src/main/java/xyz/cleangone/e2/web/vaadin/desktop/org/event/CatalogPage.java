@@ -2,6 +2,7 @@ package xyz.cleangone.e2.web.vaadin.desktop.org.event;
 
 import com.vaadin.navigator.View;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.UI;
 import xyz.cleangone.data.aws.dynamo.entity.action.Action;
 import xyz.cleangone.data.aws.dynamo.entity.bid.BidUtils;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
@@ -34,9 +35,9 @@ public class CatalogPage extends BaseEventPage implements View, CatalogView
     protected ImageManager imageMgr;
     protected BidManager bidManager;
     protected OrgTag category;
+    private CatalogLayout catalogLayout;
 
     protected BidHandler bidHandler;
-
     Set<String> itemIds = Collections.emptySet();
 
     public CatalogPage()
@@ -53,6 +54,8 @@ public class CatalogPage extends BaseEventPage implements View, CatalogView
         imageMgr = itemMgr.getImageManager();
 
         bidHandler = new BidHandler(this, sessionMgr, actionBar);
+
+        UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> resetPageWidth());
 
         leftLayout.set(category);
         setCenterLayout();
@@ -81,13 +84,18 @@ public class CatalogPage extends BaseEventPage implements View, CatalogView
             .map(CatalogItem::getId)
             .collect(Collectors.toSet());
 
-        CatalogLayout catalogLayout = new CatalogLayout(visibleItems.size(), eventMgr, bidManager);
+        catalogLayout = new CatalogLayout(UI.getCurrent().getPage().getBrowserWindowWidth(), eventMgr, bidManager);
         for (CatalogItem item : visibleItems)
         {
             catalogLayout.addItem(item, user, getQuickBidButton(item));
         }
 
         centerLayout.addComponent(catalogLayout);
+    }
+
+    private void resetPageWidth()
+    {
+        catalogLayout.resetPageWidth(UI.getCurrent().getPage().getBrowserWindowWidth());
     }
 
     protected Button getQuickBidButton(CatalogItem item)
@@ -106,51 +114,5 @@ public class CatalogPage extends BaseEventPage implements View, CatalogView
     {
         bidHandler.handleBid(item, event, maxBid);
     }
-
-//    protected Button getQuickBidButton(CatalogItem item)
-//    {
-//        BigDecimal bidAmount = BidUtils.getIncrementedAmount(item.getPrice());
-//        return createTextButton("Bid $" + bidAmount, ev -> handleBid(item, bidAmount));
-//    }
-//
-//    protected void handleWatch(CatalogItem item, boolean watch)
-//    {
-//        if (watch) { user.addWatchedItemId(item.getId()); }
-//        else  { user.removeWatchedItemId(item.getId()); }
-//
-//        userMgr.saveUser();
-//        setCenterLayout();
-//    }
-//
-//    protected void handleBid(CatalogItem item, DollarField maxBidField)
-//    {
-//        handleBid(item, maxBidField.getDollarValue());
-//    }
-//    protected void handleBid(CatalogItem item, BigDecimal maxBid)
-//    {
-//        if (maxBid.compareTo(item.getPrice()) > 0)
-//        {
-//            // note - item will be updated in-place with any new bid
-//            BidStatus bidStatus = bidManager.createBid(user, item, maxBid);
-//
-//            if (bidStatus.getUserBid() != null)
-//            {
-//                ActionManager actionMgr = orgMgr.getActionManager();
-//                Action bid = actionMgr.createBid(user, bidStatus.getUserBid(), item, event);
-//                actionMgr.save(bid);
-//                actionBar.displayMessage("Bid submitted");
-//
-//                if (bidStatus.getPreviousHighBid() != null)
-//                {
-//                    schedule(new OutbidEmailSender(bidStatus.getPreviousHighBid(), sessionMgr));
-//                }
-//
-//                setCenterLayout();
-//            }
-//        }
-//
-//        Broadcaster.broadcast(item);
-//    }
-
 
 }

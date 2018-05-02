@@ -78,6 +78,7 @@ public class ItemAdmin extends VerticalLayout
         formLayout.addComponent(createDollarField(PRICE_FIELD));
         formLayout.addComponent(quantityField);
         formLayout.addComponent(dropWindowField);
+        formLayout.addComponent(createIntegerField(RELATIVE_WIDTH_FIELD));
         formLayout.addComponent(createSaleTypeRadioButtonGroup(quantityField, dropWindowField));
         formLayout.addComponent(createSaleStatusRadioButtonGroup());
         formLayout.addComponent(createDateField(AVAIL_START_FIELD));

@@ -113,6 +113,8 @@ public class ItemPage extends CatalogPage implements View
                                 detailslayout.addComponent(getCautionLabel("Your bid of " + userBid.getDisplayMaxAmount() + " was outbid"));
                             }
                         }
+
+                        if (user.isWatching(item.getId())) { detailslayout.addComponent(getStopWatchingButton(item)); }
                     }
                     else
                     {
@@ -227,8 +229,7 @@ public class ItemPage extends CatalogPage implements View
 
         if (user != null)
         {
-            detailslayout.addComponent(user.isWatching(item.getId()) ?
-                createTextButton("Stop Watching", ev -> handleWatch(item, false)) :
+            detailslayout.addComponent(user.isWatching(item.getId()) ? getStopWatchingButton(item) :
                 createTextButton("Watch", ev -> handleWatch(item, true)));
         }
 
@@ -259,6 +260,11 @@ public class ItemPage extends CatalogPage implements View
         }
 
         return userOutbid;
+    }
+
+    private Button getStopWatchingButton(CatalogItem item)
+    {
+        return createTextButton("Stop Watching", ev -> handleWatch(item, false));
     }
 
     class BidsDisclosure extends BaseDisclosure

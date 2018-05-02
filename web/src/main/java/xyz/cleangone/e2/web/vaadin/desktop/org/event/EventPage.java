@@ -2,6 +2,7 @@ package xyz.cleangone.e2.web.vaadin.desktop.org.event;
 
 import com.vaadin.navigator.View;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.UI;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityType;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
 import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
@@ -18,6 +19,9 @@ public class EventPage extends BaseEventPage implements View
     public static final String NAME = "Event";
     private static String STYLE_WORD_WRAP = "wordWrap";
 
+    private List<CatalogItem> items;
+    private CatalogLayout catalogLayout;
+
     protected String getPageName()
     {
         return event == null ? "Event" : event.getName();
@@ -28,6 +32,8 @@ public class EventPage extends BaseEventPage implements View
         PageDisplayType leftDisplayType = leftLayout.set();
         PageDisplayType centerDisplayType = setCenterLayout();
         PageDisplayType rightDisplayType = rightLayout.set();
+
+        UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> setCatalogLayout());
 
         return getPageDisplayType(leftDisplayType, centerDisplayType, rightDisplayType);
     }
@@ -54,16 +60,20 @@ public class EventPage extends BaseEventPage implements View
         centerLayout.addComponent(label);
 
         // for now, items without categories will be displayed on event page
-        List<CatalogItem> items = itemMgr.getItems().stream()
+        items = itemMgr.getItems().stream()
+            .filter(item -> item.getEnabled())
             .filter(item -> item.getCategoryIds().isEmpty())
             .collect(Collectors.toList());
-
-
-        if (!items.isEmpty())
-        {
-            centerLayout.addComponent(new CatalogLayout(items, user, eventMgr, orgMgr.getBidManager()));
-        }
+        setCatalogLayout();
 
         return PageDisplayType.ObjectRetrieval;
+    }
+
+    private void setCatalogLayout()
+    {
+        if (catalogLayout != null) { centerLayout.removeComponent(catalogLayout); }
+
+        catalogLayout = new CatalogLayout(UI.getCurrent().getPage().getBrowserWindowWidth(), items, user, eventMgr, orgMgr.getBidManager());
+        centerLayout.addComponent(catalogLayout);
     }
 }

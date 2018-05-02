@@ -58,6 +58,7 @@ public class MyUI extends BroadcastListeningUI implements BroadcastListener
     public static final String VERIFY_EMAIL_URL_PARAM = "verify";
     public static final String ITEM_URL_PARAM = "item";
     public static final BrowserStats BROWSER_STATS = new BrowserStats();
+    public static boolean COLORS = false;
 
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
     @VaadinServletConfiguration(ui = MyUI.class, productionMode = false)

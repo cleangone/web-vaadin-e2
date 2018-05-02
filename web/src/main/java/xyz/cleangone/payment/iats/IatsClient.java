@@ -1,11 +1,12 @@
 package xyz.cleangone.payment.iats;
 
 import com.iatspayments.www.NetGate.*;
+import xyz.cleangone.data.aws.dynamo.entity.organization.PaymentProcessor;
+import xyz.cleangone.data.aws.dynamo.entity.person.Address;
 import xyz.cleangone.payment.PaymentResult;
 
 import java.util.HashMap;
 import java.util.Map;
-
 
 public class IatsClient
 {
@@ -14,6 +15,10 @@ public class IatsClient
     private String agentCode; // = "TEST88";
     private String password; // = "TEST88";
 
+    public IatsClient(PaymentProcessor processor)
+    {
+        this(processor.getUser(), processor.getAuth());
+    }
     public IatsClient(String agentCode, String password)
     {
         this.agentCode = agentCode;
@@ -32,16 +37,14 @@ public class IatsClient
     }
 
     public PaymentResult chargeCreditCard(
-        String invoiceNum, String ccNumber, String ccExpirationDate,
-        String firstName, String lastName, String address, String city, String state, String zip,
-        String cvv2, String total)
+        String invoiceNum, String ccNumber, String ccExpirationDate, String firstName, String lastName, Address address, String cvv2, String total)
     {
         try
         {
             String mop = CardType.VISA.toString();
             ProcessCreditCardV1 processCC = new ProcessCreditCardV1(
                 agentCode, password, "", invoiceNum, ccNumber, ccExpirationDate, cvv2, mop,
-                firstName, lastName, address, city, state, zip,
+                firstName, lastName, address.getStreetAddress(), address.getCity(),  address.getState(),  address.getZip(),
                 total, "comment");
 
             ProcessLinkService processLinkService = new ProcessLinkService();

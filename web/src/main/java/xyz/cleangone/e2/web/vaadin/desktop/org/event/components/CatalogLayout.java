@@ -1,54 +1,53 @@
 package xyz.cleangone.e2.web.vaadin.desktop.org.event.components;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.S3Link;
-import com.vaadin.shared.ui.AlignmentInfo;
+import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
-import org.vaadin.kim.countdownclock.CountdownClock;
-import xyz.cleangone.data.aws.dynamo.entity.bid.UserBid;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.manager.EventManager;
-import xyz.cleangone.data.manager.ImageManager;
 import xyz.cleangone.data.manager.event.BidManager;
-import xyz.cleangone.e2.web.vaadin.desktop.image.ImageDimension;
-import xyz.cleangone.e2.web.vaadin.desktop.image.ImageLabel;
-import xyz.cleangone.e2.web.vaadin.desktop.org.event.EventUtils;
-import xyz.cleangone.e2.web.vaadin.desktop.org.event.ItemPage;
+import xyz.cleangone.e2.web.vaadin.desktop.MyUI;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static xyz.cleangone.e2.web.vaadin.desktop.org.event.EventUtils.*;
-
 public class CatalogLayout extends GridLayout
 {
-    private static final int ITEM_COLS = 2;  // todo - make responsive to page size
-
     private final EventManager eventMgr;
     private final BidManager bidManager;
+
+    private List<CatalogItemLayout> itemLayouts = new ArrayList<>();
     private Map<String, OrgEvent> eventsById;
 
-    public CatalogLayout(int numItems, EventManager eventMgr, BidManager bidManager)
+    int pageWidth;
+    int maxCols;
+    int currCol;
+    int currRow;
+
+    public CatalogLayout(int pageWidth, EventManager eventMgr, BidManager bidManager)
     {
         this.eventMgr = eventMgr;
         this.bidManager = bidManager;
 
-        int rows = Math.max((numItems + 1)/ITEM_COLS, 1);
-        setColumns(ITEM_COLS);
-        setRows(rows);
-        setMargin(false);
+        setWidth("100%");
+        setMargin(new MarginInfo(true, false, false, false)); // T/R/B/L margins
+        setSpacing(true);
+        setPageWidth(pageWidth);
+
+        if (MyUI.COLORS) { setStyleName("backOrange"); }
     }
 
-    public CatalogLayout(int numItems, EventManager eventMgr, BidManager bidManager, Map<String, OrgEvent> eventsById)
+    public CatalogLayout(int pageWidth, EventManager eventMgr, BidManager bidManager, Map<String, OrgEvent> eventsById)
     {
-        this(numItems, eventMgr, bidManager);
+        this(pageWidth, eventMgr, bidManager);
         this.eventsById = eventsById;
     }
 
-    public CatalogLayout(List<CatalogItem> items, User user, EventManager eventMgr, BidManager bidManager)
+    public CatalogLayout(int pageWidth, List<CatalogItem> items, User user, EventManager eventMgr, BidManager bidManager)
     {
-        this(items.size(), eventMgr, bidManager);
+        this(pageWidth, eventMgr, bidManager);
 
         for (CatalogItem item : items)
         {
@@ -56,89 +55,59 @@ public class CatalogLayout extends GridLayout
         }
     }
 
+    private void setPageWidth(int pageWidth)
+    {
+        this.pageWidth = pageWidth;
+        int layoutWidth = pageWidth - 200;
+        maxCols = layoutWidth / 200;
+        currCol = 0;
+        currRow = 0;
+
+        setRows(1);
+        setColumns(maxCols);
+        for (int i = 0; i < maxCols; i++) { setColumnExpandRatio(i, 1); }
+    }
+
+    public void resetPageWidth(int pageWidth)
+    {
+        if (pageWidth != this.pageWidth)
+        {
+            removeAllComponents();
+            setPageWidth(pageWidth);
+            for (CatalogItemLayout itemLayout : itemLayouts) { addComponent(itemLayout); }
+        }
+    }
+
     public void addItem(CatalogItem item, User user, Button quickBidButton)
     {
-        addComponent(getItemLayout(item, user, quickBidButton));
+        CatalogItemLayout itemLayout = new CatalogItemLayout(item, user, quickBidButton, eventMgr, bidManager, eventsById);
+        itemLayouts.add(itemLayout);
+
+        addComponent(itemLayout);
     }
 
-    private Component getItemLayout(CatalogItem item, User user, Button quickBidButton)
+    private void addComponent(CatalogItemLayout itemLayout)
     {
-        VerticalLayout layout = new VerticalLayout();
-        layout.setMargin(true);
-        layout.setSpacing(false);
-        layout.setStyleName("category");
-        layout.setDefaultComponentAlignment(new Alignment(AlignmentInfo.Bits.ALIGNMENT_HORIZONTAL_CENTER));
+        int extraItemWidth = (itemLayout.getRelativeWidth() == null || itemLayout.getRelativeWidth() == 1) ? 0 : 1; // max out at double col width
+        if (extraItemWidth >= maxCols) { extraItemWidth = 0; }  // for now, this means only have one col
 
-        List<S3Link> images = item.getImages();
-        if (images != null && !images.isEmpty())
+        int spanCol = currCol + extraItemWidth;
+        if (spanCol >= maxCols)
         {
-            String imageUrl = ImageManager.getUrl(images.get(0));
-            ImageLabel imageLabel = new ImageLabel(imageUrl, ImageDimension.height(250));
-            layout.addComponent(imageLabel);
+            addRow();
+            spanCol = currCol + extraItemWidth;
         }
 
-        layout.addComponent(new Label(item.getName()));
+        addComponent(itemLayout, currCol, currRow, spanCol, currRow);
 
-        PriceLayout priceLayout = getPriceLayout(item, user);
-        layout.addComponent(priceLayout);
-
-        if (EventUtils.showCountdownClock(item.getAvailabilityEnd()))
-        {
-            CountdownClock clock = EventUtils.getCountdownClock(item.getAvailabilityEnd());
-            layout.addComponent(clock);
-        }
-
-        if (quickBidButton != null && priceLayout.userOutbid && user.getShowQuickBid()) { layout.addComponent(quickBidButton); }
-
-        layout.addLayoutClickListener( e -> {
-            if (eventsById != null) { eventMgr.setEvent(eventsById.get(item.getEventId())); }
-            eventMgr.setItem(item);
-            getUI().getNavigator().addView(ItemPage.NAME, new ItemPage());
-            getUI().getNavigator().navigateTo(ItemPage.NAME);
-        });
-
-        return layout;
+        currCol = spanCol + 1;
+        if (currCol >= maxCols) { addRow(); }
     }
 
-    private PriceLayout getPriceLayout(CatalogItem item, User user)
+    private void addRow()
     {
-        PriceLayout layout = new PriceLayout();
-        layout.setMargin(false);
-        layout.setSizeUndefined();
-
-        layout.addComponent(new Label(item.getDisplayPrice()));
-
-        if (item.isSold())
-        {
-            layout.addComponent((user != null && user.getId().equals(item.getHighBidderId())) ?
-                getGoodNewsLabel("Won") : getSoldLabel());
-        }
-        else
-        {
-            if (item.getHighBidderId() != null && user != null)
-            {
-                if (item.getHighBidderId().equals(user.getId()))
-                {
-                    layout.addComponent(getGoodNewsLabel("Winning"));
-                }
-                else
-                {
-                    UserBid userBid = bidManager.getUserBid(user, item);
-                    if (userBid != null)
-                    {
-                        layout.addComponent(getCautionLabel("Outbid"));
-                        layout.userOutbid = true;
-                    }
-                }
-            }
-        }
-
-        return layout;
-    }
-
-
-    class PriceLayout extends HorizontalLayout
-    {
-        boolean userOutbid = false;
+        currCol = 0;
+        currRow++;
+        setRows(currRow + 1);
     }
 }

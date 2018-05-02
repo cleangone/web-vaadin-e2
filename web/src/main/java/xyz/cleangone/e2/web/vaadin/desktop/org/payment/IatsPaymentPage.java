@@ -4,7 +4,7 @@ import com.vaadin.navigator.View;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.TextField;
-import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
+import xyz.cleangone.data.aws.dynamo.entity.organization.PaymentProcessor;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
@@ -13,7 +13,7 @@ import xyz.cleangone.payment.iats.IatsClient;
 
 public class IatsPaymentPage extends PaymentPage implements View
 {
-    public static final String NAME = "PaymentI";
+    public static final String NAME = "IatsPayment";
 
     private TextField ccField = VaadinUtils.createTextField("Credit Card");
     private TextField expirationDateField = VaadinUtils.createTextField("Expiration Date");
@@ -23,15 +23,7 @@ public class IatsPaymentPage extends PaymentPage implements View
 
     protected PageDisplayType set(SessionManager sessionMgr)
     {
-        iatsClient = null;
-        Organization org = sessionMgr.getOrg();
-        if (org != null &&
-            org.getPaymentProcessorType() == Organization.PaymentProcessorType.iATS &&
-            org.getPaymentProcessorUser() != null &&
-            org.getPaymentProcessorAuth() != null)
-        {
-            iatsClient = new IatsClient(org.getPaymentProcessorUser(), org.getPaymentProcessorAuth());
-        }
+        iatsClient = new IatsClient(sessionMgr.getOrgManager().getPaymentProcessor());
 
         return super.set(sessionMgr);
     }
@@ -57,10 +49,7 @@ public class IatsPaymentPage extends PaymentPage implements View
         Button button = getCheckoutButton();
         button.addClickListener(e -> {
             PaymentResult paymentResult = iatsClient.chargeCreditCard(invoiceNumber,
-                ccField.getValue(), expirationDateField.getValue(),
-                person.getFirstLast(), person.getLastName(),
-                user.getAddress(), user.getCity(), user.getState(), user.getZip(),
-                cvvField.getValue(),
+                ccField.getValue(), expirationDateField.getValue(), person.getFirstLast(), person.getLastName(), address, cvvField.getValue(),
                 cart.getTotal().toString());
 
             handlePaymentResult(paymentResult);

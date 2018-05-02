@@ -1,13 +1,17 @@
 package xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org;
 
+import com.vaadin.data.HasValue;
 import com.vaadin.server.Sizeable;
 import com.vaadin.ui.*;
 import org.vaadin.viritin.fields.IntegerField;
 import xyz.cleangone.data.aws.dynamo.dao.DynamoBaseDao;
-import xyz.cleangone.data.aws.dynamo.dao.OrgDao;
+import xyz.cleangone.data.aws.dynamo.dao.org.OrgDao;
+import xyz.cleangone.data.aws.dynamo.dao.org.PaymentProcessorDao;
+import xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
 import xyz.cleangone.data.aws.dynamo.entity.organization.BaseOrg;
 import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
+import xyz.cleangone.data.aws.dynamo.entity.organization.PaymentProcessor;
 import xyz.cleangone.data.manager.OrgManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.disclosure.BaseOrgDisclosure;
@@ -18,9 +22,8 @@ import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import static xyz.cleangone.data.aws.dynamo.entity.organization.Organization.EVENT_CAPTION_FIELD;
-import static xyz.cleangone.data.aws.dynamo.entity.organization.Organization.EVENT_CAPTION_PLURAL_FIELD;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.createIntegerField;
+import static xyz.cleangone.data.aws.dynamo.entity.organization.Organization.*;
+import static xyz.cleangone.data.aws.dynamo.entity.organization.PaymentProcessor.*;
 import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.createTextField;
 
 public class OrgAdmin extends BaseOrgAdmin
@@ -28,6 +31,10 @@ public class OrgAdmin extends BaseOrgAdmin
     private final FormLayout formLayout = new FormLayout();
 
     private OrgManager orgMgr;
+    private OrgDao orgDao;
+    private PaymentProcessorDao paymentProcessorDao;
+    private Organization org;
+    private PaymentProcessor paymentProcessor;
 
     public OrgAdmin(MessageDisplayer msgDisplayer)
     {
@@ -53,41 +60,50 @@ public class OrgAdmin extends BaseOrgAdmin
     public void set()
     {
         imageAdmin.set(orgMgr, getUI());
-        Organization org = orgMgr.getOrg();
-        OrgDao dao = orgMgr.getOrgDao();
+
+        org = orgMgr.getOrg();
+        paymentProcessor = orgMgr.getPaymentProcessor();
+
+        orgDao = orgMgr.getOrgDao();
+        paymentProcessorDao = orgMgr.getPaymentProcessorDao();
 
         formLayout.removeAllComponents();
 
-        formLayout.addComponent(new NameDisclosure(org, dao));
-        formLayout.addComponent(new BannerDisclosure(org, orgMgr, dao));
-        formLayout.addComponent(new BannerTextDisclosure(org, dao));
-        formLayout.addComponent(new MenuDisclosure(org, dao));
-        formLayout.addComponent(new LayoutDisclosure(org, dao));
+        formLayout.addComponent(new NameDisclosure(org, orgDao));
+        formLayout.addComponent(new BannerDisclosure(org, orgMgr, orgDao));
+        formLayout.addComponent(new BannerTextDisclosure(org, orgDao));
+        formLayout.addComponent(new MenuDisclosure(org, orgDao));
+        formLayout.addComponent(new LayoutDisclosure(org));
         formLayout.addComponent(new ImagesDisclosure(imageAdmin));
-        formLayout.addComponent(new IntroHtmlDisclosure(org, dao));
-        formLayout.addComponent(new EventDisclosure(org, dao));
-        formLayout.addComponent(new PaymentProcessorDisclosure(org, dao));
+        formLayout.addComponent(new IntroHtmlDisclosure(org, orgDao));
+        formLayout.addComponent(new EventDisclosure(org));
+        formLayout.addComponent(new PaymentProcessorDisclosure(org));
+    }
+
+    public TextField createListeningTextField(EntityField field, BaseEntity entity, HasValue.ValueChangeListener<String> listener)
+    {
+        return createListeningTextField(field, entity, orgDao, msgDisplayer, listener);
     }
 
     class LayoutDisclosure extends BaseOrgDisclosure
     {
-        LayoutDisclosure(Organization org, OrgDao dao)
+        LayoutDisclosure(Organization org)
         {
             super("Layout", new FormLayout(), org);
 
             setDisclosureCaption();
             mainLayout.addComponents(
-                createIntegerField(Organization.LEFT_WIDTH_FIELD, dao),
-                createIntegerField(Organization.CENTER_WIDTH_FIELD, dao),
-                createIntegerField(Organization.RIGHT_WIDTH_FIELD, dao),
-                createIntegerField(Organization.MAX_LEFT_WIDTH_FIELD, dao),
-                createIntegerField(Organization.MAX_CENTER_WIDTH_FIELD, dao),
-                createIntegerField(Organization.MAX_RIGHT_WIDTH_FIELD, dao));
+                createIntegerField(Organization.LEFT_WIDTH_FIELD),
+                createIntegerField(Organization.CENTER_WIDTH_FIELD),
+                createIntegerField(Organization.RIGHT_WIDTH_FIELD),
+                createIntegerField(Organization.MAX_LEFT_WIDTH_FIELD),
+                createIntegerField(Organization.MAX_CENTER_WIDTH_FIELD),
+                createIntegerField(Organization.MAX_RIGHT_WIDTH_FIELD));
         }
 
-        public Component createIntegerField(EntityField field, OrgDao dao)
+        public Component createIntegerField(EntityField field)
         {
-            IntegerField intField = VaadinUtils.createIntegerField(field, org, dao, 5, msgDisplayer);
+            IntegerField intField = VaadinUtils.createIntegerField(field, org, orgDao, 5, msgDisplayer);
             intField.addValueChangeListener(event -> setDisclosureCaption());
             return intField;
         }
@@ -106,20 +122,21 @@ public class OrgAdmin extends BaseOrgAdmin
 
     class PaymentProcessorDisclosure extends BaseOrgDisclosure
     {
-        private OrgDao dao;
         private List<TextField> textFields = new ArrayList<>();
 
-        PaymentProcessorDisclosure(Organization org, OrgDao dao)
+        PaymentProcessorDisclosure(Organization org)
         {
-            super("Payment Processor", new FormLayout(), org);;
-            this.dao = dao;
+            super("Payment Processor", new FormLayout(), org);
 
-            RadioButtonGroup<Organization.PaymentProcessorType> paymentProcessors = new RadioButtonGroup<>("Processor Type");
-            paymentProcessors.setItems(Organization.PaymentProcessorType.iATS, Organization.PaymentProcessorType.None);
-            if (org.getPaymentProcessorType() != null) { paymentProcessors.setValue(org.getPaymentProcessorType()); }
+            RadioButtonGroup<PaymentProcessor.PaymentProcessorType> paymentProcessors = new RadioButtonGroup<>("Processor Type");
+
+            paymentProcessors.setItems(PaymentProcessor.PaymentProcessorType.iATS, PaymentProcessor.PaymentProcessorType.None);
+
+            if (paymentProcessor != null) { paymentProcessors.setValue(paymentProcessor.getType()); }
             paymentProcessors.addValueChangeListener(event -> {
-                org.setPaymentProcessorType((Organization.PaymentProcessorType)event.getValue());
-                dao.save(org);
+                if (paymentProcessor == null) { paymentProcessor = orgMgr.createPaymentProcessor(); }
+                paymentProcessor.setType((PaymentProcessor.PaymentProcessorType)event.getValue());
+                paymentProcessorDao.save(paymentProcessor);
                 msgDisplayer.displayMessage("Payment Processor saved");
                 setDisclosureCaption();
                 setTextFields();
@@ -135,10 +152,10 @@ public class OrgAdmin extends BaseOrgAdmin
             textFields.forEach(textField -> mainLayout.removeComponent(textField));
             textFields.clear();
 
-            if (org.getPaymentProcessorType() == Organization.PaymentProcessorType.iATS)
+            if (paymentProcessor != null && paymentProcessor.isIats())
             {
-                textFields.add(createTextField(Organization.IATS_AGENT_CODE_FIELD, org, dao, 15, msgDisplayer));
-                textFields.add(createObscuredTextField(Organization.IATS_PASSWORD_FIELD, org, dao, 15, msgDisplayer));
+                textFields.add(createTextField(IATS_AGENT_CODE_FIELD, paymentProcessor, paymentProcessorDao, 15, msgDisplayer));
+                textFields.add(createObscuredTextField(IATS_PASSWORD_FIELD, paymentProcessor, paymentProcessorDao, 15, msgDisplayer));
             }
 
             textFields.forEach(textField -> mainLayout.addComponent(textField));
@@ -146,19 +163,19 @@ public class OrgAdmin extends BaseOrgAdmin
 
         public void setDisclosureCaption()
         {
-            setDisclosureCaption(org.getPaymentProcessorType() == null ? "Not set" :  org.getPaymentProcessorType().toString());
+            setDisclosureCaption(paymentProcessor == null ? "Not set" :  paymentProcessor.getType().toString());
         }
     }
 
     protected class EventDisclosure extends BaseOrgDisclosure
     {
-        public EventDisclosure(Organization org, DynamoBaseDao dao)
+        public EventDisclosure(Organization org)
         {
             super("Event Caption", new FormLayout(), org);
             setDisclosureCaption();
             mainLayout.addComponents(
-                createListeningTextField(EVENT_CAPTION_FIELD, baseOrg, dao, msgDisplayer, event -> setDisclosureCaption()),
-                createListeningTextField(EVENT_CAPTION_PLURAL_FIELD, baseOrg, dao, msgDisplayer, event -> setDisclosureCaption()));
+                createListeningTextField(EVENT_CAPTION_FIELD, baseOrg, event -> setDisclosureCaption()),
+                createListeningTextField(EVENT_CAPTION_PLURAL_FIELD, baseOrg, event -> setDisclosureCaption()));
         }
 
         public void setDisclosureCaption()
@@ -171,7 +188,7 @@ public class OrgAdmin extends BaseOrgAdmin
 
 
     public TextField createObscuredTextField(
-        EntityField field, Organization entity, DynamoBaseDao dao, float widthInEm, MessageDisplayer msgDisplayer)
+        EntityField field, BaseEntity entity, DynamoBaseDao dao, float widthInEm, MessageDisplayer msgDisplayer)
     {
         String OBSCURED = "*****";
 

@@ -4,8 +4,10 @@ import com.vaadin.shared.ui.AlignmentInfo;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.apache.commons.lang3.StringUtils;
+import xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
 import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
+import xyz.cleangone.data.aws.dynamo.entity.person.Address;
 import xyz.cleangone.data.aws.dynamo.entity.person.Person;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.aws.dynamo.entity.person.UserToken;
@@ -21,6 +23,7 @@ import xyz.cleangone.message.EmailSender;
 
 import static java.util.Objects.requireNonNull;
 import static xyz.cleangone.data.aws.dynamo.entity.person.User.*;
+import static xyz.cleangone.data.aws.dynamo.entity.person.Address.*;
 import static xyz.cleangone.e2.web.vaadin.util.DisclosureUtils.createCheckBox;
 import static xyz.cleangone.e2.web.vaadin.util.DisclosureUtils.createTextField;
 import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
@@ -35,6 +38,7 @@ public class ProfileAdmin extends BaseAdmin
     private Organization org;
     private User user;
     private Person person;
+    private Address address;
     private EntityChangeManager changeManager = new EntityChangeManager();
 
     public ProfileAdmin(MessageDisplayer msgDisplayer)
@@ -55,6 +59,7 @@ public class ProfileAdmin extends BaseAdmin
         org = sessionMgr.getOrg();
         user = userMgr.getUser();
         person = userMgr.getPerson();
+        address = userMgr.getAddress();
 
         set();
     }
@@ -211,28 +216,41 @@ public class ProfileAdmin extends BaseAdmin
         {
             super("Address", new FormLayout());
 
+            if (address != null) { setFields(); }
             setDisclosureCaption();
+        }
+
+        // called when opened
+        public void setOpen(boolean open)
+        {
+            super.setOpen(open);
+
+            if (address == null)
+            {
+                address = userMgr.createAddress();
+                setFields();
+            }
+        }
+
+        void setFields()
+        {
             mainLayout.addComponents(
-                createUserTextField(ADDRESS_FIELD, this),
-                createUserTextField(CITY_FIELD, this),
-                createUserTextField(STATE_FIELD, this),
-                createUserTextField(ZIP_FIELD, this));
+                createAddressTextField(ADDRESS_FIELD, this),
+                createAddressTextField(CITY_FIELD, this),
+                createAddressTextField(STATE_FIELD, this),
+                createAddressTextField(ZIP_FIELD, this));
         }
 
         public void setDisclosureCaption()
         {
-            String caption =
-                (user.getAddress() == null && user.getCity() == null && user.getState() == null && user.getZip() == null) ?
-                    "Address not set" :
-                    getOrDefault(user.getAddress(),   "Address") + ", " +
-                        getOrDefault(user.getCity(),  "City")    + ", " +
-                        getOrDefault(user.getState(), "State")   + ", " +
-                        getOrDefault(user.getZip(),   "Zip");
-
-            setDisclosureCaption(caption);
+            setDisclosureCaption(address == null ? "Address not set" :
+                getOrDefault(Address.ADDRESS_FIELD) + ", " +
+                getOrDefault(Address.CITY_FIELD)    + ", " +
+                getOrDefault(Address.STATE_FIELD)   + ", " +
+                getOrDefault(Address.ZIP_FIELD));
         }
 
-        String getOrDefault(String value, String defaultValue) { return value == null ? "<No " + defaultValue + ">" : value; }
+        String getOrDefault(EntityField field) { return address.get(field) == null ? "<No " + field.getDisplayName() + ">" : address.get(field); }
     }
 
     class PasswordDisclosure extends BaseDisclosure
@@ -305,5 +323,9 @@ public class ProfileAdmin extends BaseAdmin
         return createTextField(field, person, userMgr.getPersonDao(), msgDisplayer, disclosure);
     }
 
+    private TextField createAddressTextField(EntityField field, BaseDisclosure disclosure)
+    {
+        return createTextField(field, address, userMgr.getAddressDao(), msgDisplayer, disclosure);
+    }
 
 }

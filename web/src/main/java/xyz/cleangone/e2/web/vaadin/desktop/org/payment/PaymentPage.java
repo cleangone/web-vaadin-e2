@@ -9,10 +9,12 @@ import xyz.cleangone.data.aws.dynamo.entity.action.Action;
 import xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
 import xyz.cleangone.data.aws.dynamo.entity.item.CartItem;
+import xyz.cleangone.data.aws.dynamo.entity.person.Address;
 import xyz.cleangone.data.aws.dynamo.entity.person.Person;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.aws.dynamo.entity.purchase.Cart;
 import xyz.cleangone.data.manager.ActionManager;
+import xyz.cleangone.data.manager.UserManager;
 import xyz.cleangone.e2.web.vaadin.desktop.org.BasePage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
@@ -37,6 +39,7 @@ public class PaymentPage extends BasePage implements View
     protected Cart cart;
     protected User user;
     protected Person person;
+    protected Address address;
 
     public PaymentPage()
     {
@@ -55,14 +58,17 @@ public class PaymentPage extends BasePage implements View
     protected PageDisplayType set(SessionManager sessionMgr)
     {
         super.set(sessionMgr);
+        UserManager userMgr = sessionMgr.getUserManager();
 
-        user = sessionMgr.getUserManager().copyUser();  // copy so one-time changes do not affect prfile
+        user = userMgr.copyUser();  // copy so one-time changes do not affect profile
         if (user == null)
         {
             user = new User();
             user.setPerson(new Person());
         }
+
         person = user.getPerson();
+        address = userMgr.copyAddress();
 
         cart = sessionMgr.getCart();
 
@@ -89,13 +95,13 @@ public class PaymentPage extends BasePage implements View
     {
         // changes in these fields affect checkout but are not yet saved for a logged-in user
         formLayout.addComponent(createTextField(Person.FIRST_NAME_FIELD, person));
-        formLayout.addComponent(createTextField(Person.LAST_NAME_FIELD, person));
+        formLayout.addComponent(createTextField(Person.LAST_NAME_FIELD,  person));
         formLayout.addComponent(createTextField(User.EMAIL_FIELD, user));
 
-        formLayout.addComponent(createTextField(User.ADDRESS_FIELD, user));
-        formLayout.addComponent(createTextField(User.CITY_FIELD, user));
-        formLayout.addComponent(createTextField(User.STATE_FIELD, user));
-        formLayout.addComponent(createTextField(User.ZIP_FIELD, user));
+        formLayout.addComponent(createTextField(Address.ADDRESS_FIELD, address));
+        formLayout.addComponent(createTextField(Address.CITY_FIELD,    address));
+        formLayout.addComponent(createTextField(Address.STATE_FIELD,   address));
+        formLayout.addComponent(createTextField(Address.ZIP_FIELD,     address));
     }
 
     protected Button getCheckoutButton()

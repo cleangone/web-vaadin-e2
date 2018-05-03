@@ -29,6 +29,7 @@ public class RightColLayout extends VerticalLayout
     private TagManager tagMgr;
     private OrgEvent event;
     private User user;
+    private int colWidth;
     private EntityChangeManager changeManager = new EntityChangeManager();
 
     public RightColLayout(ActionBar actionBar)
@@ -60,7 +61,7 @@ public class RightColLayout extends VerticalLayout
 
         changeManager.reset(user, event);
         removeAllComponents();
-        setWidth("28em");
+        setColWidth(400);
 
         if (!event.getUserCanRegister() && !event.getAcceptDonations() && !event.getAcceptPledges())
         {
@@ -98,5 +99,15 @@ public class RightColLayout extends VerticalLayout
         }
 
         return PageDisplayType.ObjectRetrieval;
+    }
+
+    public int getColWidth()
+    {
+        return colWidth;
+    }
+    public void setColWidth(int colWidth)
+    {
+        this.colWidth = colWidth;
+        setWidth(colWidth + "px");
     }
 }

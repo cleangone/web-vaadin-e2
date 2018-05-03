@@ -21,10 +21,10 @@ public class CatalogLayout extends GridLayout
     private List<CatalogItemLayout> itemLayouts = new ArrayList<>();
     private Map<String, OrgEvent> eventsById;
 
-    int pageWidth;
-    int maxCols;
-    int currCol;
-    int currRow;
+    private int pageWidth;
+    private int maxCols;
+    private int currCol;
+    private int currRow;
 
     public CatalogLayout(int pageWidth, EventManager eventMgr, BidManager bidManager)
     {

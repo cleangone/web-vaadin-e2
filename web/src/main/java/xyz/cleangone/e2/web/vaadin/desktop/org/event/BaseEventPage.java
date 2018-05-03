@@ -22,6 +22,8 @@ public abstract class BaseEventPage extends BasePage implements View
     protected final VerticalLayout centerLayout = new VerticalLayout();
     protected final RightColLayout rightLayout;
 
+    private VerticalLayout centerWrapperLayout = new VerticalLayout();
+
     protected EventManager eventMgr;
     protected ItemManager itemMgr;
     protected UserManager userMgr;
@@ -41,6 +43,9 @@ public abstract class BaseEventPage extends BasePage implements View
         mainLayout.setHeightUndefined();
         mainLayout.setMargin(false);
 
+        centerWrapperLayout.setMargin(false);
+        centerWrapperLayout.setSpacing(true);
+
         leftLayout = new LeftColLayout(getMainLayoutHeight());
         centerLayout.setMargin(new MarginInfo(false, true, false, true)); // T/R/B/L margins
         rightLayout = new RightColLayout(actionBar);
@@ -53,8 +58,11 @@ public abstract class BaseEventPage extends BasePage implements View
             }
             else if (pageCol == PageCols.Center)
             {
-                mainLayout.addComponent(centerLayout);
-                mainLayout.setExpandRatio(centerLayout, 1.0f);
+                mainLayout.addComponent(centerWrapperLayout);
+                mainLayout.setExpandRatio(centerWrapperLayout, 1.0f);
+
+                centerWrapperLayout.addComponent(centerLayout);
+                centerWrapperLayout.setExpandRatio(centerLayout, 1.0f);
             }
             else if (pageCol == PageCols.Right) { mainLayout.addComponent(rightLayout); }
         }
@@ -74,9 +82,23 @@ public abstract class BaseEventPage extends BasePage implements View
         leftLayout.set(sessionMgr);
         rightLayout.set(sessionMgr);
 
+        // move rightCol to centerwrapper if too skinny for both
+        UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> resetPageWidth());
+        resetPageWidth();
+
         resetHeader();
         return set();
     }
 
     protected abstract PageDisplayType set();
+
+    private void resetPageWidth()
+    {
+        mainLayout.removeComponent(rightLayout);
+        centerWrapperLayout.removeComponent(rightLayout);
+
+        if (UI.getCurrent().getPage().getBrowserWindowWidth() < 800) { centerWrapperLayout.addComponent(rightLayout); }
+        else { mainLayout.addComponent(rightLayout); }
+    }
+
 }

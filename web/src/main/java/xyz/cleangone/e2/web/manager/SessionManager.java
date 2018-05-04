@@ -37,6 +37,7 @@ public class SessionManager
     private String msg;
     private Set<String> eventViews = new HashSet<>();
     private Action currentAction;
+    private ViewStatusCache viewStatusCache = new ViewStatusCache();
 
     public void reset()
     {
@@ -123,6 +124,16 @@ public class SessionManager
         return getEventManager();
     }
 
+    public ViewStatus getViewStatus(String eventId, String categoryId)
+    {
+        return viewStatusCache.getViewStatus(eventId, categoryId);
+    }
+    public ViewStatus getViewStatus()
+    {
+        return (eventMgr.getEvent() == null || eventMgr.getCategory() == null) ? new ViewStatus() :
+            getViewStatus(eventMgr.getEvent().getId(), eventMgr.getCategory().getId());
+    }
+
     //
     // Users
     //
@@ -186,7 +197,6 @@ public class SessionManager
         getEventManager().setEvent(event);
 
         // todo - weird error when tab w page deleted and then site revisited
-        // todo -
         String viewName = EventPage.NAME + "-" + getOrg().getTag() + "-" + event.getTag();
         if (!eventViews.contains(viewName))
         {
@@ -226,7 +236,6 @@ public class SessionManager
     {
         cart.addItem(item);
     }
-
 
     public boolean isMobileBrowser()
     {

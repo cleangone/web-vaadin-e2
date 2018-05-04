@@ -24,11 +24,11 @@ import java.util.List;
 
 import static xyz.cleangone.data.aws.dynamo.entity.organization.Organization.*;
 import static xyz.cleangone.data.aws.dynamo.entity.organization.PaymentProcessor.*;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.createTextField;
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
 public class OrgAdmin extends BaseOrgAdmin
 {
-    private final FormLayout formLayout = new FormLayout();
+    private final FormLayout formLayout = formLayout(MARGIN_FALSE, SPACING_FALSE, WIDTH_100_PCT, VaadinUtils.SIZE_UNDEFINED);
 
     private OrgManager orgMgr;
     private OrgDao orgDao;
@@ -39,15 +39,8 @@ public class OrgAdmin extends BaseOrgAdmin
     public OrgAdmin(MessageDisplayer msgDisplayer)
     {
         super(msgDisplayer);
+        setLayout(this, MARGIN_TRUE, SPACING_TRUE, SIZE_FULL);
 
-        setSizeFull();
-        setMargin(true);
-        setSpacing(true);
-
-        formLayout.setWidth("100%");
-        formLayout.setSizeUndefined();
-        formLayout.setMargin(false);
-        formLayout.setSpacing(false);
         addComponent(formLayout);
     }
 

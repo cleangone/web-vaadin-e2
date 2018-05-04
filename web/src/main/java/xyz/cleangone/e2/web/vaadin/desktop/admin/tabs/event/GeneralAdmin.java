@@ -27,9 +27,7 @@ import static java.util.Objects.requireNonNull;
 import static xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent.BLURB_HTML_FIELD;
 import static xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent.ITER_COUNT_LABEL_PLURAL_FIELD;
 import static xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent.ITER_LABEL_SINGULAR_FIELD;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.createCkEditor;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.createIntegerField;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.createTextField;
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
 public class GeneralAdmin extends BaseOrgAdmin
 {
@@ -45,11 +43,8 @@ public class GeneralAdmin extends BaseOrgAdmin
     {
         super(msgDisplayer);
 
-        setMargin(false);
-        setSpacing(false);
-
-        formLayout.setMargin(true);
-        formLayout.setSpacing(false);
+        setLayout(this, MARGIN_FALSE, SPACING_FALSE);
+        setLayout(formLayout, MARGIN_TRUE, SPACING_FALSE);
     }
 
     public void set(SessionManager sessionMgr)

@@ -6,7 +6,9 @@ import com.vaadin.ui.*;
 import xyz.cleangone.data.aws.dynamo.entity.person.UserToken;
 import xyz.cleangone.data.manager.UserManager;
 import xyz.cleangone.e2.web.manager.VaadinSessionManager;
+import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
 public class SigninPage extends BaseOrgPage implements View
 {
@@ -25,10 +27,7 @@ public class SigninPage extends BaseOrgPage implements View
     {
         String navToPage = sessionMgr.getNavToAfterLogin(OrgPage.NAME);
 
-        FormLayout layout = new FormLayout();
-        layout.setSizeUndefined();
-        layout.setMargin(true);
-        layout.setSpacing(true);
+        FormLayout layout = formLayout(MARGIN_TRUE, SPACING_TRUE, VaadinUtils.SIZE_UNDEFINED);
 
         TextField emailField = new TextField("Email");
         PasswordField passwordField = new PasswordField("Password");

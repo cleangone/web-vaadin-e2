@@ -7,6 +7,8 @@ import xyz.cleangone.data.aws.dynamo.entity.organization.BaseOrg;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.e2.web.manager.SessionManager;
 
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+
 public class BaseActionBar extends HorizontalLayout
 {
     public static String ACTION_BAR_STYLE_NAME = "actionBarMain";
@@ -14,9 +16,7 @@ public class BaseActionBar extends HorizontalLayout
 
     public BaseActionBar()
     {
-        setWidth("100%");
-        setMargin(false);
-        setSpacing(false);
+        setLayout(this, MARGIN_FALSE, SPACING_FALSE, WIDTH_100_PCT);
         setStyleName(ACTION_BAR_STYLE_NAME);
     }
 

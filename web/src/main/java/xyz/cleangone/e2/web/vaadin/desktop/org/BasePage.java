@@ -2,7 +2,6 @@ package xyz.cleangone.e2.web.vaadin.desktop.org;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.server.WebBrowser;
 import com.vaadin.ui.*;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.manager.OrgManager;
@@ -20,6 +19,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static xyz.cleangone.e2.web.manager.PageStats.*;
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
 
 public abstract class BasePage extends Panel implements View
@@ -30,7 +30,7 @@ public abstract class BasePage extends Panel implements View
 
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
-    private VerticalLayout pageLayout = new VerticalLayout();
+    private VerticalLayout pageLayout = vertical(MARGIN_FALSE, SPACING_FALSE, BACK_YELLOW);
     private BannerComponent banner;
     protected ActionBar actionBar = new ActionBar();
     protected AbstractOrderedLayout mainLayout;
@@ -43,8 +43,7 @@ public abstract class BasePage extends Panel implements View
     public BasePage(BannerStyle bannerStyle)
     {
         this(new VerticalLayout(), bannerStyle);
-        mainLayout.setMargin(false);
-        mainLayout.setSpacing(false);
+        setLayout(mainLayout, MARGIN_FALSE, SPACING_FALSE);
     }
 
     public BasePage(AbstractOrderedLayout mainLayout, BannerStyle bannerStyle)
@@ -64,9 +63,6 @@ public abstract class BasePage extends Panel implements View
         // the extra space is distributed equally between the component cells.
         // if you want one or more components to take all the leftover space. You need to set such a component
         // to 100% size and use setExpandRatio()
-        pageLayout.setMargin(false);
-        pageLayout.setSpacing(false);
-        if (COLORS) { pageLayout.addStyleName("backYellow"); }
 
         banner = (bannerStyle == BannerStyle.Carousel) ? new BannerCarousel() : new BannerSingle();
         pageLayout.addComponents(banner, actionBar, mainLayout);

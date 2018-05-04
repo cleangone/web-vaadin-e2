@@ -2,7 +2,6 @@ package xyz.cleangone.e2.web.vaadin.desktop.org.profile;
 
 import com.vaadin.navigator.View;
 import com.vaadin.server.Page;
-import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
 import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
 import xyz.cleangone.e2.web.manager.SessionManager;
@@ -15,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static xyz.cleangone.e2.web.vaadin.util.PageUtils.*;
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
 public abstract class BaseProfilePage extends BasePage implements View
 {
@@ -24,9 +24,9 @@ public abstract class BaseProfilePage extends BasePage implements View
     protected static String STYLE_LINK_ACTIVE = "linkActive";
 
     private ProfilePageType currPageType;
-    private final HorizontalLayout leftWrapper = new HorizontalLayout();
-    private final VerticalLayout leftLayout = new VerticalLayout();
-    private final VerticalLayout centerLayout = new VerticalLayout();
+    private final HorizontalLayout leftWrapper  = horizontal(MARGIN_FALSE, SPACING_FALSE, VaadinUtils.SIZE_UNDEFINED, BACK_RED);
+    private final VerticalLayout   leftLayout   = vertical(MARGIN_TRB, SPACING_FALSE, WIDTH_UNDEFINED, HEIGHT_100_PCT);
+    private final VerticalLayout   centerLayout = vertical(MARGIN_RL, HEIGHT_100_PCT, BACK_BLUE);
 
     protected Organization org;
     protected final Map<ProfilePageType, BaseAdmin> components = new HashMap<>();
@@ -39,20 +39,7 @@ public abstract class BaseProfilePage extends BasePage implements View
         mainLayout.setMargin(false);
         mainLayout.setSizeFull();
 
-        leftWrapper.setMargin(false);
-        leftWrapper.setSpacing(false);
-        leftWrapper.setSizeUndefined();
         leftWrapper.addComponents(getMarginLayout(UI.getCurrent(), BANNER_HEIGHT), leftLayout);
-        if (COLORS) { leftWrapper.addStyleName("backRed"); }
-
-        leftLayout.setSpacing(false);
-        leftLayout.setWidthUndefined();
-        leftLayout.setMargin(new MarginInfo(true, true, true, false)); // T/R/B/L margins
-        leftLayout.setHeight("100%");
-
-        centerLayout.setMargin(new MarginInfo(false, true, false, true)); // T/R/B/L margins
-        centerLayout.setHeight("100%");
-        if (COLORS) { centerLayout.addStyleName("backBlue"); }
 
         mainLayout.addComponents(leftWrapper, centerLayout);
         mainLayout.setExpandRatio(centerLayout, 1.0f);
@@ -81,10 +68,7 @@ public abstract class BaseProfilePage extends BasePage implements View
 
     protected VerticalLayout getLinksLayout(ProfilePageType... profilePageTypes)
     {
-        VerticalLayout layout = new VerticalLayout();
-        layout.setMargin(false);
-        layout.setSpacing(false);
-
+        VerticalLayout layout = vertical(MARGIN_FALSE, SPACING_FALSE);
         for (ProfilePageType profilePageType : profilePageTypes)
         {
             layout.addComponent(getLink(profilePageType));

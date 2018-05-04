@@ -4,6 +4,8 @@ import com.vaadin.event.LayoutEvents;
 import com.vaadin.ui.*;
 import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+
 public abstract class BaseNavCol extends VerticalLayout
 {
     protected static String STYLE_ADMIN_NAV = "adminNav";
@@ -52,15 +54,6 @@ public abstract class BaseNavCol extends VerticalLayout
         setExpandRatio(spacer, 1.0f);
     }
 
-    protected VerticalLayout getTightLayout()
-    {
-        VerticalLayout layout = new VerticalLayout();
-        layout.setSpacing(false);
-        layout.setMargin(false);
-
-        return layout;
-    }
-
     protected Component getLink(AdminPageType pageType)
     {
         String styleName = currPageType == pageType ? STYLE_LINK_ACTIVE : STYLE_LINK;
@@ -69,8 +62,7 @@ public abstract class BaseNavCol extends VerticalLayout
 
     protected Component getLink(String text, String styleName, LayoutEvents.LayoutClickListener listener)
     {
-        HorizontalLayout layout = new HorizontalLayout();
-        layout.setMargin(false);
+        HorizontalLayout layout = horizontal(MARGIN_FALSE);
         layout.addComponent(new Label(text));
         layout.addLayoutClickListener(listener);
         layout.setStyleName(styleName);

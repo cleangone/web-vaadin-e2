@@ -8,6 +8,7 @@ import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.manager.*;
 import xyz.cleangone.data.manager.event.ItemManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
+import xyz.cleangone.e2.web.vaadin.desktop.MyUI;
 import xyz.cleangone.e2.web.vaadin.desktop.org.BasePage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.components.LeftColLayout;
@@ -42,12 +43,13 @@ public abstract class BaseEventPage extends BasePage implements View
         mainLayout.setWidth("100%");
         mainLayout.setHeightUndefined();
         mainLayout.setMargin(false);
+        if (MyUI.COLORS) { setStyleName("backBlue"); }
 
         centerWrapperLayout.setMargin(false);
         centerWrapperLayout.setSpacing(true);
 
         leftLayout = new LeftColLayout(getMainLayoutHeight());
-        centerLayout.setMargin(new MarginInfo(false, true, false, true)); // T/R/B/L margins
+        centerLayout.setMargin(new MarginInfo(false, true, false, false)); // T/R/B/L margins
         rightLayout = new RightColLayout(actionBar);
 
         for (PageCols pageCol : pageCols)

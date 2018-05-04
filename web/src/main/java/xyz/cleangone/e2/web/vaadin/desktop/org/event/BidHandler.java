@@ -53,10 +53,10 @@ public class BidHandler implements View
         user = userMgr.getUser();
     }
 
-    public Button getQuickBidButton(CatalogItem item, OrgEvent event)
+    public Button getQuickBidButton(CatalogItem item)
     {
         BigDecimal bidAmount = BidUtils.getIncrementedAmount(item.getPrice());
-        return createTextButton("Bid $" + bidAmount, ev -> handleBid(item, event, bidAmount));
+        return createTextButton("Bid $" + bidAmount, ev -> handleBid(item, bidAmount));
     }
 
     public void handleWatch(CatalogItem item, boolean watch)
@@ -68,7 +68,7 @@ public class BidHandler implements View
         catalogView.setCatalogLayout();
     }
 
-    public void handleBid(CatalogItem item, OrgEvent event, BigDecimal maxBid)
+    public void handleBid(CatalogItem item, BigDecimal maxBid)
     {
         if (maxBid.compareTo(item.getPrice()) > 0)
         {
@@ -78,7 +78,7 @@ public class BidHandler implements View
             if (bidStatus.getUserBid() != null)
             {
                 ActionManager actionMgr = orgMgr.getActionManager();
-                Action bid = actionMgr.createBid(user, bidStatus.getUserBid(), item, event);
+                Action bid = actionMgr.createBid(user, bidStatus.getUserBid(), item);
                 actionMgr.save(bid);
                 messageDisplayer.displayMessage("Bid submitted");
 

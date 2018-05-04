@@ -4,6 +4,10 @@ import com.vaadin.ui.VerticalLayout;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.nav.AdminPageType;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.nav.BaseNavCol;
 
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.MARGIN_FALSE;
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.SPACING_FALSE;
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.vertical;
+
 public class NavCol extends BaseNavCol
 {
     private final StatsAdmin statsAdmin;
@@ -15,10 +19,11 @@ public class NavCol extends BaseNavCol
 
     protected void addLinks()
     {
-        VerticalLayout layout = getTightLayout();
-        layout.addComponent(getLink(StatsAdminPageType.CACHE));
-        layout.addComponent(getLink(StatsAdminPageType.PAGE));
-        layout.addComponent(getLink(StatsAdminPageType.BROWSER));
+        VerticalLayout layout = vertical(MARGIN_FALSE, SPACING_FALSE);
+        layout.addComponents(
+            getLink(StatsAdminPageType.CACHE),
+            getLink(StatsAdminPageType.PAGE),
+            getLink(StatsAdminPageType.BROWSER));
 
         addComponent(layout);
         addSpacer(15);

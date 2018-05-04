@@ -1,6 +1,7 @@
 package xyz.cleangone.e2.web.vaadin.desktop.org.event.components;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.S3Link;
+import com.vaadin.event.LayoutEvents;
 import com.vaadin.shared.ui.AlignmentInfo;
 import com.vaadin.ui.*;
 import org.vaadin.kim.countdownclock.CountdownClock;
@@ -26,16 +27,17 @@ public class CatalogItemLayout extends VerticalLayout
 {
     private static boolean COLORS = true;
 
-    private final Integer relativeWidth;
+    private final CatalogItem item;
 
-    public CatalogItemLayout(CatalogItem item, User user, Button quickBidButton, EventManager eventMgr, BidManager bidManager, Map<String, OrgEvent> eventsById)
+    public CatalogItemLayout(CatalogItem item, User user, Button quickBidButton, BidManager bidManager, LayoutEvents.LayoutClickListener listener)
     {
-        relativeWidth = item.getRelativeWidth();
+        this.item = item;
 
         setMargin(false);
         setSpacing(false);
         setStyleName("category");
         setDefaultComponentAlignment(new Alignment(AlignmentInfo.Bits.ALIGNMENT_HORIZONTAL_CENTER));
+        addLayoutClickListener(listener);
         if (MyUI.COLORS) { addStyleName("backRed"); }
 
         List<S3Link> images = item.getImages();
@@ -58,13 +60,6 @@ public class CatalogItemLayout extends VerticalLayout
         }
 
         if (quickBidButton != null && priceLayout.userOutbid && user.getShowQuickBid()) { addComponent(quickBidButton); }
-
-        addLayoutClickListener( e -> {
-            if (eventsById != null) { eventMgr.setEvent(eventsById.get(item.getEventId())); }
-            eventMgr.setItem(item);
-            getUI().getNavigator().addView(ItemPage.NAME, new ItemPage());
-            getUI().getNavigator().navigateTo(ItemPage.NAME);
-        });
     }
 
     private PriceLayout getPriceLayout(CatalogItem item, User user, BidManager bidManager)
@@ -105,7 +100,11 @@ public class CatalogItemLayout extends VerticalLayout
 
     public Integer getRelativeWidth()
     {
-        return relativeWidth;
+        return item.getRelativeWidth();
+    }
+    public boolean isSold()
+    {
+        return item.isSold();
     }
 
     class PriceLayout extends HorizontalLayout

@@ -74,14 +74,8 @@ public class ImageAdmin implements ImageDisplayer
 
         for (S3Link image : images)
         {
-            HorizontalLayout layout = new HorizontalLayout();
-            layout.setMargin(false);
-            layout.setSpacing(false);
-
-            VerticalLayout popupLayout = new VerticalLayout();
-            popupLayout.setMargin(false);
-            popupLayout.setSpacing(false);
-            popupLayout.setSizeUndefined();
+            HorizontalLayout layout = horizontal(MARGIN_FALSE, SPACING_FALSE);
+            VerticalLayout popupLayout = vertical(MARGIN_FALSE, SPACING_FALSE, SIZE_UNDEFINED);
             PopupView popup = new PopupView(null, popupLayout);
 
             String imageUrl = imageMgr.getUrl(image);

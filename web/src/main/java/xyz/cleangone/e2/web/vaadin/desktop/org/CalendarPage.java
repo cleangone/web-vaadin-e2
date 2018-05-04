@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+
 public class CalendarPage extends BasePage implements View
 {
     public static final String NAME = "Calendar";
@@ -43,9 +45,7 @@ public class CalendarPage extends BasePage implements View
         mainLayout.removeAllComponents();
 
         Component calendar = createCalendar(sessionManager.getEventManager());
-        VerticalLayout calendarLayout = new VerticalLayout();
-        calendarLayout.setMargin(true);
-        calendarLayout.addComponent(calendar);
+        VerticalLayout calendarLayout = vertical(calendar, MARGIN_TRUE);
 
         mainLayout.addComponent(calendarLayout);
 

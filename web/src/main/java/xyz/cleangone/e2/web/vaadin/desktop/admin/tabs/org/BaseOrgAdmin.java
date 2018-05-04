@@ -110,8 +110,7 @@ public abstract class BaseOrgAdmin extends BaseAdmin
                     panel.setHeight(100, Unit.PIXELS);
 
                     Label label = new Label("Drop Banner Image Here");
-                    VerticalLayout layout = new VerticalLayout(label);
-                    layout.setWidth("100%");
+                    VerticalLayout layout = vertical(label, WIDTH_100_PCT);
                     layout.setHeight("100%");
                     layout.setComponentAlignment(label, Alignment.MIDDLE_CENTER);
 

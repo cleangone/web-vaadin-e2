@@ -30,7 +30,7 @@ import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
 public class ProfileAdmin extends BaseAdmin
 {
-    protected final FormLayout formLayout = new FormLayout();
+    protected final FormLayout formLayout = formLayout(MARGIN_TRUE, SPACING_FALSE);
     private EmailSender emailSender = new EmailSender();
 
     private SessionManager sessionMgr;
@@ -44,12 +44,7 @@ public class ProfileAdmin extends BaseAdmin
     public ProfileAdmin(MessageDisplayer msgDisplayer)
     {
         super(msgDisplayer);
-
-        setMargin(false);
-        setSpacing(false);
-
-        formLayout.setMargin(true);
-        formLayout.setSpacing(false);
+        setLayout(this, MARGIN_FALSE, SPACING_FALSE);
     }
 
     public void set(SessionManager sessionMgr)

@@ -11,10 +11,12 @@ import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.manager.VaadinSessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.actionbar.ActionBar;
 
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+
 
 public abstract class BaseAdminPage extends Panel implements View
 {
-    protected VerticalLayout pageLayout = new VerticalLayout();
+    protected VerticalLayout pageLayout = vertical(MARGIN_FALSE, SPACING_TRUE);
     protected ActionBar actionBar = new ActionBar();
 
     protected SessionManager sessionMgr;
@@ -26,11 +28,8 @@ public abstract class BaseAdminPage extends Panel implements View
         setSizeFull();
 
         // pageLayout sits in components, scrolls if doesn't fit
-        pageLayout.setMargin(false);
-        pageLayout.setSpacing(true);
-        setContent(pageLayout);
-
         pageLayout.addComponent(actionBar);
+        setContent(pageLayout);
     }
 
     public static String getName() { return ""; }
@@ -54,10 +53,7 @@ public abstract class BaseAdminPage extends Panel implements View
 
     protected VerticalLayout createLayoutSizeFull(Component component)
     {
-        VerticalLayout layout = createLayout(component);
-        layout.setSizeFull();
-
-        return layout;
+        return vertical(component, MARGIN_L, SPACING_TRUE, SIZE_FULL);
     }
 
     protected VerticalLayout createLayout100Pct(Component component)
@@ -71,13 +67,7 @@ public abstract class BaseAdminPage extends Panel implements View
 
     protected VerticalLayout createLayout(Component component)
     {
-        VerticalLayout layout = new VerticalLayout();
-        layout.setMargin(new MarginInfo(false, false, false, true));  // T/R/B/L margins
-
-        layout.setSpacing(true);
-        layout.addComponent(component);
-
-        return layout;
+        return vertical(component, MARGIN_L, SPACING_TRUE);
     }
 
 }

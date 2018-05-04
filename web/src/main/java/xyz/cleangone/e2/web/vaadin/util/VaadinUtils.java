@@ -1,13 +1,12 @@
 package xyz.cleangone.e2.web.vaadin.util;
 
-
-import com.vaadin.data.HasValue;
 import com.vaadin.event.FieldEvents;
 import com.vaadin.event.LayoutEvents;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Sizeable;
 import com.vaadin.shared.ui.ContentMode;
+import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.ui.*;
 import com.vaadin.ui.components.grid.HeaderRow;
@@ -16,17 +15,104 @@ import org.vaadin.alump.ckeditor.CKEditorConfig;
 import org.vaadin.alump.ckeditor.CKEditorTextField;
 import org.vaadin.dialogs.ConfirmDialog;
 import org.vaadin.viritin.fields.IntegerField;
+import org.vaadin.viritin.v7.fields.MValueChangeListener;
 import xyz.cleangone.data.aws.dynamo.dao.DynamoBaseDao;
 import xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity;
 import xyz.cleangone.data.aws.dynamo.entity.base.BaseMixinEntity;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
-import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
-
+import xyz.cleangone.e2.web.vaadin.desktop.MyUI;
 
 public class VaadinUtils
 {
     public static final String IMAGE_HAND_STYLE = "with-hand";
 
+    public static final String MARGIN_TRUE     = "marginTrue";
+    public static final String MARGIN_FALSE    = "marginFalse";
+    public static final String MARGIN_T        = "marginTop";
+    public static final String MARGIN_TL       = "marginTopLeft";
+    public static final String MARGIN_TRB      = "marginTopRightBot";
+    public static final String MARGIN_L        = "marginLeft";
+    public static final String MARGIN_RL       = "marginRightLeft";
+    public static final String SPACING_TRUE    = "spacingTrue";
+    public static final String SPACING_FALSE   = "spacingFalse";
+    public static final String SIZE_FULL       = "sizeFull";
+    public static final String SIZE_UNDEFINED  = "sizeUndefined";
+    public static final String WIDTH_100_PCT   = "width100Pct";
+    public static final String WIDTH_UNDEFINED = "widthUndefined";
+    public static final String HEIGHT_100_PCT  = "height100Pct";
+    public static final String BACK_RED        = "backRed";
+    public static final String BACK_ORANGE     = "backOrange";
+    public static final String BACK_YELLOW     = "backYellow";
+    public static final String BACK_GREEN      = "backGreen";
+    public static final String BACK_BLUE       = "backBlue";
+
+    public static VerticalLayout vertical(Component component)
+    {
+        return new VerticalLayout(component);
+    }
+
+    public static VerticalLayout vertical(String... directives)
+    {
+        VerticalLayout layout = new VerticalLayout();
+        setLayout(layout, directives);
+        return layout;
+    }
+
+    public static HorizontalLayout horizontal(String... directives)
+    {
+        HorizontalLayout layout = new HorizontalLayout();
+        setLayout(layout, directives);
+        return layout;
+    }
+
+    public static FormLayout formLayout(String... directives)
+    {
+        FormLayout layout = new FormLayout();
+        setLayout(layout, directives);
+        return layout;
+    }
+
+    public static VerticalLayout vertical(Component component, String... directives)
+    {
+        VerticalLayout layout = vertical(component);
+        setLayout(layout, directives);
+        return layout;
+    }
+
+    public static void setLayout(AbstractOrderedLayout layout, String... directives)
+    {
+        // todo - figure out better way to do this
+        for (String directive : directives)
+        {
+            if (directive.equals(MARGIN_TRUE))          { layout.setMargin(true); }
+            else if (directive.equals(MARGIN_FALSE))    { layout.setMargin(false); }
+            else if (directive.equals(MARGIN_T))        { layout.setMargin(new MarginInfo(true,  false, false, false)); } // T/R/B/L
+            else if (directive.equals(MARGIN_TL))       { layout.setMargin(new MarginInfo(true,  false, false, true)); }
+            else if (directive.equals(MARGIN_TRB))      { layout.setMargin(new MarginInfo(true,  true,  true,  false)); }
+            else if (directive.equals(MARGIN_L))        { layout.setMargin(new MarginInfo(false, false, false, true)); }
+            else if (directive.equals(MARGIN_RL))       { layout.setMargin(new MarginInfo(false, true,  false, true)); }
+            else if (directive.equals(SPACING_TRUE))    { layout.setSpacing(true); }
+            else if (directive.equals(SPACING_FALSE))   { layout.setSpacing(false); }
+            else if (directive.equals(SIZE_FULL))       { layout.setSizeFull(); }
+            else if (directive.equals(SIZE_UNDEFINED))  { layout.setSizeUndefined(); }
+            else if (directive.equals(WIDTH_100_PCT))   { layout.setWidth("100%"); }
+            else if (directive.equals(WIDTH_UNDEFINED)) { layout.setWidthUndefined(); }
+            else if (directive.equals(HEIGHT_100_PCT))  { layout.setHeight("100%"); }
+            else if (directive.equals(BACK_RED) ||
+                directive.equals(BACK_ORANGE) ||
+                directive.equals(BACK_YELLOW) ||
+                directive.equals(BACK_GREEN)  ||
+                directive.equals(BACK_BLUE))
+            {
+                addColorStyle(layout, directive);
+            }
+        }
+    }
+
+    public static void addColorStyle(AbstractOrderedLayout layout, String styleName)
+    {
+        if (MyUI.COLORS) { layout.addStyleName(styleName); }
+    }
 
     public static TextField createNoCaptionTextField(
         EntityField field, BaseEntity entity, DynamoBaseDao dao, String placeholder, float width, MessageDisplayer msgDisplayer)
@@ -281,33 +367,42 @@ public class VaadinUtils
         return label;
     }
 
+    public static Label createImageLabel(String url)
+    {
+        return getHtmlLabel("<img src=" + url + " />");
+    }
+
     public static Label getHtmlLabel(String value)
     {
-        String labalValue = value == null ? "" : value;
-        return new Label(labalValue, ContentMode.HTML);
+        String labelValue = value == null ? "" : value;
+        return new Label(labelValue, ContentMode.HTML);
     }
+
 
     public static String quote(String s)
     {
         return "\"" + s + "\"";
     }
 
-
-    // add Enter key shortcut to button when field in focus
+    // add key shortcut to button when field in focus
     public static void addEnterKeyShortcut(Button button, TextField textField)
+    {
+        addKeyShortcut(button, textField, ShortcutAction.KeyCode.ENTER);
+    }
+    public static void addEscapeKeyShortcut(Button button, TextField textField)
+    {
+        addKeyShortcut(button, textField, ShortcutAction.KeyCode.ESCAPE);
+    }
+    public static void addKeyShortcut(Button button, TextField textField, int keyCode)
     {
         textField.addFocusListener(new FieldEvents.FocusListener() {
             @Override
-            public void focus(FieldEvents.FocusEvent event) {
-                button.setClickShortcut(ShortcutAction.KeyCode.ENTER);
-            }
+            public void focus(FieldEvents.FocusEvent event) { button.setClickShortcut(keyCode); }
         });
 
         textField.addBlurListener(new FieldEvents.BlurListener() {
             @Override
-            public void blur(FieldEvents.BlurEvent event) {
-                button.removeClickShortcut();
-            }
+            public void blur(FieldEvents.BlurEvent event) { button.removeClickShortcut(); }
         });
     }
 

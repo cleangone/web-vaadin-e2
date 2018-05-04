@@ -25,8 +25,7 @@ import java.util.logging.Logger;
 
 import static xyz.cleangone.data.aws.dynamo.entity.item.CartItem.CART_ITEM_NAME_FIELD;
 import static xyz.cleangone.data.aws.dynamo.entity.item.CartItem.PRICE_FIELD;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.createDeleteButton;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.createTextButton;
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
 
 public class CartPage extends BasePage implements View
@@ -45,9 +44,7 @@ public class CartPage extends BasePage implements View
         // todo - extend singlebannerpage w/ diff cols?
         super(BannerStyle.Single);
 
-        mainLayout.setMargin(true);
-        mainLayout.setSpacing(true);
-        mainLayout.setWidth("100%");
+        setLayout(mainLayout, MARGIN_TRUE, SPACING_TRUE, WIDTH_100_PCT);
 
         cartPanel.setContent(cartLayout);
     }

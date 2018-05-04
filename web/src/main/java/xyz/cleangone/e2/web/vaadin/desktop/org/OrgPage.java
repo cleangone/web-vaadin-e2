@@ -66,15 +66,11 @@ public class OrgPage extends BasePage implements View
         String introHtml = org.getIntroHtml();
         if (introHtml != null)
         {
-            VerticalLayout introLayout = new VerticalLayout();
-            introLayout.setMargin(new MarginInfo(false, true, false, true)); // T/R/B/L margins
-            introLayout.addComponent(getHtmlLabel(introHtml));
+            VerticalLayout introLayout = vertical(getHtmlLabel(introHtml), MARGIN_RL);
             mainLayout.addComponent(introLayout);
         }
 
-        HorizontalLayout orgLayout = new HorizontalLayout();
-        orgLayout.setMargin(false);
-        orgLayout.setSpacing(false);
+        HorizontalLayout orgLayout = horizontal(MARGIN_FALSE, SPACING_FALSE);
         if (COLORS) { orgLayout.addStyleName("backYellow"); }
 
         setOrgLayout(orgLayout);

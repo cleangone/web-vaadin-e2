@@ -22,11 +22,13 @@ public class WatchLayout extends BaseAdmin implements CatalogView
 {
     private BasePage page;
     private int pageWidth;
-    private BidManager bidMgr;
-    private EventManager eventMgr;
+
+    private SessionManager sessionMgr;
     private ItemManager itemMgr;
     private User user;
     private BidHandler bidHandler;
+
+    Map<String, OrgEvent> eventsById;
     private CatalogLayout catalogLayout;
 
     public WatchLayout(BasePage page, int pageWidth, MessageDisplayer msgDisplayer)
@@ -42,12 +44,12 @@ public class WatchLayout extends BaseAdmin implements CatalogView
 
     public void set(SessionManager sessionMgr)
     {
+        this.sessionMgr = sessionMgr;
         OrgManager orgMgr = sessionMgr.getOrgManager();
-        eventMgr = sessionMgr.getEventManager();
-        bidMgr = orgMgr.getBidManager();
         itemMgr = orgMgr.getItemManager();
         user = sessionMgr.getPopulatedUserManager().getUser();
         bidHandler = new BidHandler(this, sessionMgr, msgDisplayer);
+        eventsById = sessionMgr.getEventManager().getEventsById();
 
         set();
     }
@@ -65,11 +67,10 @@ public class WatchLayout extends BaseAdmin implements CatalogView
             .filter(CatalogItem::isVisible)
             .collect(Collectors.toList());
 
-        Map<String, OrgEvent> eventsById = eventMgr.getEventsById();
-        catalogLayout = new CatalogLayout(pageWidth, eventMgr, bidMgr, eventsById);
+        catalogLayout = new CatalogLayout(pageWidth, sessionMgr, eventsById);
         for (CatalogItem item : visibleItems)
         {
-            catalogLayout.addItem(item, user, bidHandler.getQuickBidButton(item, eventsById.get(item.getEventId())));
+            catalogLayout.addItem(item, user, bidHandler.getQuickBidButton(item));
         }
 
         addComponent(catalogLayout);

@@ -73,7 +73,7 @@ public class EventPage extends BaseEventPage implements View
     {
         if (catalogLayout != null) { centerLayout.removeComponent(catalogLayout); }
 
-        catalogLayout = new CatalogLayout(UI.getCurrent().getPage().getBrowserWindowWidth(), items, user, eventMgr, orgMgr.getBidManager());
+        catalogLayout = new CatalogLayout(UI.getCurrent().getPage().getBrowserWindowWidth(), items, user, sessionMgr);
         centerLayout.addComponent(catalogLayout);
     }
 }

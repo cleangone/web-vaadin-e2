@@ -30,10 +30,11 @@ import java.util.List;
 import java.util.Map;
 
 import static xyz.cleangone.e2.web.vaadin.util.PageUtils.*;
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
 public class LeftColLayout extends HorizontalLayout
 {
-    protected final VerticalLayout leftLayout = new VerticalLayout();
+    protected final VerticalLayout leftLayout = vertical(MARGIN_TRB, SPACING_FALSE, WIDTH_UNDEFINED);
 
     private OrgManager orgMgr;
     protected EventManager eventMgr;
@@ -49,10 +50,6 @@ public class LeftColLayout extends HorizontalLayout
         setMargin(false);
         setSpacing(false);
         addComponents(getMarginLayout(pageHeight), leftLayout);
-
-        leftLayout.setSpacing(false);
-        leftLayout.setWidthUndefined();
-        leftLayout.setMargin(new MarginInfo(true, true, true, false)); // T/R/B/L margins
     }
 
     public void set(SessionManager sessionMgr)
@@ -86,14 +83,10 @@ public class LeftColLayout extends HorizontalLayout
         changeManager.reset(user, event);
         removeAllComponents();
 
-
         // also need any categories that have eventId set
-
         List<String> categoryIds = event.getCategoryIds();
         if (categoryIds == null || categoryIds.isEmpty()) { return PageDisplayType.NoRetrieval; }
 
-
-        //List<OrgTag> categories = tagMgr.getTags(categoryIds);
         List<OrgTag> categories = tagMgr.getEventVisibleTags(OrgTag.TagType.Category, event);
         if (!categories.isEmpty())
         {
@@ -123,7 +116,7 @@ public class LeftColLayout extends HorizontalLayout
         String selectedTextStyleName = "category-text-selected" + event.getTag();
         styles.add("." + selectedTextStyleName + " {color: " + selectedTextColor + "}");
 
-        layout.addComponent(getEventLink(textStyleName));
+        //layout.addComponent(getEventLink(textStyleName));
 
         Map<String, Integer> itemCountByCategoryId = new HashMap<>();
         List<CatalogItem> items = itemMgr.getItems();

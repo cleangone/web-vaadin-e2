@@ -18,6 +18,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+
 public class NavCol extends BaseNavCol
 {
     protected final EventsAdminLayout eventsAdminLayout;
@@ -91,7 +93,7 @@ public class NavCol extends BaseNavCol
             longestNameLength = Math.max(longestNameLength, event.getName().length());
             if (event == currEvent)
             {
-                VerticalLayout eventAdmin = getTightLayout();
+                VerticalLayout eventAdmin = vertical(MARGIN_FALSE, SPACING_FALSE);
                 eventAdmin.setStyleName(STYLE_INDENT);
 
                 eventAdmin.addComponent(getLink(EventAdminPageType.GENERAL));
@@ -105,9 +107,7 @@ public class NavCol extends BaseNavCol
                 eventAdmin.addComponent(getLink(EventAdminPageType.DONATIONS));
                 eventAdmin.addComponent(getLink(EventAdminPageType.PURCHASES));
 
-                VerticalLayout eventLayout = new VerticalLayout();
-                eventLayout.setSpacing(false);
-                eventLayout.setMargin(false);
+                VerticalLayout eventLayout = vertical(MARGIN_FALSE, SPACING_FALSE);
 
                 Label label = new Label(event.getName());
                 label.setStyleName(STYLE_FONT_BOLD);

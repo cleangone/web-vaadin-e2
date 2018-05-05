@@ -45,6 +45,7 @@ public class VaadinUtils
     public static final String BACK_YELLOW     = "backYellow";
     public static final String BACK_GREEN      = "backGreen";
     public static final String BACK_BLUE       = "backBlue";
+    public static final String BACK_BLACK      = "backBlack";
 
     public static VerticalLayout vertical(Component component)
     {
@@ -102,7 +103,8 @@ public class VaadinUtils
                 directive.equals(BACK_ORANGE) ||
                 directive.equals(BACK_YELLOW) ||
                 directive.equals(BACK_GREEN)  ||
-                directive.equals(BACK_BLUE))
+                directive.equals(BACK_BLUE)   ||
+                directive.equals(BACK_BLACK))
             {
                 addColorStyle(layout, directive);
             }
@@ -307,6 +309,7 @@ public class VaadinUtils
         return button;
     }
 
+    public static Button createCloseButton() { return createIconButton(VaadinIcons.CLOSE_CIRCLE); }
     public static Button createCloseButton(String description) { return createIconButton(VaadinIcons.CLOSE_CIRCLE, description); }
     public static Button createDeleteButton(String description) { return createSmallIconButton(VaadinIcons.TRASH, description); }
 
@@ -324,11 +327,18 @@ public class VaadinUtils
         return button;
     }
 
-    public static Button createIconButton(VaadinIcons icon, String description)
+
+    public static Button createIconButton(VaadinIcons icon)
     {
         Button button = new Button(icon);
-        button.setDescription(description);
         button.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+        return button;
+    }
+
+    public static Button createIconButton(VaadinIcons icon, String description)
+    {
+        Button button = createIconButton(icon);
+        button.setDescription(description);
         return button;
     }
 

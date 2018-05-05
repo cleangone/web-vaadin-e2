@@ -3,6 +3,7 @@ package xyz.cleangone.e2.web.vaadin.desktop.org.event.components;
 import com.amazonaws.services.dynamodbv2.datamodeling.S3Link;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.event.ShortcutAction;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.*;
 import com.vaadin.ui.renderers.DateRenderer;
 import org.vaadin.kim.countdownclock.CountdownClock;
@@ -46,7 +47,7 @@ public class ItemLayout extends VerticalLayout
     private VerticalLayout bidBuyLayout = vertical(MARGIN_FALSE);
 
     public ItemLayout(
-        CatalogItem item, OrgTag category, OrgEvent event, BidHandler bidHandler, SessionManager sessionMgr, ActionBar actionBar, Button.ClickListener closeItemListener)
+        CatalogItem item, OrgTag category, OrgEvent event, int pageHeight, BidHandler bidHandler, SessionManager sessionMgr, ActionBar actionBar, Button.ClickListener closeItemListener)
     {
         this.bidHandler = bidHandler;
         bidManager = sessionMgr.getOrgManager().getBidManager();
@@ -57,7 +58,7 @@ public class ItemLayout extends VerticalLayout
         setMargin(false);
         setSpacing(true);
 
-        Button closeButton = createCloseButton("Close Item");
+        Button closeButton = createCloseButton();
         closeButton.addClickListener(closeItemListener);
         closeButton.setClickShortcut(ShortcutAction.KeyCode.ESCAPE);
 
@@ -68,9 +69,13 @@ public class ItemLayout extends VerticalLayout
         {
             String imageUrl = ImageManager.getUrl(images.get(0));
 
-            // todo - page doesn't scroll if image too big - has to scroll in popup
-            VerticalLayout popupLayout = vertical(createImageLabel(imageUrl), MARGIN_TRUE);
-            PopupView imagePopup = new PopupView(null, popupLayout);
+
+            // The panel will give it scrollbars
+            VerticalLayout fullImageLayout = vertical(createImageLabel(imageUrl), MARGIN_TRUE);
+            Panel panel = new Panel(fullImageLayout);
+            panel.setHeight(pageHeight + "px");
+            panel.setStyleName(BACK_BLACK);
+            PopupView imagePopup = new PopupView(null, panel);
 
             ImageLabel imageLabel = new ImageLabel(imageUrl, ImageDimension.width(400));
             VerticalLayout imageLayout = vertical(imageLabel, MARGIN_FALSE);

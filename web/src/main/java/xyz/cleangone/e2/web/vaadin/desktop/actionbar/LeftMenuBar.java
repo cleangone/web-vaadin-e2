@@ -76,7 +76,14 @@ public class LeftMenuBar extends BaseMenuBar
 
     private PageDisplayType addMobileItems()
     {
-        addIconOnlyItem("Home", VaadinIcons.HOME, getNavigateCmd(OrgPage.NAME));
+        Organization org = sessionMgr.getOrg();
+        if (org!= null)
+        {
+            MenuBar.MenuItem menuItem = addItem("", VaadinIcons.MENU, null);
+            menuItem.addItem("Home", null, getNavigateCmd(OrgPage.NAME));
+            addEvents(menuItem);
+        }
+
         return PageDisplayType.NoChange;
     }
 }

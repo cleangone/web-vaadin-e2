@@ -51,26 +51,12 @@ public class CenterMenuBar extends BaseMenuBar
             addIconOnlyItem("Home", VaadinIcons.HOME, getNavigateCmd(OrgPage.NAME));
         }
 
-        List<OrgEvent> events = eventMgr.getActiveEvents();
-        if (!events.isEmpty())
+        if (!sessionMgr.isMobileBrowser())
         {
             String caption = org.getEventCaptionPlural() == null ? "Events" : org.getEventCaptionPlural();
             MenuBar.MenuItem eventsItem = addItem(caption, null, null);
-            for (OrgEvent event : events)
-            {
-                if (!event.getUseOrgBanner())
-                {
-                    eventsItem.addItem(event.getName(), null, new MenuBar.Command() {
-                        public void menuSelected(MenuBar.MenuItem selectedItem) {
-                            sessionMgr.navigateTo(event, getUI().getNavigator());
-                        }
-                    });
-                }
-            }
-        }
+            addEvents(eventsItem);
 
-        if (!sessionMgr.isMobileBrowser())
-        {
             addIconOnlyItem(CalendarPage.NAME, VaadinIcons.CALENDAR, getNavigateCmd(CalendarPage.NAME));
         }
 

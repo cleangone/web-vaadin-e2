@@ -1,6 +1,7 @@
 package xyz.cleangone.e2.web.vaadin.desktop.org.event;
 
 import com.vaadin.navigator.View;
+import com.vaadin.ui.UI;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
 import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.components.ItemLayout;
@@ -46,8 +47,10 @@ public class ItemPage extends CatalogPage implements View
 
     protected void setCenterLayout()
     {
+        int height = UI.getCurrent().getPage().getBrowserWindowHeight();
+
         centerLayout.removeAllComponents();
-        centerLayout.addComponent(new ItemLayout(item, category, event, bidHandler, sessionMgr, actionBar, e -> closeItem()));
+        centerLayout.addComponent(new ItemLayout(item, category, event, height, bidHandler, sessionMgr, actionBar, e -> closeItem()));
     }
 
     // todo - hack - watchLaout should open itemLayout in same page, not the ItemPage

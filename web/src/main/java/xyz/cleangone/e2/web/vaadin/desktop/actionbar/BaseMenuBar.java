@@ -14,6 +14,8 @@ import xyz.cleangone.e2.web.manager.EntityChangeManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 
+import java.util.List;
+
 import static java.util.Objects.requireNonNull;
 import static xyz.cleangone.e2.web.vaadin.desktop.actionbar.ActionBar.ACTION_BAR_STYLE_NAME;
 
@@ -35,6 +37,25 @@ public class BaseMenuBar extends MenuBar
         userMgr = sessionMgr.getUserManager();
         eventMgr = sessionMgr.getEventManager();
         return PageDisplayType.NotApplicable;
+    }
+
+    protected void addEvents(MenuBar.MenuItem parentMenuItem)
+    {
+        List<OrgEvent> events = eventMgr.getActiveEvents();
+        if (!events.isEmpty())
+        {
+            for (OrgEvent event : events)
+            {
+                if (!event.getUseOrgBanner())
+                {
+                    parentMenuItem.addItem(event.getName(), null, new MenuBar.Command() {
+                        public void menuSelected(MenuBar.MenuItem selectedItem) {
+                            sessionMgr.navigateTo(event, getUI().getNavigator());
+                        }
+                    });
+                }
+            }
+        }
     }
 
     protected void addNavigateItem(String pageName, Resource icon, MenuBar menuBar)

@@ -60,14 +60,7 @@ public class PaymentPage extends BasePage implements View
         super.set(sessionMgr);
         UserManager userMgr = sessionMgr.getUserManager();
 
-        user = userMgr.copyUser();  // copy so one-time changes do not affect profile
-        if (user == null)
-        {
-            user = new User();
-            user.setPerson(new Person());
-        }
-
-        person = user.getPerson();
+        user = userMgr.hasUser() ? userMgr.copyUser() : new User();  // copy so one-time changes do not affect profile
         address = userMgr.copyAddress();
 
         cart = sessionMgr.getCart();

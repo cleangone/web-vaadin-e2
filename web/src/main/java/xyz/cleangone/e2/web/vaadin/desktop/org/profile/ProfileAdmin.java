@@ -37,7 +37,6 @@ public class ProfileAdmin extends BaseAdmin
     private UserManager userMgr;
     private Organization org;
     private User user;
-    private Person person;
     private Address address;
     private EntityChangeManager changeManager = new EntityChangeManager();
 
@@ -53,7 +52,6 @@ public class ProfileAdmin extends BaseAdmin
         userMgr = sessionMgr.getPopulatedUserManager();
         org = sessionMgr.getOrg();
         user = userMgr.getUser();
-        person = userMgr.getPerson();
         address = userMgr.getAddress();
 
         set();
@@ -62,8 +60,7 @@ public class ProfileAdmin extends BaseAdmin
     public void set()
     {
         if (changeManager.unchanged(user) &&
-            changeManager.unchangedEntity(user.getId()) &&
-            changeManager.unchangedEntity(user.getPersonId()))
+            changeManager.unchangedEntity(user.getId()))
         {
             return;
         }
@@ -91,13 +88,13 @@ public class ProfileAdmin extends BaseAdmin
             setDisclosureCaption();
 
             mainLayout.addComponents(
-                createPersonTextField(Person.FIRST_NAME_FIELD, this),
-                createPersonTextField(Person.LAST_NAME_FIELD, this));
+                createUserTextField(User.FIRST_NAME_FIELD, this),
+                createUserTextField(User.LAST_NAME_FIELD, this));
         }
 
         public void setDisclosureCaption()
         {
-            String caption = StringUtils.isBlank(person.getFirstLast()) ? "Name not set" : person.getFirstLast();
+            String caption = StringUtils.isBlank(user.getFirstLast()) ? "Name not set" : user.getFirstLast();
             setDisclosureCaption(caption);
         }
     }
@@ -119,7 +116,7 @@ public class ProfileAdmin extends BaseAdmin
             TextField emailField = VaadinUtils.createTextField(null, user.getEmail());
             emailField.addValueChangeListener(event -> {
                 String newEmail = event.getValue();
-                if (userMgr.getUserWithEmail(newEmail, org.getId()) == null)
+                if (!userMgr.emailExists(newEmail))
                 {
                     user.setEmail(newEmail);
                     user.setEmailVerified(false);
@@ -313,10 +310,10 @@ public class ProfileAdmin extends BaseAdmin
         return createTextField(field, user, userMgr.getUserDao(), msgDisplayer, disclosure);
     }
 
-    private TextField createPersonTextField(EntityField field, BaseDisclosure disclosure)
-    {
-        return createTextField(field, person, userMgr.getPersonDao(), msgDisplayer, disclosure);
-    }
+//    private TextField createPersonTextField(EntityField field, BaseDisclosure disclosure)
+//    {
+//        return createTextField(field, person, userMgr.getPersonDao(), msgDisplayer, disclosure);
+//    }
 
     private TextField createAddressTextField(EntityField field, BaseDisclosure disclosure)
     {

@@ -87,6 +87,10 @@ public class SessionManager
     {
         return orgMgr.getOrg();
     }
+    public String getOrgId()
+    {
+        return orgMgr.getOrg() == null ? null : orgMgr.getOrg().getId();
+    }
     public void setOrg(Organization org)
     {
         orgMgr.setOrg(org);
@@ -154,7 +158,7 @@ public class SessionManager
     }
     public boolean hasSuperUser()
     {
-        return (hasUser() && getUser().isSuper());
+        return (hasUser() && getUser().isSuperAdmin());
     }
 
     public String getNavToAfterLogin(String defaultPage)

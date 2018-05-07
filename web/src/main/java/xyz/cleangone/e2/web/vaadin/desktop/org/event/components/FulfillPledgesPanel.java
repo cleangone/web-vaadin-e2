@@ -38,7 +38,7 @@ public class FulfillPledgesPanel extends BaseActionPanel
         if (!panelHasContent(event, user)) { return; }
 
         // look for pledges
-        List<Action> actions = actionMgr.getActionsBySourcePerson(user.getPersonId(), event.getId());
+        List<Action> actions = actionMgr.getActionsBySourcePerson(user.getId(), event.getId());
         List<Action> pledges = actions.stream()
             .filter(a -> a.getActionType() == ActionType.Pledged)
             .collect(Collectors.toList());

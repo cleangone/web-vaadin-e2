@@ -6,13 +6,12 @@ import com.vaadin.ui.*;
 import xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
 import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
-import xyz.cleangone.data.aws.dynamo.entity.person.Person;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.manager.UserManager;
 import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 
+import static xyz.cleangone.data.aws.dynamo.entity.person.User.*;
 import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
-
 
 public class CreateAccountPage extends BaseOrgPage implements View
 {
@@ -27,15 +26,14 @@ public class CreateAccountPage extends BaseOrgPage implements View
         Organization org = sessionMgr.getOrg();
 
         User user = new User();
-        Person person = new Person();
 
         FormLayout formLayout = new FormLayout();
         formLayout.setMargin(new MarginInfo(true));
         mainLayout.addComponent(formLayout);
 
-        formLayout.addComponent(createTextField(User.EMAIL_FIELD, user));
-        formLayout.addComponent(createTextField(Person.FIRST_NAME_FIELD, person));
-        formLayout.addComponent(createTextField(Person.LAST_NAME_FIELD, person));
+        formLayout.addComponent(createTextField(EMAIL_FIELD, user));
+        formLayout.addComponent(createTextField(FIRST_NAME_FIELD, user));
+        formLayout.addComponent(createTextField(LAST_NAME_FIELD, user));
 
         PasswordField passwordField = new PasswordField("Password");
         formLayout.addComponent(passwordField);
@@ -49,14 +47,10 @@ public class CreateAccountPage extends BaseOrgPage implements View
             if (user.getEmail() == null) { showError("Email not set"); }
             else if (passwordField.getValue().isEmpty()) { showError("Password not set"); }
             else if (!passwordField.getValue().equals(confirmField.getValue())) { showError("Password and Confirm do not match"); }
-            else if (userMgr.emailExists(user.getName(), org.getId())) { showError("Email already exists"); }
+            else if (userMgr.emailExists(user.getEmail())) { showError("Email already exists"); }
             else
             {
-                person.setOrgId(org.getId());
-                userMgr.getPersonDao().save(person);
-
-                user.setPersonId(person.getId());
-                user.setOrgId(org.getId());
+                user.addOrgId(org.getId());
                 user.setPassword(passwordField.getValue());
                 userMgr.getUserDao().save(user);
 

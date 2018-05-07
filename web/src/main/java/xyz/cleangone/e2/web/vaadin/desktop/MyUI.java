@@ -118,8 +118,14 @@ public class MyUI extends BroadcastListeningUI implements BroadcastListener
             User user = userMgr.loginByToken(resetPasswordToken);
             if (user != null)
             {
-                sessionMgr.getOrgManager().setOrgById(user.getOrgId());
-                sessionMgr.resetEventManager();
+                // get org from path - pathTags should always be set - request password always from an org
+                // todo - user could nav to another org before requesting reset
+                List<String> pathTags = getPathTags(vaadinRequest);
+                if (!pathTags.isEmpty())
+                {
+                    getOrgFromPath(pathTags, sessionMgr.getOrgManager()); // does setOrg
+                    sessionMgr.resetEventManager();
+                }
 
                 nav.setErrorView(orgPage);
                 nav.navigateTo(PasswordResetPage.NAME);
@@ -131,7 +137,7 @@ public class MyUI extends BroadcastListeningUI implements BroadcastListener
         verifyEmail(vaadinRequest, userMgr);
 
         String initialPage = getInitialPage(vaadinRequest, sessionMgr);  // parse url /<orgTag>/<eventTag>
-        if (initialPage == null && userMgr.userIsSuper())
+        if (initialPage == null && userMgr.userIsSuperAdmin())
         {
             initialPage = SuperAdminPage.NAME;
         }
@@ -179,30 +185,18 @@ public class MyUI extends BroadcastListeningUI implements BroadcastListener
     // url path may contain /<orgTag>/<eventTag>
     private String getInitialPage(VaadinRequest vaadinRequest, SessionManager sessionMgr)
     {
-        String path = vaadinRequest.getPathInfo();
-        if (path == null || !path.startsWith("/") || path.equals("/")) { return null; }
+        List<String> pathTags = getPathTags(vaadinRequest);
+        if (pathTags.isEmpty()) { return null; }
 
-        List<String> tags = Arrays.asList(path.substring(1).split("\\s*/\\s*"));
-        if (tags.isEmpty()) { return null; }
-
+        // first tag is org
         String returnPage = null;
-        OrgManager orgMgr = sessionMgr.getOrgManager();
-        UserManager userMgr = sessionMgr.getUserManager();
-
-         // first tag is org
-        Organization org = orgMgr.findOrg(tags.get(0));
-        if (org != null)
-        {
-            verifyUser(userMgr, org);
-            orgMgr.setOrg(org);
-            returnPage = OrgPage.NAME;
-        }
-
-        if (tags.size() == 1) { return returnPage; }
+        Organization org = getOrgFromPath(pathTags, sessionMgr.getOrgManager());
+        if (org != null) { returnPage = OrgPage.NAME; }
 
         // second tag is an event if it exists
+        if (pathTags.size() == 1) { return returnPage; }
         EventManager eventMgr = sessionMgr.getEventManager();
-        OrgEvent event = eventMgr.getActiveEvent(tags.get(1));
+        OrgEvent event = eventMgr.getActiveEvent(pathTags.get(1));
         if (event != null)
         {
             eventMgr.setEvent(event);
@@ -212,7 +206,35 @@ public class MyUI extends BroadcastListeningUI implements BroadcastListener
         return returnPage;
     }
 
-    // todo - quite a mess
+
+    // url path may contain /<orgTag>/<eventTag>
+    private List<String> getPathTags(VaadinRequest vaadinRequest)
+    {
+        String path = vaadinRequest.getPathInfo();
+        if (path == null || !path.startsWith("/") || path.equals("/"))
+        {
+            return null;
+        }
+
+        return Arrays.asList(path.substring(1).split("\\s*/\\s*"));  // can be empty
+    }
+
+    private Organization getOrgFromPath(List<String> pathTags, OrgManager orgMgr)
+    {
+        // first tag is org
+        Organization org = orgMgr.findOrg(pathTags.get(0));
+        if (org != null)
+        {
+//            verifyUser(userMgr, org);
+            orgMgr.setOrg(org);
+        }
+
+        return org;
+    }
+
+
+
+        // todo - quite a mess
     private String getItemPage(VaadinRequest vaadinRequest, SessionManager sessionMgr)
     {
         String itemId = vaadinRequest.getParameter(ITEM_URL_PARAM);
@@ -263,12 +285,12 @@ public class MyUI extends BroadcastListeningUI implements BroadcastListener
 
     private void verifyUser(UserManager userMgr, Organization org)
     {
-        User user = userMgr.getUser();
-        if (user != null && user.getOrgId() != null && !user.getOrgId().equals(org.getId()))
-        {
-            LOG.info("Logging out User " + user.getId() + " because logged in by token but org " + user.getOrgId() +
-                " does not match path Org " + org.getId());
-            userMgr.logout();
-        }
+//        User user = userMgr.getUser();
+//        if (user != null && user.getOrgId() != null && !user.getOrgId().equals(org.getId()))
+//        {
+//            LOG.info("Logging out User " + user.getId() + " because logged in by token but org " + user.getOrgId() +
+//                " does not match path Org " + org.getId());
+//            userMgr.logout();
+//        }
     }
 }

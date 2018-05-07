@@ -138,13 +138,11 @@ public class UsersAdmin extends BaseEventAdmin implements MultiSelectionListener
         // get enabled users that are not already an admin
         List<User> users = orgMgr.getUsers().stream()
             .filter(u -> u.getEnabled())
-            .filter(u -> !u.isAdmin())
+            .filter(u -> !u.isOrgAdmin(orgMgr.getOrgId())) // todo - why do this?  check admin priv vs. role
             .collect(Collectors.toList());
 
-        Map<String, Person> peopleById = orgMgr.getPeopleByIdMap();
         for (User user : users)
         {
-            user.setPerson(peopleById.get(user.getPersonId()));
             user.setTagsCsv(eventUserRolesById);
         }
 

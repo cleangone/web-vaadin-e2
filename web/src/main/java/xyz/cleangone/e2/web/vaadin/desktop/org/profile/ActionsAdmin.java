@@ -60,7 +60,7 @@ public class ActionsAdmin extends BaseAdmin
     public void set()
     {
         if (changeManager.unchanged(user) &&
-            changeManager.unchanged(user.getPersonId(), EntityType.Action))
+            changeManager.unchanged(user.getId(), EntityType.Action))
         {
             return;
         }
@@ -68,7 +68,7 @@ public class ActionsAdmin extends BaseAdmin
         changeManager.reset(user);
 
         actions.clear();
-        actions.addAll(actionMgr.getActionsBySourcePerson(user.getPersonId(), Arrays.asList(getActionTypes())));
+        actions.addAll(actionMgr.getActionsBySourcePerson(user.getId(), Arrays.asList(getActionTypes())));
         actionGrid.setHeightByRows(actions.size() > 5 ? actions.size()+1 : 5);
     }
 

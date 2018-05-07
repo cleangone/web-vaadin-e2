@@ -1,6 +1,5 @@
 package xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.actions;
 
-
 import com.vaadin.shared.ui.MarginInfo;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityType;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;

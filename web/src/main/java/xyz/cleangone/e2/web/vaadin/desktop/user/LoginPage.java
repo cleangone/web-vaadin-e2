@@ -82,10 +82,9 @@ public class LoginPage extends Panel implements View
                 }
                 else
                 {
-                    // user exists, but is not super
+                    // user exists, but is not super - all non-super users will have at least one associated org
                     OrgManager orgMgr = sessionMgr.getOrgManager();
-                    orgMgr.setOrgById(user.getOrgId());
-
+                    orgMgr.setOrgById(user.getOrgIds().get(0));
                     getUI().getNavigator().navigateTo(OrgPage.NAME);
                 }
 
@@ -130,7 +129,7 @@ public class LoginPage extends Panel implements View
 
         loginButton.setClickShortcut(ShortcutAction.KeyCode.ENTER);
         loginButton.addClickListener(event -> {
-            if (userMgr.loginSuper(emailField.getValue(), passwordField.getValue()) != null)
+            if (userMgr.login(emailField.getValue(), passwordField.getValue()) != null)
             {
                 if (rememberMeCheckbox.getValue())
                 {

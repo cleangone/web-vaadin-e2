@@ -29,7 +29,7 @@ public class RightMenuBar extends BaseMenuBar
 
         if (changeManager.unchanged(user) &&
             changeManager.unchanged(user, EntityType.Entity) &&
-            (user == null  || changeManager.unchanged(user.getPersonId(), EntityType.Entity)))
+            (user == null  || changeManager.unchanged(user.getId(), EntityType.Entity)))
         {
             setCartMenuItem();
             return PageDisplayType.NoChange;
@@ -49,7 +49,7 @@ public class RightMenuBar extends BaseMenuBar
 
         if (userMgr.hasUser())
         {
-            MenuBar.MenuItem profileItem = addItem((sessionMgr.isMobileBrowser() ? "" : " " + userMgr.getPersonFirstName()), null, null);
+            MenuBar.MenuItem profileItem = addItem((sessionMgr.isMobileBrowser() ? "" : " " + userMgr.getFirstName()), null, null);
             profileItem.setIcon(VaadinIcons.USER_CHECK);
             profileItem.setDescription(ProfilePage.DISPLAY_NAME);
 

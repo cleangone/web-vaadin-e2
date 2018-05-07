@@ -10,7 +10,7 @@ import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.themes.ValoTheme;
 import org.vaadin.dialogs.ConfirmDialog;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
-import xyz.cleangone.data.aws.dynamo.entity.person.Person;
+import xyz.cleangone.data.aws.dynamo.entity.person.AdminPrivledge;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.manager.OrgManager;
 import xyz.cleangone.data.manager.UserManager;
@@ -19,8 +19,6 @@ import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
 import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import static xyz.cleangone.data.aws.dynamo.entity.person.User.*;
 import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
@@ -30,7 +28,7 @@ public class UsersAdmin extends VerticalLayout
     private final MessageDisplayer msgDisplayer;
     private OrgManager orgMgr;
     private UserManager userMgr;
-
+    private String orgId;
 
     public UsersAdmin(MessageDisplayer msgDisplayer)
     {
@@ -44,6 +42,7 @@ public class UsersAdmin extends VerticalLayout
     {
         this.orgMgr = orgMgr;
         this.userMgr = userMgr;
+        orgId = orgMgr.getOrgId();
 
         set();
     }
@@ -52,68 +51,62 @@ public class UsersAdmin extends VerticalLayout
     {
         removeAllComponents();
 
-        // todo - sort people
-        List<Person> people = orgMgr.getPeople();
-        Map<String, Person> peopleById = people.stream()
-            .collect(Collectors.toMap(Person::getId, Function.identity()));
-
-        addComponent(getAddUserLayout(people));
-
-        Component grid = getUserGrid(peopleById);
-        addComponent(grid);
+        Component grid = getUserGrid();
+        addComponents(getAddUserLayout(), grid);
         setExpandRatio(grid, 1.0f);
     }
 
-    private Component getAddUserLayout(List<Person> people)
+    private Component getAddUserLayout()
     {
-        HorizontalLayout layout = new HorizontalLayout();
-        layout.setSizeUndefined();
+        HorizontalLayout layout = horizontal(VaadinUtils.SIZE_UNDEFINED);
 
-        ComboBox<Person> personComboBox = new ComboBox<>();
-        layout.addComponent(personComboBox);
-        personComboBox.addStyleName(ValoTheme.TEXTFIELD_TINY);
-        personComboBox.setPlaceholder("Person");
-        personComboBox.setItemCaptionGenerator(Person::getLastCommaFirst);
-        personComboBox.setItems(people);
-
+        TextField firstNameField = VaadinUtils.createGridTextField("First Name");
+        TextField lastNameField = VaadinUtils.createGridTextField("Last Name");
         TextField emailField = VaadinUtils.createGridTextField("Email");
-        layout.addComponent(emailField);
 
         Button button = new Button("Add User");
         button.addStyleName(ValoTheme.TEXTFIELD_TINY);
-        layout.addComponent(button);
-        button.addClickListener(new Button.ClickListener()
-        {
-            @Override
-            public void buttonClick(Button.ClickEvent event)
-            {
-                Person person = personComboBox.getValue();
-                String email = emailField.getValue();
+        button.addClickListener(event -> {
+            String firstName = firstNameField.getValue();
+            String lastName = lastNameField.getValue();
+            String email = emailField.getValue();
 
-                if (person == null) { showError("Must select a person"); }
-                else if (email.length() == 0) { showError("Email required"); }
-                else if (userMgr.emailExists(email, orgMgr.getOrgId())) { showError("Email already exists"); }
-                else
-                {
-                    userMgr.createUser(email, person.getId(), orgMgr.getOrgId());
-                    set();
-                }
+            if (firstName.length() == 0) { showError("First Name required"); }
+            else if (lastName.length() == 0) { showError("Last Name required"); }
+            else if (email.length() == 0) { showError("Email required"); }
+            else if (userMgr.emailExists(email)) { showError("Email already exists"); }
+            else
+            {
+                userMgr.createUser(email, firstName, lastName, orgMgr.getOrgId());
+                set();
             }
         });
 
+        layout.addComponents(firstNameField, lastNameField, emailField, button);
         return layout;
     }
 
-    private Component getUserGrid(Map<String, Person> peopleById)
+    private Component getUserGrid()
     {
         Grid<User> grid = new Grid<>();
         grid.setSizeFull();
 
         Grid.Column<User, String> nameCol = addColumn(grid, LAST_FIRST_FIELD, User::getLastCommaFirst);
-        addColumn(grid, EMAIL_FIELD, User::getEmail, User::setEmail);
+
+        // cannot edit email - should you be able to edit email just created?  or delete & recreate?
+        addColumn(grid, EMAIL_FIELD, User::getEmail);
+//        addColumn(grid, EMAIL_FIELD, User::getEmail, User::setEmail);
+
+
         addColumn(grid, PASSWORD_FIELD, User::getPassword, User::setPassword);  // shows blank, clear text when typed in
-        addBooleanColumn(grid, ENABLED_FIELD, User::getEnabled, User::setEnabled);
-        addBooleanColumn(grid, ORG_ADMIN_FIELD, User::isOrgAdmin, User::setOrgAdmin);
+
+        grid.addColumn(this::isOrgAdmin)
+            .setId(ORG_ADMIN_FIELD.getName()).setCaption(ORG_ADMIN_FIELD.getDisplayName())
+            .setEditorComponent(new CheckBox(), this::setOrgAdmin);
+
+        // todo - cannot disable user - should admin be able to block them?
+        // addBooleanColumn(grid, ENABLED_FIELD, User::getEnabled, User::setEnabled);
+
         grid.addComponentColumn(this::buildDeleteButton);
 
         grid.sort(nameCol, SortDirection.ASCENDING);
@@ -127,8 +120,9 @@ public class UsersAdmin extends VerticalLayout
             set();
         });
 
-        List<User> users = orgMgr.getUsers();
-        users.forEach(u -> u.setPerson(peopleById.get(u.getPersonId())));
+        List<User> users = orgMgr.getUsers().stream()
+            .filter(user -> !user.isSuperAdmin())
+            .collect(Collectors.toList());
 
         Label countLabel = new Label();
         CountingDataProvider<User> dataProvider = new CountingDataProvider<User>(users, countLabel);
@@ -141,6 +135,16 @@ public class UsersAdmin extends VerticalLayout
         footerRow.getCell(EMAIL_FIELD.getName()).setComponent(countLabel);
 
         return grid;
+    }
+
+    private boolean isOrgAdmin(User user)
+    {
+        return user.isOrgAdmin(orgId);
+    }
+    private void setOrgAdmin(User user, boolean isAdmin)
+    {
+        if (isAdmin) { user.addAdminPrivledge(new AdminPrivledge(orgId)); }
+        else { user.removeAdminPrivledge(new AdminPrivledge(orgId)); }
     }
 
     private Grid.Column<User, String> addColumn(
@@ -165,8 +169,11 @@ public class UsersAdmin extends VerticalLayout
             .setEditorComponent(new CheckBox(), setter);
     }
 
+    // can only delete users that have not had password set - ie. just been created
     private Button buildDeleteButton(User user)
     {
+        if (user.hasPassword()) { return null; }
+
         Button button = createDeleteButton("Delete User");
         button.addClickListener(e -> {
             ConfirmDialog.show(getUI(), "Confirm User Delete", "Delete user '" + user.getName() + "'?",

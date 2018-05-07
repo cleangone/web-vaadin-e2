@@ -100,7 +100,7 @@ public class EventsAdmin extends BaseEventAdmin
         grid.sort(dispOrderCol, SortDirection.ASCENDING);
 
         List<OrgEvent> events = new ArrayList<>(eventMgr.getEvents());
-        if (userMgr.userIsAdmin(orgMgr.getOrg()))
+        if (userMgr.userIsOrgAdmin(orgMgr.getOrgId()))
         {
             // user is an admin and can edit grid entries
             grid.getEditor().setEnabled(true);

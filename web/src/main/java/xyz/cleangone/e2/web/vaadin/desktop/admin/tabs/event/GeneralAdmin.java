@@ -5,7 +5,7 @@ import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import org.vaadin.alump.ckeditor.CKEditorTextField;
 import xyz.cleangone.data.aws.dynamo.dao.DynamoBaseDao;
-import xyz.cleangone.data.aws.dynamo.dao.EventDao;
+import xyz.cleangone.data.aws.dynamo.dao.event.EventDao;
 import xyz.cleangone.data.aws.dynamo.entity.action.ActionType;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityType;

@@ -1,26 +1,18 @@
 package xyz.cleangone.e2.web.vaadin.desktop.banner;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static xyz.cleangone.e2.web.vaadin.desktop.banner.BannerUtil.*;
 import com.vaadin.ui.AbsoluteLayout;
 import org.vaadin.virkki.carousel.HorizontalCarousel;
 import org.vaadin.virkki.carousel.client.widget.gwt.ArrowKeysMode;
 import org.vaadin.virkki.carousel.client.widget.gwt.CarouselLoadMode;
-import xyz.cleangone.data.aws.dynamo.dao.CatalogItemDao;
-import xyz.cleangone.data.aws.dynamo.dao.UserDao;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityType;
-import xyz.cleangone.data.aws.dynamo.entity.bid.ItemBid;
-import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
-import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.manager.EventManager;
 import xyz.cleangone.data.manager.OrgManager;
-import xyz.cleangone.data.processor.ItemBidFixer;
 import xyz.cleangone.e2.web.manager.EntityChangeManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
-import xyz.cleangone.e2.web.vaadin.desktop.MyUI;
-import xyz.cleangone.message.EmailSender;
+
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;

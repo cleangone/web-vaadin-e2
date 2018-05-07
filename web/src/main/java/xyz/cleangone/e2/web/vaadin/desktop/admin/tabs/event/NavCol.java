@@ -68,7 +68,7 @@ public class NavCol extends BaseNavCol
             }
         }
 
-        if (!userMgr.userIsAdmin(sessionMgr.getOrg()))
+        if (!userMgr.userIsOrgAdmin(sessionMgr.getOrg().getId()))
         {
             // user is an event admin - determine which events to display
             TagManager tagMgr = sessionMgr.getOrgManager().getTagManager();

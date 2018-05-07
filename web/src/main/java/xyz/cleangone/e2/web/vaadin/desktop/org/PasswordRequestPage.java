@@ -53,7 +53,7 @@ public class PasswordRequestPage extends BaseOrgPage implements View
                 return;
             }
 
-            User user = userMgr.getUserWithEmail(email, org.getId());
+            User user = userMgr.getUserWithEmail(email);
             if (user == null)
             {
                 // todo - silently fail instead?

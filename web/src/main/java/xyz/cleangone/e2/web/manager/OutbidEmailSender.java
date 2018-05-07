@@ -1,7 +1,7 @@
 package xyz.cleangone.e2.web.manager;
 
 import xyz.cleangone.data.aws.dynamo.dao.CatalogItemDao;
-import xyz.cleangone.data.aws.dynamo.dao.UserDao;
+import xyz.cleangone.data.aws.dynamo.dao.user.UserDao;
 import xyz.cleangone.data.aws.dynamo.entity.bid.ItemBid;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;

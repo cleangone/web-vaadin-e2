@@ -52,7 +52,7 @@ public class OrgAdminPage extends BaseAdminPage
         sessionMgr.resetEventManager();
         actionBar.set(sessionMgr);
 
-        boolean isAdmin = sessionMgr.getUserManager().userIsAdmin(orgMgr.getOrg());
+        boolean isAdmin = sessionMgr.getUserManager().userIsOrgAdmin(orgMgr.getOrgId());
         for (TabSheet.Tab tab : tabs)
         {
             tab.setEnabled(isAdmin);

@@ -51,15 +51,15 @@ public class LeftMenuBar extends BaseMenuBar
         if (sessionMgr.hasOrg() && sessionMgr.hasUser())
         {
             TagManager tagMgr = sessionMgr.getOrgManager().getTagManager();
-            if (userMgr.userIsAdmin(org))
+            if (userMgr.userIsOrgAdmin(org.getId()))
             {
                 addIconOnlyItem(OrgAdminPage.DISPLAY_NAME, VaadinIcons.WRENCH, getNavigateCmd(OrgAdminPage.NAME));
             }
             else
             {
-                List<OrgTag> tags = tagMgr.getEventAdminRoleTags();
+//                List<OrgTag> tags = tagMgr.getEventAdminRoleTags();
                 pageDisplayType = PageDisplayType.ObjectRetrieval;
-                if (userMgr.userHasEventAdmin(org, tags))
+                if (userMgr.userIsEventAdmin(org.getId()))
                 {
                     addIconOnlyItem(EventAdminPage.DISPLAY_NAME, VaadinIcons.WRENCH, getNavigateCmd(EventAdminPage.NAME));
                 }

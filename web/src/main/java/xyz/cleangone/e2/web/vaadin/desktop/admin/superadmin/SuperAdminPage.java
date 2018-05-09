@@ -35,8 +35,7 @@ public class SuperAdminPage extends BaseSuperAdminPage
 
     private HorizontalLayout getAddOrgLayout(List<Organization> existingOrgs)
     {
-        HorizontalLayout layout = new HorizontalLayout();
-        layout.setSizeUndefined();
+        HorizontalLayout layout = horizontal(VaadinUtils.SIZE_UNDEFINED);
 
         TextField newOrgNameField = VaadinUtils.createGridTextField("New Organization Name");
         layout.addComponent(newOrgNameField);
@@ -72,6 +71,7 @@ public class SuperAdminPage extends BaseSuperAdminPage
             .setCaption(NAME_FIELD.getDisplayName())
             .setComparator(Comparator.comparing(Organization::getName)::compare);
         addColumn(grid, TAG_FIELD, Organization::getTag, Organization::setTag);
+        addBooleanColumn(grid, IS_DEFAULT_FIELD, Organization::getIsDefault, Organization::setIsDefault);
 
         grid.sort(nameCol, SortDirection.ASCENDING);
 
@@ -93,6 +93,14 @@ public class SuperAdminPage extends BaseSuperAdminPage
         return grid.addColumn(valueProvider)
             .setId(entityField.getName()).setCaption(entityField.getDisplayName()).setExpandRatio(1)
             .setEditorComponent(new TextField(), setter);
+    }
+
+    private Grid.Column<Organization, Boolean> addBooleanColumn(Grid<Organization> grid,
+        EntityField entityField, ValueProvider<Organization, Boolean> valueProvider, Setter<Organization, Boolean> setter)
+    {
+        return grid.addColumn(valueProvider)
+            .setId(entityField.getName()).setCaption(entityField.getDisplayName())
+            .setEditorComponent(new CheckBox(), setter);
     }
 
     private Button buildNameLinkButton(Organization org)

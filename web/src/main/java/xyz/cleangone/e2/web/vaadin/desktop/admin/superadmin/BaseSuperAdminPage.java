@@ -1,21 +1,19 @@
 package xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin;
 
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.manager.VaadinSessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.BaseAdminPage;
 
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+
 public abstract class BaseSuperAdminPage extends BaseAdminPage
 {
-    protected VerticalLayout mainLayout = new VerticalLayout();
+    protected VerticalLayout mainLayout = vertical(MARGIN_L, SPACING_TRUE);
 
     public BaseSuperAdminPage()
     {
-        mainLayout.setMargin(new MarginInfo(false, false, false, true)); // T/R/B/L margins
-        mainLayout.setSpacing(true);
-
         pageLayout.addComponent(mainLayout);
         pageLayout.setExpandRatio(mainLayout, 1.0f);
     }

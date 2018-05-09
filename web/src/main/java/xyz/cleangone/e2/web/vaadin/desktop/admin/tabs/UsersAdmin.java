@@ -101,7 +101,7 @@ public class UsersAdmin extends VerticalLayout
         addColumn(grid, PASSWORD_FIELD, User::getPassword, User::setPassword);  // shows blank, clear text when typed in
 
         grid.addColumn(this::isOrgAdmin)
-            .setId(ORG_ADMIN_FIELD.getName()).setCaption(ORG_ADMIN_FIELD.getDisplayName())
+            .setId(ADMIN_FIELD.getName()).setCaption(ADMIN_FIELD.getDisplayName())
             .setEditorComponent(new CheckBox(), this::setOrgAdmin);
 
         // todo - cannot disable user - should admin be able to block them?
@@ -113,7 +113,6 @@ public class UsersAdmin extends VerticalLayout
 
         grid.getEditor().setEnabled(true);
         grid.getEditor().addSaveListener(event -> {
-            // todo - check if email already taken
             User user = event.getBean();
             userMgr.save(user);
             msgDisplayer.displayMessage("User updates saved");

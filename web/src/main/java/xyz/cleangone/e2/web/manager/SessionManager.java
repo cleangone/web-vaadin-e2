@@ -120,7 +120,7 @@ public class SessionManager
     }
     public void resetEventManager()
     {
-        eventMgr.setOrg(orgMgr.getOrg());
+        if (orgMgr.getOrg() != null) { eventMgr.setOrg(orgMgr.getOrg()); }
     }
     public EventManager getResetEventManager()
     {

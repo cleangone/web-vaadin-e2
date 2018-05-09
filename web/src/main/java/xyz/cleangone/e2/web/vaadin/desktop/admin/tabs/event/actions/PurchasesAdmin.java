@@ -15,7 +15,6 @@ import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 import static xyz.cleangone.data.aws.dynamo.entity.action.Action.AMOUNT_FIELD;
@@ -23,8 +22,6 @@ import static xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity.CREATED_DATE_
 
 public class PurchasesAdmin extends ActionsAdmin
 {
-    private List<Action> actions;
-
     public PurchasesAdmin(EventsAdminLayout eventsAdmin, MessageDisplayer msgDisplayer)
     {
         super(eventsAdmin, msgDisplayer);
@@ -36,19 +33,14 @@ public class PurchasesAdmin extends ActionsAdmin
         if (unchanged(event)) { return; }
 
         removeAllComponents();
-        List<Action> allActions = actionMgr.getActionsByTargetEvent(event);
+        List<Action> purchases = actionMgr.getActionsByTargetEvent(event, ActionType.Purchased);
 
-        // get pledges
-        actions = allActions.stream()
-            .filter(a -> a.getActionType() == ActionType.Purchased)
-            .collect(Collectors.toList());
-
-        Component grid = getActionGrid();
+        Component grid = getActionGrid(purchases);
         addComponents(grid, new Label());
         setExpandRatio(grid, 1.0f);
     }
 
-    private Grid<Action> getActionGrid()
+    private Grid<Action> getActionGrid(List<Action> actions)
     {
         Grid<Action> grid = new Grid<>();
         grid.setSizeFull();

@@ -4,6 +4,7 @@ import com.vaadin.ui.*;
 import xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
+import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.manager.EventManager;
 import xyz.cleangone.data.manager.OrgManager;
 import xyz.cleangone.data.manager.TagManager;
@@ -68,23 +69,18 @@ public class NavCol extends BaseNavCol
             }
         }
 
-        if (!userMgr.userIsOrgAdmin(sessionMgr.getOrg().getId()))
+        User user = userMgr.getUser();
+        String orgId = sessionMgr.getOrgId();
+        if (!user.isOrgAdmin(orgId))
         {
             // user is an event admin - determine which events to display
-            TagManager tagMgr = sessionMgr.getOrgManager().getTagManager();
-            Map<String, OrgTag> eventAdminRoleTagsById = tagMgr.getEventAdminRoleTagsById();
-            Map<String, OrgEvent> eventsById = events.stream()
-                .collect(Collectors.toMap(BaseEntity::getId, Function.identity()));
+            List<String> userAdminEventIds = user.getAdminPrivledgeEventIds(orgId);
+            List<OrgEvent> allEvents = new ArrayList<>(events);
 
-            for (String tagId : userMgr.getUser().getTagIds())
+            events.clear();
+            for (OrgEvent event : allEvents)
             {
-                events.clear();
-                if (eventAdminRoleTagsById.keySet().contains(tagId))
-                {
-                    OrgTag adminRoleTag = eventAdminRoleTagsById.get(tagId);
-                    OrgEvent event = eventsById.get(adminRoleTag.getEventId());
-                    if (event != null) { events.add(event); }
-                }
+                if (userAdminEventIds.contains(event.getId())) { events.add(event); }
             }
         }
 

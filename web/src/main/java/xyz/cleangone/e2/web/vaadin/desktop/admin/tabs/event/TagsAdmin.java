@@ -171,7 +171,7 @@ public class TagsAdmin extends BaseEventAdmin
 
     private Button buildDeleteButton(OrgTag tag)
     {
-        if (tag.isAdminRole() || tag.getEventId() == null) { return null; }
+        if (tag.getEventId() == null) { return null; }
 
         Button button = createDeleteButton("Delete Event Tag");
         button.addClickListener(e -> {

@@ -42,11 +42,10 @@ import xyz.cleangone.e2.web.vaadin.desktop.org.profile.ProfilePage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.profile.ProfilePageType;
 import xyz.cleangone.e2.web.vaadin.desktop.org.profile.WatchLayout;
 import xyz.cleangone.e2.web.vaadin.desktop.user.LoginPage;
+import xyz.cleangone.util.env.E2Env;
+import xyz.cleangone.util.env.EnvManager;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
 @Push
@@ -65,6 +64,11 @@ public class MyUI extends BroadcastListeningUI implements BroadcastListener
     public static class MyUIServlet extends VaadinServlet { }
 
     private static final Logger LOG = Logger.getLogger(MyUI.class.getName());
+
+    static
+    {
+        EnvManager.setEnv(new E2Env());
+    }
 
     @Override
     protected void init(VaadinRequest vaadinRequest)
@@ -213,7 +217,7 @@ public class MyUI extends BroadcastListeningUI implements BroadcastListener
         String path = vaadinRequest.getPathInfo();
         if (path == null || !path.startsWith("/") || path.equals("/"))
         {
-            return null;
+            return Collections.emptyList();
         }
 
         return Arrays.asList(path.substring(1).split("\\s*/\\s*"));  // can be empty

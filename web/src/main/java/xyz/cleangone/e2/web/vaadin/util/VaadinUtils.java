@@ -30,6 +30,7 @@ public class VaadinUtils
     public static final String MARGIN_FALSE    = "marginFalse";
     public static final String MARGIN_T        = "marginTop";
     public static final String MARGIN_TL       = "marginTopLeft";
+    public static final String MARGIN_TR       = "marginTopRight";
     public static final String MARGIN_TRB      = "marginTopRightBot";
     public static final String MARGIN_L        = "marginLeft";
     public static final String MARGIN_RL       = "marginRightLeft";
@@ -89,6 +90,7 @@ public class VaadinUtils
             else if (directive.equals(MARGIN_FALSE))    { layout.setMargin(false); }
             else if (directive.equals(MARGIN_T))        { layout.setMargin(new MarginInfo(true,  false, false, false)); } // T/R/B/L
             else if (directive.equals(MARGIN_TL))       { layout.setMargin(new MarginInfo(true,  false, false, true)); }
+            else if (directive.equals(MARGIN_TR))       { layout.setMargin(new MarginInfo(true,  true,  false, false)); }
             else if (directive.equals(MARGIN_TRB))      { layout.setMargin(new MarginInfo(true,  true,  true,  false)); }
             else if (directive.equals(MARGIN_L))        { layout.setMargin(new MarginInfo(false, false, false, true)); }
             else if (directive.equals(MARGIN_RL))       { layout.setMargin(new MarginInfo(false, true,  false, true)); }

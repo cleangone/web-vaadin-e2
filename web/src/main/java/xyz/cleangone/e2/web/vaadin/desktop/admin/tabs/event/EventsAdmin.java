@@ -10,6 +10,7 @@ import xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
+import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.manager.EventManager;
 import xyz.cleangone.data.manager.OrgManager;
 import xyz.cleangone.data.manager.TagManager;
@@ -33,8 +34,7 @@ public class EventsAdmin extends BaseEventAdmin
     private EventManager eventMgr;
     private UserManager userMgr;
     private OrgManager orgMgr;
-    private TagManager tagMgr;
-
+    private String orgId;
 
     public EventsAdmin(EventsAdminLayout eventsAdminLayout, MessageDisplayer msgDisplayer)
     {
@@ -49,7 +49,7 @@ public class EventsAdmin extends BaseEventAdmin
         eventMgr = sessionMgr.getEventManager();
         userMgr = sessionMgr.getUserManager();
         orgMgr = sessionMgr.getOrgManager();
-        tagMgr = orgMgr.getTagManager();
+        orgId = orgMgr.getOrgId();
 
         set();
     }
@@ -72,10 +72,7 @@ public class EventsAdmin extends BaseEventAdmin
         TextField addNameField = VaadinUtils.createGridTextField(eventCaption + " Name");
         Button button = createTextButton("Add " + eventCaption, e -> {
             OrgEvent event = eventMgr.createEvent(addNameField.getValue());
-            tagMgr.createTag(OrgTag.ADMIN_ROLE_NAME, OrgTag.TagType.UserRole, event);
-
-            // display event created message
-            set();
+            set(); // display event created message
         });
 
         layout.addComponents(addNameField, button);
@@ -100,7 +97,9 @@ public class EventsAdmin extends BaseEventAdmin
         grid.sort(dispOrderCol, SortDirection.ASCENDING);
 
         List<OrgEvent> events = new ArrayList<>(eventMgr.getEvents());
-        if (userMgr.userIsOrgAdmin(orgMgr.getOrgId()))
+
+        User user = userMgr.getUser();
+        if (user.isOrgAdmin(orgId))
         {
             // user is an admin and can edit grid entries
             grid.getEditor().setEnabled(true);
@@ -114,19 +113,13 @@ public class EventsAdmin extends BaseEventAdmin
         else
         {
             // user is an event admin of at least one event - determine which events to display
-            Map<String, OrgTag> eventAdminRoleTagsById = tagMgr.getEventAdminRoleTagsById();
-            Map<String, OrgEvent> eventsById = events.stream()
-                .collect(Collectors.toMap(BaseEntity::getId, Function.identity()));
+            List<String> userAdminEventIds = user.getAdminPrivledgeEventIds(orgId);
+            List<OrgEvent> allEvents = new ArrayList<>(events);
 
             events.clear();
-            for (String tagId : userMgr.getUser().getTagIds())
+            for (OrgEvent event : allEvents)
             {
-                if (eventAdminRoleTagsById.keySet().contains(tagId))
-                {
-                    OrgTag adminRoleTag = eventAdminRoleTagsById.get(tagId);
-                    OrgEvent event = eventsById.get(adminRoleTag.getEventId());
-                    if (event != null) { events.add(event); }
-                }
+                if (userAdminEventIds.contains(event.getId())) { events.add(event); }
             }
         }
 

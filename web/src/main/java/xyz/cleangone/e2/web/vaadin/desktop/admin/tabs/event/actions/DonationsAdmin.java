@@ -39,25 +39,21 @@ public class DonationsAdmin extends ActionsAdmin
         if (unchanged(event)) { return; }
 
         removeAllComponents();
-        List<Action> allActions = actionMgr.getActionsByTargetEvent(event);
 
-        // get pledges
-        List<Action> pledges = allActions.stream()
-            .filter(a -> a.getActionType() == ActionType.Pledged)
-            .collect(Collectors.toList());
+        List<Action> actions = actionMgr.getActionsByTargetEvent(event, ActionType.Donated, ActionType.Pledged, ActionType.FulfilledPledge);
 
         // get pledges that have been fulfilled
-        Set<String> fulfilledPledgeIds = allActions.stream()
+        Set<String> fulfilledPledgeIds = actions.stream()
             .filter(a -> a.getActionType() == ActionType.FulfilledPledge)
             .map(Action::getReferenceActionId)
             .collect(Collectors.toSet());
 
         // omit pledges that have been fulfilled
-        List<Action> actions = allActions.stream()
-            .filter(a -> !fulfilledPledgeIds.contains(a.getId()))
+        List<Action> donations = actions.stream()
+            .filter(a -> !(a.getActionType() == ActionType.Pledged && fulfilledPledgeIds.contains(a.getId())))
             .collect(Collectors.toList());
 
-        Component grid = getActionGrid(actions);
+        Component grid = getActionGrid(donations);
         addComponents(grid, new Label());
         setExpandRatio(grid, 1.0f);
     }

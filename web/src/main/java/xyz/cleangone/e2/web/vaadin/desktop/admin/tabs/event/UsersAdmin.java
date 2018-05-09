@@ -12,7 +12,7 @@ import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
 import xyz.cleangone.data.aws.dynamo.entity.organization.EventParticipant;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
-import xyz.cleangone.data.aws.dynamo.entity.person.Person;
+
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.manager.EventManager;
 import xyz.cleangone.data.manager.OrgManager;
@@ -28,9 +28,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
-import static xyz.cleangone.data.aws.dynamo.entity.organization.EventParticipant.LAST_COMMA_FIRST_FIELD;
-import static xyz.cleangone.data.aws.dynamo.entity.person.User.TAGS_FIELD;
-
+import static xyz.cleangone.data.aws.dynamo.entity.organization.EventParticipant.*;
+import static xyz.cleangone.data.aws.dynamo.entity.person.User.*;
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
 public class UsersAdmin extends BaseEventAdmin implements MultiSelectionListener<User>
 {
@@ -51,11 +51,7 @@ public class UsersAdmin extends BaseEventAdmin implements MultiSelectionListener
     public UsersAdmin(EventsAdminLayout eventsAdminLayout, MessageDisplayer msgDisplayer)
     {
         super(eventsAdminLayout, msgDisplayer);
-
-        setSizeFull();
-        setMargin(new MarginInfo(true, false, false, false)); // T/R/B/L
-        setSpacing(true);
-        setWidth("100%");
+        setLayout(this, MARGIN_TR, SPACING_TRUE, SIZE_FULL, WIDTH_100_PCT);
     }
 
     public void set(SessionManager sessionMgr)
@@ -138,7 +134,7 @@ public class UsersAdmin extends BaseEventAdmin implements MultiSelectionListener
         // get enabled users that are not already an admin
         List<User> users = orgMgr.getUsers().stream()
             .filter(u -> u.getEnabled())
-            .filter(u -> !u.isOrgAdmin(orgMgr.getOrgId())) // todo - why do this?  check admin priv vs. role
+            .filter(u -> !u.isOrgAdmin(orgMgr.getOrgId())) // todo - why do this?
             .collect(Collectors.toList());
 
         for (User user : users)
@@ -152,9 +148,21 @@ public class UsersAdmin extends BaseEventAdmin implements MultiSelectionListener
         addColumn(grid, LAST_COMMA_FIRST_FIELD, User::getLastCommaFirst, 1);
         addColumn(grid, TAGS_FIELD, User::getTagsCsv, 2);
 
+        grid.addColumn(this::isAdmin)
+            .setId(ADMIN_FIELD.getName()).setCaption(ADMIN_FIELD.getDisplayName())
+            .setEditorComponent(new CheckBox(), this::setAdmin);
+
         grid.setColumnReorderingAllowed(true);
         grid.setSelectionMode(Grid.SelectionMode.MULTI);
         grid.asMultiSelect().addSelectionListener(this);
+
+        grid.getEditor().setEnabled(true);
+        grid.getEditor().addSaveListener(event -> {
+            User user = event.getBean();
+            userMgr.save(user);
+            msgDisplayer.displayMessage("User updates saved");
+            set();
+        });
 
         Label countLabel = new Label();
         CountingDataProvider<User> dataProvider = new CountingDataProvider<>(users, countLabel);
@@ -164,6 +172,16 @@ public class UsersAdmin extends BaseEventAdmin implements MultiSelectionListener
         setColumnFiltering(filterHeader, dataProvider);
 
         return grid;
+    }
+
+    private boolean isAdmin(User user)
+    {
+        return user.isEventAdmin(event.getOrgId(), event.getId());
+    }
+    private void setAdmin(User user, boolean isAdmin)
+    {
+        if (isAdmin) { user.addAdminPrivledge(event); }
+        else { user.removeAdminPrivledge(event); }
     }
 
     private Grid.Column<User, String> addColumn(Grid<User> grid,

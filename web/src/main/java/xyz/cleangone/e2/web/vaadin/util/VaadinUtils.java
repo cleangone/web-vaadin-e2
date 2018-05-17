@@ -33,6 +33,7 @@ public class VaadinUtils
     public static final String MARGIN_TR       = "marginTopRight";
     public static final String MARGIN_TRB      = "marginTopRightBot";
     public static final String MARGIN_L        = "marginLeft";
+    public static final String MARGIN_R        = "marginRight";
     public static final String MARGIN_RL       = "marginRightLeft";
     public static final String SPACING_TRUE    = "spacingTrue";
     public static final String SPACING_FALSE   = "spacingFalse";
@@ -47,15 +48,33 @@ public class VaadinUtils
     public static final String BACK_GREEN      = "backGreen";
     public static final String BACK_BLUE       = "backBlue";
     public static final String BACK_BLACK      = "backBlack";
+    public static final String BACK_PURPLE     = "backPurple";
 
     public static VerticalLayout vertical(Component component)
     {
         return new VerticalLayout(component);
     }
+    public static VerticalLayout vertical(Component component, String... directives)
+    {
+        VerticalLayout layout = vertical(component);
+        setLayout(layout, directives);
+        return layout;
+    }
 
     public static VerticalLayout vertical(String... directives)
     {
         VerticalLayout layout = new VerticalLayout();
+        setLayout(layout, directives);
+        return layout;
+    }
+
+    public static HorizontalLayout horizontal(Component component)
+    {
+        return new HorizontalLayout(component);
+    }
+    public static HorizontalLayout horizontal(Component component, String... directives)
+    {
+        HorizontalLayout layout = horizontal(component);
         setLayout(layout, directives);
         return layout;
     }
@@ -74,13 +93,6 @@ public class VaadinUtils
         return layout;
     }
 
-    public static VerticalLayout vertical(Component component, String... directives)
-    {
-        VerticalLayout layout = vertical(component);
-        setLayout(layout, directives);
-        return layout;
-    }
-
     public static void setLayout(AbstractOrderedLayout layout, String... directives)
     {
         // todo - figure out better way to do this
@@ -89,11 +101,12 @@ public class VaadinUtils
             if (directive.equals(MARGIN_TRUE))          { layout.setMargin(true); }
             else if (directive.equals(MARGIN_FALSE))    { layout.setMargin(false); }
             else if (directive.equals(MARGIN_T))        { layout.setMargin(new MarginInfo(true,  false, false, false)); } // T/R/B/L
-            else if (directive.equals(MARGIN_TL))       { layout.setMargin(new MarginInfo(true,  false, false, true)); }
+            else if (directive.equals(MARGIN_TL))       { layout.setMargin(new MarginInfo(true,  false, false, true));  }
             else if (directive.equals(MARGIN_TR))       { layout.setMargin(new MarginInfo(true,  true,  false, false)); }
             else if (directive.equals(MARGIN_TRB))      { layout.setMargin(new MarginInfo(true,  true,  true,  false)); }
-            else if (directive.equals(MARGIN_L))        { layout.setMargin(new MarginInfo(false, false, false, true)); }
-            else if (directive.equals(MARGIN_RL))       { layout.setMargin(new MarginInfo(false, true,  false, true)); }
+            else if (directive.equals(MARGIN_L))        { layout.setMargin(new MarginInfo(false, false, false, true));  }
+            else if (directive.equals(MARGIN_R))        { layout.setMargin(new MarginInfo(false, true,  false, false)); }
+            else if (directive.equals(MARGIN_RL))       { layout.setMargin(new MarginInfo(false, true,  false, true));  }
             else if (directive.equals(SPACING_TRUE))    { layout.setSpacing(true); }
             else if (directive.equals(SPACING_FALSE))   { layout.setSpacing(false); }
             else if (directive.equals(SIZE_FULL))       { layout.setSizeFull(); }
@@ -106,7 +119,8 @@ public class VaadinUtils
                 directive.equals(BACK_YELLOW) ||
                 directive.equals(BACK_GREEN)  ||
                 directive.equals(BACK_BLUE)   ||
-                directive.equals(BACK_BLACK))
+                directive.equals(BACK_BLACK)  ||
+                directive.equals(BACK_PURPLE))
             {
                 addColorStyle(layout, directive);
             }
@@ -220,9 +234,12 @@ public class VaadinUtils
         intField.addStyleName(ValoTheme.TEXTFIELD_TINY);  // todo - doesn't look like it affects display
         intField.addStyleName(ValoTheme.LABEL_TINY);
         intField.addValueChangeListener(event -> {
-            entity.setInt(field, event.getValue());
-            dao.save(entity);
-            msgDisplayer.displayMessage(field.getDisplayName() + " saved");
+            if (event.getValue() != null)
+            {
+                entity.setInt(field, event.getValue());
+                dao.save(entity);
+                msgDisplayer.displayMessage(field.getDisplayName() + " saved");
+            }
         });
 
         return intField;
@@ -314,6 +331,8 @@ public class VaadinUtils
     public static Button createCloseButton() { return createIconButton(VaadinIcons.CLOSE_CIRCLE); }
     public static Button createCloseButton(String description) { return createIconButton(VaadinIcons.CLOSE_CIRCLE, description); }
     public static Button createDeleteButton(String description) { return createSmallIconButton(VaadinIcons.TRASH, description); }
+    public static Button createArrowLeftButton(String description) { return createIconButton(VaadinIcons.CHEVRON_LEFT, description); }
+    public static Button createArrowRightButton(String description) { return createIconButton(VaadinIcons.CHEVRON_RIGHT, description); }
 
     public static Button createDeleteButton(String description, Button.ClickListener listener)
     {

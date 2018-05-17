@@ -23,6 +23,8 @@ import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
 public class CatalogLayout extends VerticalLayout
 {
+    private static int DEFAULT_NAV_COL_WIDTH = 200;
+
     private final EventManager eventMgr;
     private final TagManager tagMgr;
     private final BidManager bidMgr;
@@ -33,12 +35,13 @@ public class CatalogLayout extends VerticalLayout
     private Map<String, OrgEvent> eventsById;
 
     private int pageWidth;
+    private int navColWidth;
     private int maxCols;
     private int currCol;
     private int currRow;
 
     // called by CatalogPage
-    public CatalogLayout(int pageWidth, SessionManager sessionMgr)
+    public CatalogLayout(int pageWidth, int navColWidth, SessionManager sessionMgr)
     {
         OrgManager orgMgr = sessionMgr.getOrgManager();
         eventMgr = sessionMgr.getEventManager();
@@ -47,7 +50,7 @@ public class CatalogLayout extends VerticalLayout
         viewStatus = sessionMgr.getViewStatus();
 
         setLayout(this, MARGIN_FALSE, SPACING_TRUE, WIDTH_100_PCT, BACK_GREEN);
-        setPageWidth(pageWidth);
+        setPageWidth(pageWidth, navColWidth);
 
         catalogGridLayout.setMargin(false);
         catalogGridLayout.setSpacing(true);
@@ -58,13 +61,13 @@ public class CatalogLayout extends VerticalLayout
     // called by WatchLayout
     public CatalogLayout(int pageWidth, SessionManager sessionMgr, Map<String, OrgEvent> eventsById)
     {
-        this(pageWidth, sessionMgr);
+        this(pageWidth, DEFAULT_NAV_COL_WIDTH, sessionMgr);
         this.eventsById = eventsById;
     }
 
     public CatalogLayout(int pageWidth, List<CatalogItem> items, User user, SessionManager sessionMgr)
     {
-        this(pageWidth, sessionMgr);
+        this(pageWidth, DEFAULT_NAV_COL_WIDTH, sessionMgr);
 
         for (CatalogItem item : items)
         {
@@ -72,13 +75,13 @@ public class CatalogLayout extends VerticalLayout
         }
     }
 
-    private void setPageWidth(int pageWidth)
+    private void setPageWidth(int pageWidth, int navColWidth)
     {
         this.pageWidth = pageWidth;
+        this.navColWidth = navColWidth;
 
-        // nav col and item cols each ~200px
-        int layoutWidth = pageWidth - 200;
-        maxCols = Math.max(layoutWidth/200, 1);
+        int layoutWidth = pageWidth - navColWidth;
+        maxCols = Math.max(layoutWidth/200, 1); // item cols each ~200px
 
         catalogGridLayout.setRows(1);
         catalogGridLayout.setColumns(maxCols);
@@ -87,10 +90,14 @@ public class CatalogLayout extends VerticalLayout
 
     public void resetPageWidth(int pageWidth)
     {
-        if (pageWidth != this.pageWidth)
+        resetPageWidth(pageWidth, navColWidth);
+    }
+    public void resetPageWidth(int pageWidth, int navColWidth)
+    {
+        if (pageWidth != this.pageWidth && navColWidth != this.navColWidth)
         {
             catalogGridLayout.removeAllComponents();
-            setPageWidth(pageWidth);
+            setPageWidth(pageWidth, navColWidth);
             resetItems();
         }
     }
@@ -109,6 +116,7 @@ public class CatalogLayout extends VerticalLayout
         if (getComponentCount() == 0) { addComponents(createViewSoldLayout(), catalogGridLayout); }
 
         CatalogItemLayout itemLayout = new CatalogItemLayout(item, user, quickBidButton, bidMgr,  e -> {
+            // LayoutClickListener
             // this needs to do different things for catalog and watched items
 
             ItemPage itemPage = new ItemPage();

@@ -10,10 +10,11 @@ import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
 public abstract class BaseSuperAdminPage extends BaseAdminPage
 {
-    protected VerticalLayout mainLayout = vertical(MARGIN_L, SPACING_TRUE);
+    protected VerticalLayout mainLayout = vertical(MARGIN_FALSE, SPACING_TRUE, BACK_ORANGE);
 
     public BaseSuperAdminPage()
     {
+        pageLayout.setSpacing(false);
         pageLayout.addComponent(mainLayout);
         pageLayout.setExpandRatio(mainLayout, 1.0f);
     }

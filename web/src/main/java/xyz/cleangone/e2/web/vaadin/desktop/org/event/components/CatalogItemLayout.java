@@ -29,7 +29,8 @@ public class CatalogItemLayout extends VerticalLayout
 
     private final CatalogItem item;
 
-    public CatalogItemLayout(CatalogItem item, User user, Button quickBidButton, BidManager bidManager, LayoutEvents.LayoutClickListener listener)
+    public CatalogItemLayout(
+        CatalogItem item, User user, Button quickBidButton, BidManager bidManager, LayoutEvents.LayoutClickListener listener)
     {
         this.item = item;
 

@@ -3,7 +3,6 @@ package xyz.cleangone.e2.web.vaadin.desktop.admin;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.EventsAdminLayout;
 
-
 public class EventAdminPage extends BaseAdminPage
 {
     public static final String NAME = "EventAdmin";

@@ -11,8 +11,9 @@ import xyz.cleangone.data.manager.OrgManager;
 import xyz.cleangone.data.manager.UserManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.manager.VaadinSessionManager;
-import xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin.SuperAdminPage;
+import xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin.OrgsAdmin;
 import xyz.cleangone.e2.web.vaadin.desktop.actionbar.ActionBar;
+import xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin.SuperAdminPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.OrgPage;
 
 import javax.servlet.http.Cookie;

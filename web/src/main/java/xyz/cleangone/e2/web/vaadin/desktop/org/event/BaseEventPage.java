@@ -48,7 +48,7 @@ public abstract class BaseEventPage extends BasePage implements View
         centerWrapperLayout.setMargin(false);
         centerWrapperLayout.setSpacing(true);
 
-        leftLayout = new LeftColLayout(getMainLayoutHeight());
+        leftLayout = new LeftColLayout(getMainLayoutHeight(), UI.getCurrent().getPage().getBrowserWindowWidth());
         centerLayout.setMargin(new MarginInfo(false, true, false, false)); // T/R/B/L margins
         rightLayout = new RightColLayout(actionBar);
 
@@ -102,5 +102,4 @@ public abstract class BaseEventPage extends BasePage implements View
         if (UI.getCurrent().getPage().getBrowserWindowWidth() < 800) { centerWrapperLayout.addComponent(rightLayout); }
         else { mainLayout.addComponent(rightLayout); }
     }
-
 }

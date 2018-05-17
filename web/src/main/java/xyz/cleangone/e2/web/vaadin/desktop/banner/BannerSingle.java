@@ -23,10 +23,11 @@ public class BannerSingle extends HorizontalLayout implements BannerComponent
 
         EventManager eventMgr = sessionMgr.getEventManager();
         boolean isMobileBrowser = sessionMgr.isMobileBrowser();
+
         OrgEvent event = eventMgr == null ? null : eventMgr.getEvent();
         if (event != null && !event.getUseOrgBanner())
         {
-            AbsoluteLayout eventBanner = getBanner(event);
+            AbsoluteLayout eventBanner = getBanner(event, isMobileBrowser);
             addComponent(eventBanner);
 
             // event banner used for catalog, item - need nav back to event
@@ -37,7 +38,7 @@ public class BannerSingle extends HorizontalLayout implements BannerComponent
             OrgManager orgMgr = sessionMgr.getOrgManager();
             Organization org = orgMgr.getOrg();
 
-            AbsoluteLayout orgBanner = getBanner(org);
+            AbsoluteLayout orgBanner = getBanner(org, isMobileBrowser);
             addComponent(orgBanner);
             addComponentToLayout(getHtml(org, isMobileBrowser, getUI()), orgBanner, isMobileBrowser); // a bit ugly
         }

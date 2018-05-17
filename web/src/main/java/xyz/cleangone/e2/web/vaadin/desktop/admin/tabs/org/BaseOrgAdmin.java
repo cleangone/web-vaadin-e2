@@ -6,10 +6,12 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.dnd.DropTargetExtension;
 import org.apache.commons.lang3.StringUtils;
 import org.vaadin.alump.ckeditor.CKEditorTextField;
+import org.vaadin.viritin.fields.IntegerField;
 import xyz.cleangone.data.aws.dynamo.dao.DynamoBaseDao;
 import xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
 import xyz.cleangone.data.aws.dynamo.entity.organization.BaseOrg;
+import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
 import xyz.cleangone.data.manager.ImageContainerManager;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.disclosure.BaseOrgDisclosure;
 import xyz.cleangone.e2.web.vaadin.desktop.image.ImageLabel;
@@ -76,7 +78,9 @@ public abstract class BaseOrgAdmin extends BaseAdmin
             setDisclosureCaption();
 
             mainLayout.addComponents(bannerImageLabel,
-                new ColorPickerComponent(BANNER_BKGND_COLOR_FIELD, baseOrg, dao, msgDisplayer, Color.WHITE));
+                new ColorPickerComponent(BANNER_BKGND_COLOR_FIELD, baseOrg, dao, msgDisplayer, Color.WHITE),
+                createTextField(BANNER_MOBILE_OFFSET_X_FIELD, baseOrg, dao, 5, msgDisplayer),
+                createTextField(BANNER_MOBILE_OFFSET_Y_FIELD, baseOrg, dao, 5, msgDisplayer));
         }
 
         private void addDropTargetExtension(BannerImageLabel target, BaseOrg baseOrg, ImageContainerManager icMgr)
@@ -96,7 +100,7 @@ public abstract class BaseOrgAdmin extends BaseAdmin
 
         public void setDisclosureCaption()
         {
-            setDisclosureCaption("Banner " + (baseOrg.getBannerHtml() == null ? " not" : "") + " set");
+            setDisclosureCaption("Banner " + (baseOrg.getBannerText().getHtml() == null ? " not" : "") + " set");
         }
 
         class BannerImageLabel extends CustomComponent
@@ -129,23 +133,35 @@ public abstract class BaseOrgAdmin extends BaseAdmin
     {
         public BannerTextDisclosure(BaseOrg baseOrg, DynamoBaseDao dao)
         {
-            super("Banner Text", new HorizontalLayout(), baseOrg);
+            super("Banner Text", new VerticalLayout(), baseOrg);
 
             setDisclosureCaption();
 
-            TextField bannerHtmlField = createTextField(BANNER_HTML_FIELD, baseOrg, dao, 20, msgDisplayer);
+            TextField bannerHtmlField = createTextField(BANNER_TEXT_HTML_FIELD, dao, 20);
             bannerHtmlField.addValueChangeListener(event -> setDisclosureCaption());
 
             mainLayout.addComponents(
-                bannerHtmlField,
-                createTextField(BANNER_TEXT_SIZE_FIELD,  baseOrg, dao, 5, msgDisplayer),
                 new ColorPickerComponent(BANNER_TEXT_COLOR_FIELD, baseOrg, dao, msgDisplayer, Color.WHITE),
-                new ColorPickerComponent(BANNER_DROPSHADOW_COLOR_FIELD, baseOrg, dao, msgDisplayer, Color.WHITE));
+                new HorizontalLayout(
+                    bannerHtmlField,
+                    createTextField(BANNER_TEXT_SIZE_FIELD,          dao, 5),
+                    createTextField(BANNER_TEXT_LINE_HEIGHT_FIELD,   dao, 5),
+                    createTextField(BANNER_TEXT_BOTTOM_OFFSET_FIELD, dao, 5)),
+                new HorizontalLayout(
+                    createTextField(BANNER_TEXT_MOBILE_HTML_FIELD,          dao, 20),
+                    createTextField(BANNER_TEXT_MOBILE_SIZE_FIELD,          dao, 5),
+                    createTextField(BANNER_TEXT_MOBILE_LINE_HEIGHT_FIELD,   dao, 5),
+                    createTextField(BANNER_TEXT_MOBILE_BOTTOM_OFFSET_FIELD, dao, 5)));
+        }
+
+        public TextField createTextField(EntityField field, DynamoBaseDao dao, float widthInEm)
+        {
+            return VaadinUtils.createTextField(field, baseOrg, dao, widthInEm, msgDisplayer);
         }
 
         public void setDisclosureCaption()
         {
-            setDisclosureCaption(baseOrg.getBannerHtml());
+            setDisclosureCaption(baseOrg.getBannerText().getHtml());
         }
     }
 

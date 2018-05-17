@@ -59,8 +59,6 @@ public class ItemsAdmin extends BaseEventTagsAdmin implements MultiSelectionList
         if (COLORS) { addStyleName("backGreen"); }
     }
 
-
-
     public void set(SessionManager sessionMgr)
     {
         filterValues = new HashMap<>();

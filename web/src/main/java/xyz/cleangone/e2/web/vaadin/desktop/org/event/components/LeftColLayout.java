@@ -1,11 +1,9 @@
 package xyz.cleangone.e2.web.vaadin.desktop.org.event.components;
 
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
-import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
+import com.vaadin.ui.themes.ValoTheme;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityType;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
 import xyz.cleangone.data.aws.dynamo.entity.item.SaleStatus;
@@ -34,8 +32,10 @@ import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
 public class LeftColLayout extends HorizontalLayout
 {
-    protected final VerticalLayout leftLayout = vertical(MARGIN_TRB, SPACING_FALSE, WIDTH_UNDEFINED);
+    protected final VerticalLayout leftLayout = vertical(MARGIN_TR, SPACING_FALSE, WIDTH_UNDEFINED);
 
+    private int pageWidth;
+    private SessionManager sessionMgr;
     private OrgManager orgMgr;
     protected EventManager eventMgr;
     protected ItemManager itemMgr;
@@ -45,15 +45,26 @@ public class LeftColLayout extends HorizontalLayout
     protected User user;
     private EntityChangeManager changeManager = new EntityChangeManager();
 
-    public LeftColLayout(int pageHeight)
+    OrgTag currentCategory;
+    List<OrgTag> categories;
+    Map<String, Integer> itemCountByCategoryId;
+
+    private boolean colMinimized = false;
+
+    public LeftColLayout(int pageHeight, int pageWidth)
     {
+        this.pageWidth = pageWidth;
+
+        // horizontal to hold margin layout, which ensures col background color for height of page
         setMargin(false);
         setSpacing(false);
+
         addComponents(getMarginLayout(pageHeight), leftLayout);
     }
 
     public void set(SessionManager sessionMgr)
     {
+        this.sessionMgr = sessionMgr;
         orgMgr = sessionMgr.getOrgManager();
         eventMgr = sessionMgr.getEventManager();
         itemMgr = eventMgr.getItemManager();
@@ -67,6 +78,8 @@ public class LeftColLayout extends HorizontalLayout
     public PageDisplayType set() { return set((OrgTag)null); }
     public PageDisplayType set(OrgTag currentCategory)
     {
+        this.currentCategory = currentCategory;
+
         if (changeManager.unchanged(user) &&
             changeManager.unchanged(event) &&
             changeManager.unchanged(orgMgr.getOrgId(), EntityType.Category) &&
@@ -87,19 +100,48 @@ public class LeftColLayout extends HorizontalLayout
         List<String> categoryIds = event.getCategoryIds();
         if (categoryIds == null || categoryIds.isEmpty()) { return PageDisplayType.NoRetrieval; }
 
-        List<OrgTag> categories = tagMgr.getEventVisibleTags(OrgTag.TagType.Category, event);
-        if (!categories.isEmpty())
-        {
-            leftLayout.removeAllComponents();
-            leftLayout.addComponent(getCategoriesLayout(currentCategory, categories));
+        categories = tagMgr.getEventVisibleTags(OrgTag.TagType.Category, event);
+        if (categories.isEmpty()) { return PageDisplayType.ObjectRetrieval; }
 
-            addComponents(getMarginLayout(), leftLayout);
+        itemCountByCategoryId = new HashMap<>();
+        List<CatalogItem> items = itemMgr.getItems();
+        for (CatalogItem item : items)
+        {
+            if (item.getEnabled() &&
+                item.getSaleStatus() != SaleStatus.Preview &&
+                (item.getAvailabilityStart() == null || item.getAvailabilityStart().before(new Date())))
+            {
+                for (String categoryId : item.getCategoryIds())
+                {
+                    int count = itemCountByCategoryId.getOrDefault(categoryId, 0);
+                    itemCountByCategoryId.put(categoryId, count + 1);
+                }
+            }
         }
+
+
+        if (sessionMgr.isMobileBrowser() && pageWidth < 500)
+        {
+            colMinimized = true;
+            setLayout(leftLayout, MARGIN_FALSE);
+        }
+
+        leftLayout.removeAllComponents();
+
+        if (colMinimized) { leftLayout.addComponent(new CategoryMenu()); }
+        else { leftLayout.addComponent(getCategoriesLayout()); }
+
+        addComponents(getMarginLayout(), leftLayout);
 
         return PageDisplayType.ObjectRetrieval;
     }
 
-    private Component getCategoriesLayout(OrgTag currentCategory, List<OrgTag> categories)
+    public int getColWidth()
+    {
+        return colMinimized ? 50 : 200;
+    }
+
+    private Component getCategoriesLayout()
     {
         VerticalLayout layout = new VerticalLayout();
         layout.setMargin(false);
@@ -115,24 +157,6 @@ public class LeftColLayout extends HorizontalLayout
 
         String selectedTextStyleName = "category-text-selected" + event.getTag();
         styles.add("." + selectedTextStyleName + " {color: " + selectedTextColor + "}");
-
-        //layout.addComponent(getEventLink(textStyleName));
-
-        Map<String, Integer> itemCountByCategoryId = new HashMap<>();
-        List<CatalogItem> items = itemMgr.getItems();
-        for (CatalogItem item : items)
-        {
-            if (item.getEnabled() &&
-                item.getSaleStatus() != SaleStatus.Preview &&
-                (item.getAvailabilityStart() == null || item.getAvailabilityStart().before(new Date())))
-            {
-                for (String categoryId : item.getCategoryIds())
-                {
-                    int count = itemCountByCategoryId.getOrDefault(categoryId, 0);
-                    itemCountByCategoryId.put(categoryId, count + 1);
-                }
-            }
-        }
 
         for (OrgTag category : categories)
         {
@@ -163,31 +187,55 @@ public class LeftColLayout extends HorizontalLayout
     {
         String styleName = currentCategory != null && currentCategory.getId().equals(category.getId()) ? selectedTextStyleName: textStyleName;
         HorizontalLayout layout = getLink(category.getName() + " (" + itemCount + ")", styleName);
-        layout.addLayoutClickListener( e -> {
-            eventMgr.setCategory(category);
-            String viewName = CatalogPage.NAME + "-" + category.getName();
-            getUI().getNavigator().addView(viewName, new CatalogPage());
-            getUI().getNavigator().navigateTo(viewName);
-        });
+        layout.addLayoutClickListener(e -> navigateTo(category));
 
         return layout;
     }
 
     private HorizontalLayout getLink(String text, String textStyleName)
     {
-        HorizontalLayout layout = new HorizontalLayout();
-        layout.setMargin(false);
-
         Label label = new Label(text);
         label.addStyleName("category");
         label.addStyleName(textStyleName);
 
-        layout.addComponent(label);
-        return layout;
+        return horizontal(label, MARGIN_FALSE);
+    }
+
+    private void navigateTo(OrgTag category)
+    {
+        eventMgr.setCategory(category);
+        String viewName = CatalogPage.NAME + "-" + category.getName();
+        getUI().getNavigator().addView(viewName, new CatalogPage());
+        getUI().getNavigator().navigateTo(viewName);
     }
 
     private void setStyle()
     {
         setStyleName(setNavStyle("menu-left-" + orgMgr.getOrg().getTag() + "-", event));
+    }
+
+    private class CategoryMenu extends MenuBar
+    {
+        CategoryMenu()
+        {
+            addStyleName(ValoTheme.MENUBAR_BORDERLESS);
+            setMargin(false);
+
+            MenuBar.MenuItem categoryItem = addItem("", null, null);
+            categoryItem.setIcon(VaadinIcons.LIST_UL);
+
+            for (OrgTag category : categories)
+            {
+                int itemCount = itemCountByCategoryId.getOrDefault(category.getId(), 0);
+                if (itemCount != 0)
+                {
+                    categoryItem.addItem(category.getName(), null, new MenuBar.Command() {
+                        public void menuSelected(MenuBar.MenuItem selectedItem) {
+                            navigateTo(category);
+                        }
+                    });
+                }
+            }
+        }
     }
 }

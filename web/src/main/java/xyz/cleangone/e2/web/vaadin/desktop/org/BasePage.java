@@ -76,6 +76,9 @@ public abstract class BasePage extends Panel implements View
     {
         Date start = new Date();
         SessionManager sessionManager = VaadinSessionManager.getExpectedSessionManager();
+
+
+
         if (sessionManager.hasOrg())
         {
             PageDisplayType pageDisplayType = set(sessionManager);

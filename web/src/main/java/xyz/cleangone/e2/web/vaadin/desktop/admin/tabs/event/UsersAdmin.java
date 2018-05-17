@@ -47,7 +47,6 @@ public class UsersAdmin extends BaseEventAdmin implements MultiSelectionListener
     private ComboBox<OrgTag> removeTagComboBox = new ComboBox<>();
     private List<User> selectedUsers;
 
-
     public UsersAdmin(EventsAdminLayout eventsAdminLayout, MessageDisplayer msgDisplayer)
     {
         super(eventsAdminLayout, msgDisplayer);

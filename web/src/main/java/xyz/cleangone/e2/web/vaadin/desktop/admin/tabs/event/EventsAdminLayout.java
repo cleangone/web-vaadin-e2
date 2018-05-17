@@ -3,6 +3,7 @@ package xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event;
 import com.vaadin.ui.*;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.e2.web.manager.SessionManager;
+import xyz.cleangone.e2.web.vaadin.desktop.MyUI;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.actions.DonationsAdmin;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.actions.PurchasesAdmin;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.item.ItemsAdmin;
@@ -14,15 +15,18 @@ import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
 import java.util.HashMap;
 import java.util.Map;
 
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+
 public class EventsAdminLayout extends HorizontalLayout
 {
     private final NavCol navCol;
     private final Map<AdminPageType, BaseAdmin> adminComponents = new HashMap<>();
     private final VerticalLayout mainLayout = new VerticalLayout();
-    private static boolean COLORS = false;
 
     public EventsAdminLayout(MessageDisplayer msgDisplayer)
     {
+        setLayout(this, MARGIN_FALSE, SIZE_FULL, BACK_BLUE);
+
         navCol = new NavCol(this);
         adminComponents.put(EventAdminPageType.EVENTS, new EventsAdmin(this, msgDisplayer));
         adminComponents.put(EventAdminPageType.GENERAL, new GeneralAdmin(msgDisplayer));
@@ -36,14 +40,8 @@ public class EventsAdminLayout extends HorizontalLayout
         adminComponents.put(EventAdminPageType.ROLES, new TagsAdmin(this, OrgTag.TagType.UserRole, msgDisplayer));
         adminComponents.put(EventAdminPageType.USERS, new UsersAdmin(this, msgDisplayer));
 
-        mainLayout.setMargin(false);
+        setLayout(mainLayout, MARGIN_FALSE, SIZE_FULL, BACK_RED);
         mainLayout.setHeight((UI.getCurrent().getPage().getBrowserWindowHeight() - 100) + "px");  // hack - like navCol
-
-        if (COLORS) { mainLayout.addStyleName("backRed"); }
-
-        setSizeFull();
-        setMargin(false);
-        if (COLORS) { addStyleName("backBlue"); }
 
         // note - spacing set dynamically in setAdminPage
 

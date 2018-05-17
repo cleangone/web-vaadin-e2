@@ -1,57 +1,20 @@
 package xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.item;
 
-import com.amazonaws.AmazonClientException;
-import com.amazonaws.AmazonServiceException;
-import com.amazonaws.event.ProgressListener;
-import com.amazonaws.services.dynamodbv2.datamodeling.S3Link;
-import com.amazonaws.services.s3.transfer.*;
-import com.amazonaws.services.s3.transfer.Upload;
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.server.Page;
-import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.shared.ui.AlignmentInfo;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
-import com.wcs.wcslib.vaadin.widget.multifileupload.ui.AllUploadFinishedHandler;
-import com.wcs.wcslib.vaadin.widget.multifileupload.ui.MultiFileUpload;
-import com.wcs.wcslib.vaadin.widget.multifileupload.ui.UploadFinishedHandler;
-import com.wcs.wcslib.vaadin.widget.multifileupload.ui.UploadStateWindow;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
-import xyz.cleangone.data.aws.dynamo.entity.base.EntityType;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
 import xyz.cleangone.data.aws.dynamo.entity.item.SaleStatus;
 import xyz.cleangone.data.aws.dynamo.entity.item.SaleType;
-import xyz.cleangone.data.aws.dynamo.entity.organization.BaseOrg;
-import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
-import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
-import xyz.cleangone.data.aws.dynamo.entity.person.User;
-import xyz.cleangone.data.manager.ImageContainerManager;
-import xyz.cleangone.data.manager.ImageManager;
-import xyz.cleangone.data.manager.TagManager;
-import xyz.cleangone.data.manager.event.ItemManager;
-import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.actionbar.*;
-import xyz.cleangone.e2.web.vaadin.desktop.admin.EventAdminPage;
-import xyz.cleangone.e2.web.vaadin.desktop.admin.OrgAdminPage;
-import xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin.SuperAdminPage;
-import xyz.cleangone.e2.web.vaadin.desktop.image.ImageLabel;
-import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
-import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
 import xyz.cleangone.e2.web.vaadin.util.PageUtils;
 import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.getHtmlLabel;
 
 public class ItemMenuBar extends BaseActionBar
 {

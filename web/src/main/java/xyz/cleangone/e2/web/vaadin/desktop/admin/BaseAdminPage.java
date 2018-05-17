@@ -2,7 +2,6 @@ package xyz.cleangone.e2.web.vaadin.desktop.admin;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
@@ -13,10 +12,9 @@ import xyz.cleangone.e2.web.vaadin.desktop.actionbar.ActionBar;
 
 import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
-
 public abstract class BaseAdminPage extends Panel implements View
 {
-    protected VerticalLayout pageLayout = vertical(MARGIN_FALSE, SPACING_TRUE);
+    protected VerticalLayout pageLayout = vertical(MARGIN_FALSE, SPACING_TRUE, BACK_YELLOW);
     protected ActionBar actionBar = new ActionBar();
 
     protected SessionManager sessionMgr;

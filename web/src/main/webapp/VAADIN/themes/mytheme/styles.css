@@ -2515,8 +2515,8 @@ div.v-layout.v-horizontal.v-widget {
 
 .mytheme .v-reconnect-dialog {
 	color: white;
-	top: 12px;
-	right: 12px;
+	top: 10px;
+	right: 10px;
 	max-width: 100%;
 	border-radius: 0;
 	-webkit-box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.25);
@@ -2570,11 +2570,11 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme .v-margin-top {
-	padding-top: 37px;
+	padding-top: 10px;
 }
 
 .mytheme .v-margin-right {
-	padding-right: 37px;
+	padding-right: 10px;
 }
 
 .mytheme .v-margin-bottom {
@@ -2582,12 +2582,12 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme .v-margin-left {
-	padding-left: 37px;
+	padding-left: 10px;
 }
 
 .mytheme .v-spacing {
-	width: 12px;
-	height: 12px;
+	width: 10px;
+	height: 10px;
 }
 
 .mytheme .v-verticallayout-well, .mytheme .v-horizontallayout-well {
@@ -2651,7 +2651,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme .v-horizontallayout-wrapping > .v-spacing + .v-slot, .mytheme .v-horizontallayout-wrapping > .v-slot:first-child {
-	margin-bottom: 12px;
+	margin-bottom: 10px;
 }
 
 .mytheme .v-horizontallayout-wrapping > .v-slot:first-child:last-child {
@@ -4570,7 +4570,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme [class*="spacing"] > tbody > [class*="row"] > td {
-	padding-top: 12px;
+	padding-top: 10px;
 }
 
 .mytheme [class*="spacing"] > tbody > [class*="firstrow"] > td {
@@ -4578,7 +4578,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme [class*="margin-top"] > tbody > [class*="firstrow"] > td {
-	padding-top: 37px;
+	padding-top: 10px;
 }
 
 .mytheme [class*="margin-bottom"] > tbody > [class*="lastrow"] > td {
@@ -4586,19 +4586,19 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme [class*="margin-left"] > tbody > [class*="row"] > [class*="captioncell"] {
-	padding-left: 37px;
+	padding-left: 10px;
 }
 
 .mytheme [class*="margin-left"] > tbody > [class*="row"] > [class*="contentcell"]  > .v-label-h2, .mytheme [class*="margin-left"] > tbody > [class*="row"] > [class*="contentcell"]  > .v-label-h3, .mytheme [class*="margin-left"] > tbody > [class*="row"] > [class*="contentcell"]  > .v-label-h4 {
-	left: 37px;
+	left: 10px;
 }
 
 .mytheme [class*="margin-right"] > tbody > [class*="row"] > [class*="contentcell"] {
-	padding-right: 37px;
+	padding-right: 10px;
 }
 
 .mytheme [class*="margin-right"] > tbody > [class*="row"] > [class*="contentcell"]  > .v-label-h2, .mytheme [class*="margin-right"] > tbody > [class*="row"] > [class*="contentcell"]  > .v-label-h3, .mytheme [class*="margin-right"] > tbody > [class*="row"] > [class*="contentcell"]  > .v-label-h4 {
-	right: 37px;
+	right: 10px;
 }
 
 .mytheme .v-formlayout > table {
@@ -5428,7 +5428,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .mytheme .v-grid-editor-footer {
 	font-size: 14px;
-	padding: 0 6px;
+	padding: 0 5px;
 	background: #fafafa;
 	-webkit-animation: valo-grid-editor-footer-animate-in 200ms 120ms backwards;
 	-moz-animation: valo-grid-editor-footer-animate-in 200ms 120ms backwards;
@@ -5519,7 +5519,7 @@ div.v-layout.v-horizontal.v-widget {
 	text-decoration: none;
 	border: none;
 	background: transparent;
-	padding: 6px 6px;
+	padding: 5px 5px;
 	margin: 0;
 	outline: none;
 }
@@ -7542,7 +7542,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme .v-gridlayout-margin-top {
-	padding-top: 37px;
+	padding-top: 10px;
 }
 
 .mytheme .v-gridlayout-margin-bottom {
@@ -7550,16 +7550,16 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme .v-gridlayout-margin-left {
-	padding-left: 37px;
+	padding-left: 10px;
 }
 
 .mytheme .v-gridlayout-margin-right {
-	padding-right: 37px;
+	padding-right: 10px;
 }
 
 .mytheme .v-gridlayout-spacing-on {
-	padding-left: 12px;
-	padding-top: 12px;
+	padding-left: 10px;
+	padding-top: 10px;
 }
 
 .mytheme .v-menubar {
@@ -9093,7 +9093,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme .v-window-top-toolbar .v-spacing, .mytheme .v-window-bottom-toolbar .v-spacing {
-	width: 6px;
+	width: 5px;
 }
 
 .mytheme .v-window-top-toolbar.v-layout {
@@ -9961,7 +9961,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .mytheme .v-tree8-editor-footer {
 	font-size: 14px;
-	padding: 0 6px;
+	padding: 0 5px;
 	background: #fafafa;
 	-webkit-animation: valo-grid-editor-footer-animate-in 200ms 120ms backwards;
 	-moz-animation: valo-grid-editor-footer-animate-in 200ms 120ms backwards;
@@ -10052,7 +10052,7 @@ div.v-layout.v-horizontal.v-widget {
 	text-decoration: none;
 	border: none;
 	background: transparent;
-	padding: 6px 6px;
+	padding: 5px 5px;
 	margin: 0;
 	outline: none;
 }
@@ -11037,7 +11037,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .mytheme .v-treegrid-editor-footer {
 	font-size: 14px;
-	padding: 0 6px;
+	padding: 0 5px;
 	background: #fafafa;
 	-webkit-animation: valo-grid-editor-footer-animate-in 200ms 120ms backwards;
 	-moz-animation: valo-grid-editor-footer-animate-in 200ms 120ms backwards;
@@ -11128,7 +11128,7 @@ div.v-layout.v-horizontal.v-widget {
 	text-decoration: none;
 	border: none;
 	background: transparent;
-	padding: 6px 6px;
+	padding: 5px 5px;
 	margin: 0;
 	outline: none;
 }
@@ -12753,7 +12753,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .mytheme .v-tabsheet-framed  > .v-tabsheet-tabcontainer .v-caption {
 	margin-left: 4px;
-	padding: 0 12px;
+	padding: 0 10px;
 	background-color: #fafafa;
 	border: 1px solid transparent;
 	line-height: 36px;
@@ -12774,7 +12774,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme .v-tabsheet-framed  > .v-tabsheet-tabcontainer .v-caption-closable {
-	padding-right: 30px;
+	padding-right: 28px;
 }
 
 .mytheme .v-tabsheet-framed  > .v-tabsheet-tabcontainer .v-tabsheet-caption-close {
@@ -12845,7 +12845,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme .v-tabsheet-icons-on-top  > .v-tabsheet-tabcontainer .v-caption-closable {
-	padding-right: 12px;
+	padding-right: 10px;
 }
 
 .mytheme .v-tabsheet-icons-on-top  > .v-tabsheet-tabcontainer .v-tabsheet-caption-close {
@@ -14172,7 +14172,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme .v-popupview-loading {
-	margin: 12px 12px;
+	margin: 10px 10px;
 	height: 24px !important;
 	width: 24px !important;
 	box-sizing: border-box;
@@ -14373,19 +14373,19 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme .v-Notification.v-position-top {
-	top: 12px;
+	top: 10px;
 }
 
 .mytheme .v-Notification.v-position-right {
-	right: 12px;
+	right: 10px;
 }
 
 .mytheme .v-Notification.v-position-bottom {
-	bottom: 12px;
+	bottom: 10px;
 }
 
 .mytheme .v-Notification.v-position-left {
-	left: 12px;
+	left: 10px;
 }
 
 .mytheme .v-Notification.v-position-assistive {

@@ -62,7 +62,7 @@ public class CatalogPage extends BaseEventPage implements View, CatalogView
             .map(CatalogItem::getId)
             .collect(Collectors.toSet());
 
-        catalogLayout = new CatalogLayout(UI.getCurrent().getPage().getBrowserWindowWidth(), sessionMgr);
+        catalogLayout = new CatalogLayout(UI.getCurrent().getPage().getBrowserWindowWidth(), leftLayout.getColWidth(), sessionMgr);
         for (CatalogItem item : visibleItems)
         {
             catalogLayout.addItem(item, user, getQuickBidButton(item));

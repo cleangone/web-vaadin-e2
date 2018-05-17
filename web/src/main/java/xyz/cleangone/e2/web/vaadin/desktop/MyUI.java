@@ -25,8 +25,9 @@ import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.manager.VaadinSessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.EventAdminPage;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.OrgAdminPage;
-import xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin.SuperAdminPage;
+import xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin.OrgsAdmin;
 import xyz.cleangone.e2.web.vaadin.desktop.actionbar.ActionBar;
+import xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin.SuperAdminPage;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin.SuperAdminProfilePage;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.stats.browser.BrowserStats;
 import xyz.cleangone.e2.web.vaadin.desktop.broadcast.BroadcastListener;
@@ -40,7 +41,6 @@ import xyz.cleangone.e2.web.vaadin.desktop.org.payment.PaymentPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.profile.BidsPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.profile.ProfilePage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.profile.ProfilePageType;
-import xyz.cleangone.e2.web.vaadin.desktop.org.profile.WatchLayout;
 import xyz.cleangone.e2.web.vaadin.desktop.user.LoginPage;
 import xyz.cleangone.util.env.E2Env;
 import xyz.cleangone.util.env.EnvManager;
@@ -140,15 +140,49 @@ public class MyUI extends BroadcastListeningUI implements BroadcastListener
         loginByCookie(userMgr);
         verifyEmail(vaadinRequest, userMgr);
 
-        String initialPage = getInitialPage(vaadinRequest, sessionMgr);  // parse url /<orgTag>/<eventTag>
+        // first check for direct link to item
+        String initialPage = getItemPage(vaadinRequest, sessionMgr);
+
+        // next check if org specified in the url - url may end with  /<orgTag>/<eventTag>
+        if (initialPage == null)
+        {
+            initialPage = getInitialPage(vaadinRequest, sessionMgr);
+        }
+
+        // next check if default org config'd in env
+        OrgManager orgMgr = sessionMgr.getOrgManager();
+        if (initialPage == null)
+        {
+            String configuredDefaultOrgTag = EnvManager.getEnv().getDefaultOrg();
+            if (configuredDefaultOrgTag != null)
+            {
+                Organization org = orgMgr.findOrg(configuredDefaultOrgTag);
+                if (org != null && org.getEnabled())
+                {
+                    orgMgr.setOrg(org);
+                    initialPage = OrgPage.NAME;
+                }
+            }
+        }
+
+        // next check if an org is set as default in db
+        if (initialPage == null)
+        {
+            for (Organization org : orgMgr.getAll())
+            {
+                if (org.getEnabled() && org.getIsDefault())
+                {
+                    orgMgr.setOrg(org);
+                    initialPage = OrgPage.NAME;
+                }
+            }
+        }
+
+        // default for superadmin
         if (initialPage == null && userMgr.userIsSuperAdmin())
         {
             initialPage = SuperAdminPage.NAME;
         }
-
-        // check for direct link to item
-        String itemPage = getItemPage(vaadinRequest, sessionMgr);
-        if (itemPage != null) { initialPage = itemPage; }
 
         nav.setErrorView(initialPage == null ? loginPage : orgPage);
         nav.navigateTo(initialPage == null ? LoginPage.NAME : initialPage);
@@ -229,16 +263,13 @@ public class MyUI extends BroadcastListeningUI implements BroadcastListener
         Organization org = orgMgr.findOrg(pathTags.get(0));
         if (org != null)
         {
-//            verifyUser(userMgr, org);
             orgMgr.setOrg(org);
         }
 
         return org;
     }
 
-
-
-        // todo - quite a mess
+    // todo - quite a mess
     private String getItemPage(VaadinRequest vaadinRequest, SessionManager sessionMgr)
     {
         String itemId = vaadinRequest.getParameter(ITEM_URL_PARAM);

@@ -18,9 +18,7 @@ public abstract class BaseNavCol extends VerticalLayout
 
     public BaseNavCol()
     {
-        setMargin(true);
-        setSpacing(true);
-        setWidthUndefined();
+        setLayout(this, MARGIN_TRUE, SPACING_TRUE, WIDTH_UNDEFINED, BACK_GREEN);
         setHeight((UI.getCurrent().getPage().getBrowserWindowHeight() - 100) + "px");
 
         setStyleName(STYLE_ADMIN_NAV);

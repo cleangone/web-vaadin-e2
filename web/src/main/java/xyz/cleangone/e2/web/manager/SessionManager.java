@@ -183,7 +183,6 @@ public class SessionManager
         this.currentAction = currentAction;
     }
 
-
     public String getAndClearMsg()
     {
         String returnMsg = msg == null ? "" : msg;

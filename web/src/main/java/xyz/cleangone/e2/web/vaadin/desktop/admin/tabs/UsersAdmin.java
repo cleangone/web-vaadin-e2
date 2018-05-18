@@ -33,9 +33,7 @@ public class UsersAdmin extends VerticalLayout
     public UsersAdmin(MessageDisplayer msgDisplayer)
     {
         this.msgDisplayer = msgDisplayer;
-
-        setSizeFull();
-        setSpacing(true);
+        setLayout(this, MARGIN_TRUE, SPACING_TRUE, SIZE_FULL, BACK_BLUE);
     }
 
     public void set(OrgManager orgMgr, UserManager userMgr)
@@ -95,11 +93,7 @@ public class UsersAdmin extends VerticalLayout
 
         // cannot edit email - should you be able to edit email just created?  or delete & recreate?
         addColumn(grid, EMAIL_FIELD, User::getEmail);
-//        addColumn(grid, EMAIL_FIELD, User::getEmail, User::setEmail);
-
-
         addColumn(grid, PASSWORD_FIELD, User::getPassword, User::setPassword);  // shows blank, clear text when typed in
-
         grid.addColumn(this::isOrgAdmin)
             .setId(ADMIN_FIELD.getName()).setCaption(ADMIN_FIELD.getDisplayName())
             .setEditorComponent(new CheckBox(), this::setOrgAdmin);

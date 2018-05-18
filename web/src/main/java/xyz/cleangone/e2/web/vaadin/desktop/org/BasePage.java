@@ -8,6 +8,7 @@ import xyz.cleangone.data.manager.OrgManager;
 import xyz.cleangone.e2.web.manager.EntityChangeManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.manager.VaadinSessionManager;
+import xyz.cleangone.e2.web.vaadin.desktop.MyUI;
 import xyz.cleangone.e2.web.vaadin.desktop.actionbar.ActionBar;
 import xyz.cleangone.e2.web.vaadin.desktop.banner.BannerComponent;
 import xyz.cleangone.e2.web.vaadin.desktop.banner.BannerCarousel;
@@ -25,7 +26,6 @@ import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 public abstract class BasePage extends Panel implements View
 {
     protected static int BANNER_HEIGHT = 300;  // includes actionBar
-    protected static boolean COLORS = false;
     protected enum BannerStyle { Carousel, Single };
 
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -39,21 +39,19 @@ public abstract class BasePage extends Panel implements View
     protected OrgManager orgMgr;
     protected EntityChangeManager changeManager = new EntityChangeManager();
 
-
     public BasePage(BannerStyle bannerStyle)
     {
         this(new VerticalLayout(), bannerStyle);
-        setLayout(mainLayout, MARGIN_FALSE, SPACING_FALSE);
+        setLayout(mainLayout, MARGIN_FALSE, SPACING_FALSE, BACK_GREEN);
     }
 
     public BasePage(AbstractOrderedLayout mainLayout, BannerStyle bannerStyle)
     {
         this.mainLayout = mainLayout;
-        if (COLORS) { mainLayout.addStyleName("backGreen"); }
 
         // panel fills the browser screen
         setSizeFull();
-        if (COLORS) { setStyleName("backOrange"); }
+        if (MyUI.COLORS) { setStyleName("backOrange"); }
 
         // pageLayout sits in panel, scrolls if doesn't fit, sadly does not expand because height not 100%
         //
@@ -76,8 +74,6 @@ public abstract class BasePage extends Panel implements View
     {
         Date start = new Date();
         SessionManager sessionManager = VaadinSessionManager.getExpectedSessionManager();
-
-
 
         if (sessionManager.hasOrg())
         {

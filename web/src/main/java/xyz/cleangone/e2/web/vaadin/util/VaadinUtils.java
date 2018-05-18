@@ -22,6 +22,9 @@ import xyz.cleangone.data.aws.dynamo.entity.base.BaseMixinEntity;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
 import xyz.cleangone.e2.web.vaadin.desktop.MyUI;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class VaadinUtils
 {
     public static final String IMAGE_HAND_STYLE = "with-hand";
@@ -47,8 +50,13 @@ public class VaadinUtils
     public static final String BACK_YELLOW     = "backYellow";
     public static final String BACK_GREEN      = "backGreen";
     public static final String BACK_BLUE       = "backBlue";
-    public static final String BACK_BLACK      = "backBlack";
+    public static final String BACK_DK_BLUE    = "backDBlue";
+    public static final String BACK_PINK       = "backPink";
     public static final String BACK_PURPLE     = "backPurple";
+    public static final String BACK_BLACK      = "backBlack";
+
+    public static final List<String> COLORS = Arrays.asList(
+        new String[] { BACK_RED, BACK_ORANGE, BACK_YELLOW, BACK_GREEN, BACK_BLUE, BACK_DK_BLUE, BACK_PINK, BACK_PURPLE, BACK_BLACK} );
 
     public static VerticalLayout vertical(Component component)
     {
@@ -114,16 +122,7 @@ public class VaadinUtils
             else if (directive.equals(WIDTH_100_PCT))   { layout.setWidth("100%"); }
             else if (directive.equals(WIDTH_UNDEFINED)) { layout.setWidthUndefined(); }
             else if (directive.equals(HEIGHT_100_PCT))  { layout.setHeight("100%"); }
-            else if (directive.equals(BACK_RED) ||
-                directive.equals(BACK_ORANGE) ||
-                directive.equals(BACK_YELLOW) ||
-                directive.equals(BACK_GREEN)  ||
-                directive.equals(BACK_BLUE)   ||
-                directive.equals(BACK_BLACK)  ||
-                directive.equals(BACK_PURPLE))
-            {
-                addColorStyle(layout, directive);
-            }
+            else if (COLORS.contains(directive))        { addColorStyle(layout, directive); }
         }
     }
 

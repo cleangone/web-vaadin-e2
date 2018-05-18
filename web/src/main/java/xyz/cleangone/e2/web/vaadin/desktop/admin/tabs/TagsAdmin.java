@@ -3,11 +3,9 @@ package xyz.cleangone.e2.web.vaadin.desktop.admin.tabs;
 import com.vaadin.data.ValueProvider;
 import com.vaadin.server.Setter;
 import com.vaadin.shared.data.sort.SortDirection;
-import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
 import com.vaadin.ui.components.grid.FooterRow;
 import com.vaadin.ui.components.grid.HeaderRow;
-import com.vaadin.ui.renderers.TextRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 import org.vaadin.dialogs.ConfirmDialog;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
@@ -25,7 +23,6 @@ import java.util.Map;
 import static xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag.*;
 import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
-
 public class TagsAdmin extends VerticalLayout
 {
     private final MessageDisplayer msgDisplayer;
@@ -39,12 +36,9 @@ public class TagsAdmin extends VerticalLayout
     {
         this.msgDisplayer = msgDisplayer;
         this.tagType = tagType;
-        tagTypeName = TagManager.getSingularName(tagType);
 
-        setWidth("100%");
-        setHeight("100%");
-        setMargin(new MarginInfo(true, false, true, false)); // T/R/B/L
-        setSpacing(true);
+        setLayout(this, MARGIN_TRUE, SPACING_TRUE, SIZE_FULL, BACK_ORANGE);
+        tagTypeName = TagManager.getSingularName(tagType);
     }
 
     public void set(TagManager tagMgr, EventManager eventMgr)

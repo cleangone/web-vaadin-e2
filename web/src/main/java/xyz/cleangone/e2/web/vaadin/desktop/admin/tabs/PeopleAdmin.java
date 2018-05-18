@@ -1,8 +1,7 @@
 package xyz.cleangone.e2.web.vaadin.desktop.admin.tabs;
 
-
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.createDeleteButton;
 import static xyz.cleangone.data.aws.dynamo.entity.person.Person.*;
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
 import com.vaadin.data.ValueProvider;
 import com.vaadin.event.selection.MultiSelectionEvent;
@@ -13,7 +12,6 @@ import com.vaadin.shared.ui.AlignmentInfo;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.dnd.DropEffect;
 import com.vaadin.shared.ui.grid.DropMode;
-import com.vaadin.shared.ui.grid.HeightMode;
 import com.vaadin.ui.*;
 import com.vaadin.ui.components.grid.FooterRow;
 import com.vaadin.ui.components.grid.GridDropTarget;
@@ -26,6 +24,7 @@ import xyz.cleangone.data.aws.dynamo.entity.base.EntityType;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
 import xyz.cleangone.data.aws.dynamo.entity.person.Person;
+import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.manager.OrgManager;
 import xyz.cleangone.data.manager.TagManager;
 import xyz.cleangone.e2.web.manager.EntityChangeManager;
@@ -58,17 +57,14 @@ public class PeopleAdmin extends VerticalLayout implements MultiSelectionListene
     public PeopleAdmin(MessageDisplayer msgDisplayer)
     {
         this.msgDisplayer = msgDisplayer;
-
-        Label filteredItemCountLabel = new Label();
-        dataProvider = new CountingDataProvider<>(new ArrayList<>(), filteredItemCountLabel);
-        personGrid = getPersonGrid(filteredItemCountLabel);
-
-        setSizeFull();
-        setMargin(new MarginInfo(true, false, true, false)); // T/R/B/L
-        setSpacing(true);
-
-        addComponents(getTopBarLayout(), personGrid);
-        setExpandRatio(personGrid, 1.0f);
+        setLayout(this, MARGIN_TRUE, SPACING_TRUE, SIZE_FULL, BACK_PURPLE);
+//
+//        Label filteredItemCountLabel = new Label();
+//        dataProvider = new CountingDataProvider<>(new ArrayList<>(), filteredItemCountLabel);
+//        personGrid = getPersonGrid(filteredItemCountLabel);
+//
+//        addComponents(getTopBarLayout(), personGrid);
+//        setExpandRatio(personGrid, 1.0f);
     }
 
     public void set(OrgManager orgMgr)
@@ -79,40 +75,50 @@ public class PeopleAdmin extends VerticalLayout implements MultiSelectionListene
 
     public void set()
     {
-        Organization org = orgMgr.getOrg();
-        if (changeManager.unchanged(org) &&
-            changeManager.unchanged(org, EntityType.PersonTag, EntityType.Person))
-        {
-            return;
-        }
+        removeAllComponents();
 
-        changeManager.reset(org);
 
+
+
+//
+//        Organization org = orgMgr.getOrg();
+//        if (changeManager.unchanged(org) &&
+//            changeManager.unchanged(org, EntityType.PersonTag, EntityType.Person))
+//        {
+//            return;
+//        }
+//
+//        changeManager.reset(org);
+//
         TagManager tagMgr = orgMgr.getTagManager();
         List<OrgTag> orgTags = tagMgr.getPersonTags();
         orgTagsById = tagMgr.getTagsById(orgTags);
-
+//
         List<Person> people = orgMgr.getPeople();
         if (!people.isEmpty() && people.get(0).getTagsCsv() == null)
         {
             // set tagsCsv
             people.forEach(person -> person.setTagsCsv(orgTagsById));
         }
-
-        dataProvider.resetItems(people);
-        personGrid.setDataProvider(dataProvider); //  todo - workaround for grid/dataprovider bug
-
+//
+//        dataProvider.resetItems(people);
+//        personGrid.setDataProvider(dataProvider); //  todo - workaround for grid/dataprovider bug
+//
         addTagComboBox.setItems(orgTags);
         addTagComboBox.setValue(null);  // todo - there is a bug with setValue that is being fixed
         removeTagComboBox.setValue(null);
+
+        Component grid = getPersonGrid(people);
+        addComponents(getTopBarLayout(), grid);
+        setExpandRatio(grid, 1.0f);
+
     }
 
-    private Grid<Person> getPersonGrid(Label filteredItemCountLabel)
+//    private Grid<Person> getPersonGrid(Label filteredItemCountLabel)
+    private Grid<Person> getPersonGrid(List<Person> people)
     {
         Grid<Person> grid = new Grid<>();
-        grid.setWidth("100%");
-        grid.setHeight("100%");
-//        grid.setHeightMode(HeightMode.CSS);
+        grid.setSizeFull();
 
         Grid.Column<Person, Date> createdDateCol = grid.addColumn(Person::getCreatedDate).setCaption("Date Added")
             .setId(CREATED_DATE_FIELD.getName())
@@ -134,26 +140,18 @@ public class PeopleAdmin extends VerticalLayout implements MultiSelectionListene
             .forEach(column -> column.setHidable(true));
         createdDateCol.setHidden(true);
 
-
-        GridDropTarget<Person> dropTarget = new GridDropTarget<>(grid, DropMode.BETWEEN);
-        dropTarget.setDropEffect(DropEffect.MOVE);
-
-        dropTarget.addGridDropListener(event -> {
-            // Accepting dragged items from another Grid in the same UI
-            int i=1;
-        });
-
-
         grid.getEditor().setEnabled(true);
         grid.getEditor().addSaveListener(event -> savePerson(event.getBean()));
 
+        Label countLabel = new Label();
+        CountingDataProvider<Person> dataProvider = new CountingDataProvider<Person>(people, countLabel);
         grid.setDataProvider(dataProvider);
 
         HeaderRow filterHeader = grid.appendHeaderRow();
         setColumnFiltering(filterHeader, dataProvider);
 
         FooterRow footerRow = grid.appendFooterRow();
-        footerRow.getCell(FIRST_NAME_FIELD.getName()).setComponent(filteredItemCountLabel);
+        footerRow.getCell(FIRST_NAME_FIELD.getName()).setComponent(countLabel);
 
         return grid;
     }

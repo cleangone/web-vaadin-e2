@@ -28,10 +28,10 @@ public class OrgAdminPage extends BaseAdminPage
     private TabSheet tabsheet = new TabSheet();
     private TabSheet.Tab orgTab = tabsheet.addTab(createLayoutSizeFull(orgAdmin), "Organization");
     private TabSheet.Tab statsTab = tabsheet.addTab(createLayoutSizeFull(statsAdmin), "Stats");
-    private TabSheet.Tab tagsTab = tabsheet.addTab(createLayout100Pct(tagsAdmin), "Tags");
-    private TabSheet.Tab peopleTab = tabsheet.addTab(createLayoutSizeFull(peopleAdmin), "People");
-    private TabSheet.Tab usersTab = tabsheet.addTab(createLayoutSizeFull(usersAdmin), "Users");
-    private TabSheet.Tab categoriesTab = tabsheet.addTab(createLayout100Pct(categoriesAdmin), "Categories");
+    private TabSheet.Tab tagsTab = tabsheet.addTab(tagsAdmin, "Tags");
+    private TabSheet.Tab peopleTab = tabsheet.addTab(peopleAdmin, "People");
+    private TabSheet.Tab usersTab = tabsheet.addTab(usersAdmin, "Users");
+    private TabSheet.Tab categoriesTab = tabsheet.addTab(categoriesAdmin, "Categories");
     private TabSheet.Tab eventsTab = tabsheet.addTab(createLayoutSizeFull(eventsAdmin), "Events");
     private TabSheet.Tab[] tabs = { orgTab, statsTab, tagsTab, peopleTab, usersTab, categoriesTab, eventsTab};
 
@@ -72,6 +72,9 @@ public class OrgAdminPage extends BaseAdminPage
     protected void handleTabChangeEvent()
     {
         TabSheet.Tab selectedTab = tabsheet.getTab(tabsheet.getSelectedTab());
+
+        // todo - pageHeight not set yet
+        int pageHeight = getUI().getPage().getBrowserWindowHeight();
 
         if (selectedTab == tagsTab) { tagsAdmin.set(orgMgr.getTagManager(), sessionMgr.getResetEventManager()); }
         else if (selectedTab == statsTab) { statsAdmin.set(orgMgr); }

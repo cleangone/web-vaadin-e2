@@ -14,7 +14,7 @@ import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
 public abstract class BaseAdminPage extends Panel implements View
 {
-    protected VerticalLayout pageLayout = vertical(MARGIN_FALSE, SPACING_TRUE, BACK_YELLOW);
+    protected VerticalLayout pageLayout = vertical(MARGIN_FALSE, SPACING_TRUE, SIZE_FULL, BACK_YELLOW);
     protected ActionBar actionBar = new ActionBar();
 
     protected SessionManager sessionMgr;
@@ -26,6 +26,7 @@ public abstract class BaseAdminPage extends Panel implements View
         setSizeFull();
 
         // pageLayout sits in components, scrolls if doesn't fit
+        // todo - making pagelayout full - other will scroll in it
         pageLayout.addComponent(actionBar);
         setContent(pageLayout);
     }
@@ -51,7 +52,7 @@ public abstract class BaseAdminPage extends Panel implements View
 
     protected VerticalLayout createLayoutSizeFull(Component component)
     {
-        return vertical(component, MARGIN_L, SPACING_TRUE, SIZE_FULL);
+        return vertical(component, MARGIN_FALSE, SPACING_TRUE, SIZE_FULL, BACK_RED);
     }
 
     protected VerticalLayout createLayout100Pct(Component component)

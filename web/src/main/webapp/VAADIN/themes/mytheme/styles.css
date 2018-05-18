@@ -2578,7 +2578,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme .v-margin-bottom {
-	padding-bottom: 37px;
+	padding-bottom: 10px;
 }
 
 .mytheme .v-margin-left {
@@ -4582,7 +4582,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme [class*="margin-bottom"] > tbody > [class*="lastrow"] > td {
-	padding-bottom: 37px;
+	padding-bottom: 10px;
 }
 
 .mytheme [class*="margin-left"] > tbody > [class*="row"] > [class*="captioncell"] {
@@ -7546,7 +7546,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme .v-gridlayout-margin-bottom {
-	padding-bottom: 37px;
+	padding-bottom: 10px;
 }
 
 .mytheme .v-gridlayout-margin-left {
@@ -15511,6 +15511,10 @@ div.v-layout.v-horizontal.v-widget {
 
 .mytheme .backDBlue {
 	background: blue;
+}
+
+.mytheme .backPink {
+	background: hotpink;
 }
 
 .mytheme .backPurple {

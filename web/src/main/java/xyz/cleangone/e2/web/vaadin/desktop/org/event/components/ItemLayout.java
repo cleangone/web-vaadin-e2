@@ -62,31 +62,23 @@ public class ItemLayout extends VerticalLayout
         closeButton.addClickListener(closeItemListener);
         closeButton.setClickShortcut(ShortcutAction.KeyCode.ESCAPE);
 
-        HorizontalLayout itemLayout = horizontal(MARGIN_FALSE);
+        AbstractOrderedLayout itemLayout = sessionMgr.isMobileBrowser() ? vertical(MARGIN_FALSE) : horizontal(MARGIN_FALSE);
 
         List<S3Link> images = item.getImages();
         if (images != null && !images.isEmpty())
         {
             String imageUrl = ImageManager.getUrl(images.get(0));
-
-
-            // The panel will give it scrollbars
-            VerticalLayout fullImageLayout = vertical(createImageLabel(imageUrl), MARGIN_TRUE);
-            Panel panel = new Panel(fullImageLayout);
-            panel.setHeight(pageHeight + "px");
-            panel.setStyleName(BACK_BLACK);
-            PopupView imagePopup = new PopupView(null, panel);
+            PopupView fullImagePopup = getFullImagePopup(imageUrl,  pageHeight);
 
             ImageLabel imageLabel = new ImageLabel(imageUrl, ImageDimension.width(400));
             VerticalLayout imageLayout = vertical(imageLabel, MARGIN_FALSE);
-            imageLayout.addLayoutClickListener(e -> imagePopup.setPopupVisible(true));
+            imageLayout.addLayoutClickListener(e -> fullImagePopup.setPopupVisible(true));
 
-            itemLayout.addComponents(imageLayout, imagePopup);
+            itemLayout.addComponents(imageLayout, fullImagePopup);
         }
-
-        VerticalLayout detailslayout = vertical(MARGIN_FALSE, WIDTH_100_PCT);
+        
+        VerticalLayout detailslayout = vertical((sessionMgr.isMobileBrowser() ? MARGIN_TRUE : MARGIN_FALSE), WIDTH_100_PCT);
         itemLayout.addComponent(detailslayout);
-
         detailslayout.addComponent(VaadinUtils.createLabel(item.getName(), "title"));
 
         boolean userOutbid = false;
@@ -205,6 +197,23 @@ public class ItemLayout extends VerticalLayout
         }
 
         addComponents(closeButton, itemLayout);
+    }
+
+    private PopupView getFullImagePopup(String imageUrl, int pageHeight)
+    {
+        Button closeButton = createCloseButton();
+        VerticalLayout fullImageLayout = vertical(closeButton, MARGIN_TRUE);
+        fullImageLayout.addComponent(createImageLabel(imageUrl));
+
+        // The panel will give it scrollbars
+        Panel panel = new Panel(fullImageLayout);
+        panel.setHeight(pageHeight + "px");
+        panel.setStyleName(BACK_BLACK);
+
+        PopupView popup = new PopupView(null, panel);
+        closeButton.addClickListener(e -> popup.setPopupVisible(false));
+
+        return popup;
     }
 
     // return true is user is outbid (a bit of a hack)

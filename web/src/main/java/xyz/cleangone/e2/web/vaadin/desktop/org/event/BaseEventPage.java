@@ -1,7 +1,6 @@
 package xyz.cleangone.e2.web.vaadin.desktop.org.event;
 
 import com.vaadin.navigator.View;
-import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
@@ -14,13 +13,14 @@ import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.components.LeftColLayout;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.components.RightColLayout;
 
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
 public abstract class BaseEventPage extends BasePage implements View
 {
     protected enum PageCols { Left, Center, Right };
 
     protected final LeftColLayout leftLayout;
-    protected final VerticalLayout centerLayout = new VerticalLayout();
+    protected final VerticalLayout centerLayout = vertical(MARGIN_R, BACK_PINK);
     protected final RightColLayout rightLayout;
 
     private VerticalLayout centerWrapperLayout = new VerticalLayout();
@@ -49,7 +49,6 @@ public abstract class BaseEventPage extends BasePage implements View
         centerWrapperLayout.setSpacing(true);
 
         leftLayout = new LeftColLayout(getMainLayoutHeight(), UI.getCurrent().getPage().getBrowserWindowWidth());
-        centerLayout.setMargin(new MarginInfo(false, true, false, false)); // T/R/B/L margins
         rightLayout = new RightColLayout(actionBar);
 
         for (PageCols pageCol : pageCols)

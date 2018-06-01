@@ -21,7 +21,7 @@ import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.getOrDefault;
 
 public class PageUtils
 {
-    private static int COL_MIN_HEIGHT = 700;
+    public static int DEFAULT_MARGIN_WIDTH = 10;
 
     public static ZoneId TIME_ZONE_ID = ZoneId.of("America/Los_Angeles");
 
@@ -70,7 +70,6 @@ public class PageUtils
         else { return type1; }
     }
 
-
     public static VerticalLayout getMarginLayout(UI ui, int bannerHeight)
     {
         VerticalLayout margin = getMarginLayout(ui.getPage().getBrowserWindowHeight() - bannerHeight);
@@ -81,12 +80,12 @@ public class PageUtils
         return margin;
     }
 
-    public static VerticalLayout getMarginLayout() { return getMarginLayout(COL_MIN_HEIGHT); }
-    public static VerticalLayout getMarginLayout(int colHeight)
+    public static VerticalLayout getMarginLayout(int colHeight) { return getMarginLayout(colHeight, DEFAULT_MARGIN_WIDTH); }
+    public static VerticalLayout getMarginLayout(int colHeight, int marginWidth)
     {
         VerticalLayout layout = new VerticalLayout();
         layout.setMargin(false);
-        layout.setWidth("25px");
+        layout.setWidth(getPx(marginWidth));
         layout.setHeight(getPx(colHeight));
 
         return layout;
@@ -111,7 +110,7 @@ public class PageUtils
             .from(date.atZone(TIME_ZONE_ID).toInstant());
     }
 
-    private static String getPx(int i)
+    public static String getPx(int i)
     {
         return i + "px";
     }

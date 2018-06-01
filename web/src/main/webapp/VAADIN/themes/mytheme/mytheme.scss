@@ -61,6 +61,11 @@ $v-layout-spacing-horizontal: 10px;
     font-weight: bold;
   }
 
+  .catalogItem {
+    cursor: pointer;
+    font-size: smaller;
+  }
+
   .title {
     font-size: larger;
     font-weight: bold;

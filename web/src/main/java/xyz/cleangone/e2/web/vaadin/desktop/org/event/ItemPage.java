@@ -5,7 +5,6 @@ import com.vaadin.ui.UI;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
 import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.components.ItemLayout;
-import xyz.cleangone.e2.web.vaadin.desktop.org.profile.BidsPage;
 
 public class ItemPage extends CatalogPage implements View
 {
@@ -50,22 +49,7 @@ public class ItemPage extends CatalogPage implements View
         int height = UI.getCurrent().getPage().getBrowserWindowHeight();
 
         centerLayout.removeAllComponents();
-        centerLayout.addComponent(new ItemLayout(item, category, event, height, bidHandler, sessionMgr, actionBar, e -> closeItem()));
-    }
-
-    // todo - hack - watchLaout should open itemLayout in same page, not the ItemPage
-    private void closeItem()
-    {
-        if (closeToWatch)
-        {
-            getUI().getNavigator().navigateTo(BidsPage.WATCH_NAME);
-        }
-        else
-        {
-            String viewName = CatalogPage.NAME + "-" + category.getName();
-            getUI().getNavigator().addView(viewName, new CatalogPage());
-            getUI().getNavigator().navigateTo(viewName);
-        }
+        centerLayout.addComponent(new ItemLayout(item, category, event, height, bidHandler, sessionMgr, actionBar, closeToWatch));
     }
 
     public void setCloseToWatch()

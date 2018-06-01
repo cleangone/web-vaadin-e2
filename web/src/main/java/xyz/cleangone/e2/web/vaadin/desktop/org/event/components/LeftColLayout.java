@@ -35,6 +35,7 @@ public class LeftColLayout extends HorizontalLayout
     protected final VerticalLayout leftLayout = vertical(MARGIN_TR, SPACING_FALSE, WIDTH_UNDEFINED);
 
     private int pageWidth;
+    private VerticalLayout marginLayout;
     private SessionManager sessionMgr;
     private OrgManager orgMgr;
     protected EventManager eventMgr;
@@ -59,7 +60,8 @@ public class LeftColLayout extends HorizontalLayout
         setMargin(false);
         setSpacing(false);
 
-        addComponents(getMarginLayout(pageHeight), leftLayout);
+        marginLayout = getMarginLayout(pageHeight);
+        addComponents(marginLayout, leftLayout);
     }
 
     public void set(SessionManager sessionMgr)
@@ -119,11 +121,11 @@ public class LeftColLayout extends HorizontalLayout
             }
         }
 
-
         if (sessionMgr.isMobileBrowser() && pageWidth < 500)
         {
             colMinimized = true;
             setLayout(leftLayout, MARGIN_FALSE);
+            marginLayout.setWidth(getPx(0));
         }
 
         leftLayout.removeAllComponents();
@@ -131,7 +133,7 @@ public class LeftColLayout extends HorizontalLayout
         if (colMinimized) { leftLayout.addComponent(new CategoryMenu()); }
         else { leftLayout.addComponent(getCategoriesLayout()); }
 
-        addComponents(getMarginLayout(), leftLayout);
+        addComponents(marginLayout, leftLayout);
 
         return PageDisplayType.ObjectRetrieval;
     }

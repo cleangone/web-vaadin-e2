@@ -36,7 +36,7 @@ public class CatalogItemLayout extends VerticalLayout
 
         setMargin(false);
         setSpacing(false);
-        setStyleName("category");
+        setStyleName("catalogItem");
         setDefaultComponentAlignment(new Alignment(AlignmentInfo.Bits.ALIGNMENT_HORIZONTAL_CENTER));
         addLayoutClickListener(listener);
         if (MyUI.COLORS) { addStyleName("backRed"); }

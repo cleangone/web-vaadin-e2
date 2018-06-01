@@ -94,7 +94,7 @@ public class CatalogLayout extends VerticalLayout
     }
     public void resetPageWidth(int pageWidth, int navColWidth)
     {
-        if (pageWidth != this.pageWidth && navColWidth != this.navColWidth)
+        if (pageWidth != this.pageWidth || navColWidth != this.navColWidth)
         {
             catalogGridLayout.removeAllComponents();
             setPageWidth(pageWidth, navColWidth);

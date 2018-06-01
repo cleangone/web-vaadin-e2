@@ -3,7 +3,7 @@ package xyz.cleangone.e2.web.vaadin.desktop.org.event.components;
 import com.amazonaws.services.dynamodbv2.datamodeling.S3Link;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.event.ShortcutAction;
-import com.vaadin.server.ThemeResource;
+import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.ui.*;
 import com.vaadin.ui.renderers.DateRenderer;
 import org.vaadin.kim.countdownclock.CountdownClock;
@@ -24,8 +24,10 @@ import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.disclosure.BaseDisclos
 import xyz.cleangone.e2.web.vaadin.desktop.image.ImageDimension;
 import xyz.cleangone.e2.web.vaadin.desktop.image.ImageLabel;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.BidHandler;
+import xyz.cleangone.e2.web.vaadin.desktop.org.event.CatalogPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.EventPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.EventUtils;
+import xyz.cleangone.e2.web.vaadin.desktop.org.profile.BidsPage;
 import xyz.cleangone.e2.web.vaadin.util.DollarField;
 import xyz.cleangone.e2.web.vaadin.util.PageUtils;
 import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
@@ -43,23 +45,29 @@ public class ItemLayout extends VerticalLayout
     private final BidHandler bidHandler;
     private final BidManager bidManager;
     private final User user;
+    private final OrgTag category;
+    private final boolean closeReturnsToWatch;
 
     private VerticalLayout bidBuyLayout = vertical(MARGIN_FALSE);
 
     public ItemLayout(
-        CatalogItem item, OrgTag category, OrgEvent event, int pageHeight, BidHandler bidHandler, SessionManager sessionMgr, ActionBar actionBar, Button.ClickListener closeItemListener)
+        CatalogItem item, OrgTag category, OrgEvent event, int pageHeight, BidHandler bidHandler, SessionManager sessionMgr, ActionBar actionBar, boolean closeReturnsToWatch)
     {
         this.bidHandler = bidHandler;
         bidManager = sessionMgr.getOrgManager().getBidManager();
+        this.category = category;
+        this.closeReturnsToWatch = closeReturnsToWatch;
 
         UserManager userMgr = sessionMgr.getUserManager();
         user = userMgr.getUser();
 
-        setMargin(false);
-        setSpacing(true);
+        setLayout(this, MARGIN_FALSE, SPACING_TRUE, BACK_GREEN);
+        addLayoutClickListener(e -> {
+            if (e.getMouseEventDetails().getButton() == MouseEventDetails.MouseButton.RIGHT) { closeItem(); }
+        });
 
         Button closeButton = createCloseButton();
-        closeButton.addClickListener(closeItemListener);
+        closeButton.addClickListener(e -> closeItem());
         closeButton.setClickShortcut(ShortcutAction.KeyCode.ESCAPE);
 
         AbstractOrderedLayout itemLayout = sessionMgr.isMobileBrowser() ? vertical(MARGIN_FALSE) : horizontal(MARGIN_FALSE);
@@ -72,11 +80,14 @@ public class ItemLayout extends VerticalLayout
 
             ImageLabel imageLabel = new ImageLabel(imageUrl, ImageDimension.width(400));
             VerticalLayout imageLayout = vertical(imageLabel, MARGIN_FALSE);
-            imageLayout.addLayoutClickListener(e -> fullImagePopup.setPopupVisible(true));
+            imageLayout.addLayoutClickListener(e -> {
+                if (e.getMouseEventDetails().getButton() == MouseEventDetails.MouseButton.RIGHT) { closeItem(); }
+                else { fullImagePopup.setPopupVisible(true); }
+            });
 
             itemLayout.addComponents(imageLayout, fullImagePopup);
         }
-        
+
         VerticalLayout detailslayout = vertical((sessionMgr.isMobileBrowser() ? MARGIN_TRUE : MARGIN_FALSE), WIDTH_100_PCT);
         itemLayout.addComponent(detailslayout);
         detailslayout.addComponent(VaadinUtils.createLabel(item.getName(), "title"));
@@ -201,17 +212,13 @@ public class ItemLayout extends VerticalLayout
 
     private PopupView getFullImagePopup(String imageUrl, int pageHeight)
     {
-        Button closeButton = createCloseButton();
-        VerticalLayout fullImageLayout = vertical(closeButton, MARGIN_TRUE);
-        fullImageLayout.addComponent(createImageLabel(imageUrl));
-
-        // The panel will give it scrollbars
-        Panel panel = new Panel(fullImageLayout);
+        VerticalLayout fullImageLayout = vertical(createImageLabel(imageUrl), MARGIN_TRUE);
+        Panel panel = new Panel(fullImageLayout); // panel for scrollbars
         panel.setHeight(pageHeight + "px");
         panel.setStyleName(BACK_BLACK);
 
         PopupView popup = new PopupView(null, panel);
-        closeButton.addClickListener(e -> popup.setPopupVisible(false));
+        fullImageLayout.addLayoutClickListener(e -> popup.setPopupVisible(false));
 
         return popup;
     }
@@ -279,6 +286,20 @@ public class ItemLayout extends VerticalLayout
     private Button getStopWatchingButton(CatalogItem item)
     {
         return createTextButton("Stop Watching", ev -> bidHandler.handleWatch(item, false));
+    }
+
+    private void closeItem()
+    {
+        if (closeReturnsToWatch)
+        {
+            getUI().getNavigator().navigateTo(BidsPage.WATCH_NAME);
+        }
+        else
+        {
+            String viewName = CatalogPage.NAME + "-" + category.getName();
+            getUI().getNavigator().addView(viewName, new CatalogPage());
+            getUI().getNavigator().navigateTo(viewName);
+        }
     }
 
     class BidsDisclosure extends BaseDisclosure

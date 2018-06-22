@@ -7,26 +7,24 @@ import com.vaadin.ui.themes.ValoTheme;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.e2.web.vaadin.desktop.actionbar.BaseActionBar;
 import xyz.cleangone.e2.web.vaadin.desktop.actionbar.BaseMenuBar;
+import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 
 import java.util.List;
+
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
 public class ParticipantMenuBar extends BaseActionBar
 {
     private final ParticipantsAdmin participantsAdmin;
-    private MyLeftMenuBar leftMenuBar;
+    private MyLeftMenuBar leftMenuBar = new MyLeftMenuBar();
     private MyCenterMenuBar centerMenuBar = new MyCenterMenuBar();
 
     public ParticipantMenuBar(ParticipantsAdmin participantsAdmin)
     {
         this.participantsAdmin = participantsAdmin;
-        leftMenuBar = new MyLeftMenuBar(participantsAdmin);
 
         HorizontalLayout leftLayout = getLayout(leftMenuBar, "40%");
         HorizontalLayout centerLayout = getLayout(centerMenuBar, "50%");
-
-        PopupView popup = leftMenuBar.getPopup();
-        leftLayout.addComponent(popup);
-        leftLayout.setComponentAlignment(popup, new Alignment(AlignmentInfo.Bits.ALIGNMENT_BOTTOM));
 
         addComponents(leftLayout, centerLayout);
     }
@@ -46,56 +44,31 @@ public class ParticipantMenuBar extends BaseActionBar
 
     class MyLeftMenuBar extends BaseMenuBar
     {
-//        MenuItem  addParticipantsItem;
-        ComboBox<OrgTag> tagComboBox = new ComboBox<>();
-        PopupView addParticipantsPopup;
+        MenuItem addPeopleMenuItem;
 
-        public MyLeftMenuBar(ParticipantsAdmin participantsAdmin)
+        public MyLeftMenuBar()
         {
             MenuItem menuItem = addItem("",  VaadinIcons.PLUS, null);
             menuItem.setStyleName("icon-only");
 
-            addParticipantsPopup = new PopupView(null, createPopupLayout());
-            menuItem.addItem("Add Participants", null, new Command() {
-                public void menuSelected(MenuItem selectedItem)
-                {
-                    addParticipantsPopup.setPopupVisible(true);
-                }
-            });
-        }
-
-        private Component createPopupLayout()
-        {
-            HorizontalLayout layout = new HorizontalLayout();
-            layout.setMargin(true);
-            layout.setSpacing(true);
-            layout.setSizeUndefined();
-
-            tagComboBox.addStyleName(ValoTheme.TEXTFIELD_TINY);
-            tagComboBox.setPlaceholder("Tag");
-            tagComboBox.setItemCaptionGenerator(OrgTag::getName);
-
-            Button button = new Button("Add People with Tag");
-            button.addStyleName(ValoTheme.TEXTFIELD_TINY);
-            button.addClickListener(new Button.ClickListener() {
-                public void buttonClick(Button.ClickEvent event) {
-                    OrgTag tag = tagComboBox.getValue();
-                    if (tag != null) { participantsAdmin.addPeopleWithTag(tag); }
-                }
-            });
-
-            layout.addComponents(tagComboBox, button);
-            return layout;
+            addPeopleMenuItem = menuItem.addItem("Add People with Tag", null, null);
         }
 
         void setTags(List<OrgTag> tags)
         {
-            tagComboBox.setItems(tags);
-        }
+            addPeopleMenuItem.removeChildren();
 
-        PopupView getPopup()
-        {
-            return addParticipantsPopup;
+            if (tags != null)
+            {
+                for (OrgTag tag : tags)
+                {
+                    addPeopleMenuItem.addItem(tag.getName(), null, new Command() {
+                        public void menuSelected(MenuItem selectedItem) {
+                            participantsAdmin.addPeopleWithTag(tag);
+                        }
+                    });
+                }
+            }
         }
     }
 

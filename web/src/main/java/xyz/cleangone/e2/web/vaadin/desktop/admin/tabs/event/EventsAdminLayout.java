@@ -2,6 +2,7 @@ package xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event;
 
 import com.vaadin.ui.*;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
+import xyz.cleangone.data.aws.dynamo.entity.organization.TagType;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.MyUI;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.actions.DonationsAdmin;
@@ -31,13 +32,10 @@ public class EventsAdminLayout extends HorizontalLayout
         adminComponents.put(EventAdminPageType.EVENTS, new EventsAdmin(this, msgDisplayer));
         adminComponents.put(EventAdminPageType.GENERAL, new GeneralAdmin(msgDisplayer));
         adminComponents.put(EventAdminPageType.PARTICIPANTS, new ParticipantsAdmin(this, msgDisplayer));
-        adminComponents.put(EventAdminPageType.TAGS, new TagsAdmin(this, OrgTag.TagType.PersonTag, msgDisplayer));
-        adminComponents.put(EventAdminPageType.CATEGORIES, new TagsAdmin(this, OrgTag.TagType.Category, msgDisplayer));
         adminComponents.put(EventAdminPageType.ITEMS, new ItemsAdmin(this, msgDisplayer));
         adminComponents.put(EventAdminPageType.DATES, new DatesAdmin(this, msgDisplayer));
         adminComponents.put(EventAdminPageType.DONATIONS, new DonationsAdmin(this, msgDisplayer));
         adminComponents.put(EventAdminPageType.PURCHASES, new PurchasesAdmin(this, msgDisplayer));
-        adminComponents.put(EventAdminPageType.ROLES, new TagsAdmin(this, OrgTag.TagType.UserRole, msgDisplayer));
         adminComponents.put(EventAdminPageType.USERS, new UsersAdmin(this, msgDisplayer));
 
         setLayout(mainLayout, MARGIN_FALSE, SIZE_FULL, BACK_RED);

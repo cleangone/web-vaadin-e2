@@ -7,11 +7,8 @@ public enum EventAdminPageType implements AdminPageType
     EVENTS("All Events"),
     GENERAL("General"),
     PARTICIPANTS("Participants"),
-    TAGS("Tags"),
-    CATEGORIES("Categories"),
     ITEMS("Items"),
     DATES("Dates"),
-    ROLES("User Roles"),
     USERS("Users"),
     DONATIONS("Donations"),
     PURCHASES("Purchases");

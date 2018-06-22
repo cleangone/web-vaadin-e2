@@ -4,21 +4,18 @@ import com.vaadin.data.ValueProvider;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.event.selection.MultiSelectionEvent;
 import com.vaadin.event.selection.MultiSelectionListener;
-import com.vaadin.shared.ui.AlignmentInfo;
-import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
 import com.vaadin.ui.components.grid.FooterRow;
 import com.vaadin.ui.components.grid.HeaderRow;
-import com.vaadin.ui.themes.ValoTheme;
 import org.vaadin.dialogs.ConfirmDialog;
 import org.vaadin.viritin.fields.IntegerField;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
 import xyz.cleangone.data.aws.dynamo.entity.organization.EventParticipant;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
+import xyz.cleangone.data.aws.dynamo.entity.organization.TagType;
 import xyz.cleangone.data.aws.dynamo.entity.person.Person;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.BaseEventTagsAdmin;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.EventsAdminLayout;
-import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.item.ItemMenuBar;
 import xyz.cleangone.e2.web.vaadin.util.*;
 
 import java.util.*;
@@ -27,7 +24,8 @@ import java.util.stream.Collectors;
 import static xyz.cleangone.data.aws.dynamo.entity.organization.EventParticipant.LAST_COMMA_FIRST_FIELD;
 import static xyz.cleangone.data.aws.dynamo.entity.organization.EventParticipant.SELF_REGISTERED_FIELD;
 import static xyz.cleangone.data.aws.dynamo.entity.person.Person.TAGS_FIELD;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.createDeleteButton;
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.BACK_GREEN;
 
 public class ParticipantsAdmin extends BaseEventTagsAdmin implements MultiSelectionListener<EventParticipant>
 {
@@ -40,20 +38,17 @@ public class ParticipantsAdmin extends BaseEventTagsAdmin implements MultiSelect
 
     public ParticipantsAdmin(EventsAdminLayout eventsAdminLayout, MessageDisplayer msgDisplayer)
     {
-        super(eventsAdminLayout, OrgTag.TagType.PersonTag, msgDisplayer);
+        super(eventsAdminLayout, TagType.PERSON_TAG_TAG_TYPE, msgDisplayer);
         participantMenuBar = new ParticipantMenuBar(this);
 
-        setSizeFull();
-        setMargin(false);
-        setSpacing(true);
-        setWidth("100%");
+        setLayout(this, MARGIN_FALSE, SPACING_TRUE, SIZE_FULL, BACK_GREEN);
     }
 
     public void set()
     {
         super.set();
 
-        List<OrgTag> allEventVisiblePersonTags = tagMgr.getEventVisibleTags(tagType, event);
+        List<OrgTag> allEventVisiblePersonTags = tagMgr.getEventVisibleTags(tagTypeName, event);
         allEventVisiblePersonTagsById = tagMgr.getTagsById(allEventVisiblePersonTags);
         eventPersonTags = allEventVisiblePersonTags.stream()
             .filter(t -> event.getId().equals(t.getEventId()))
@@ -66,19 +61,14 @@ public class ParticipantsAdmin extends BaseEventTagsAdmin implements MultiSelect
 
         removeAllComponents();
 
-        Component grid = getParticipantGrid();
-
         participantMenuBar.setTagsForAddingParticipant(orgTagsExposedToEvent);
         participantMenuBar.setTagsToAdd(null);
         participantMenuBar.setTagsToRemove(null);
 
-        VerticalLayout gridLayout = new VerticalLayout();
-        gridLayout.setMargin(false);
-        gridLayout.setSpacing(true);
-        gridLayout.setStyleName("marginLeft");
-        gridLayout.addComponents(grid);
+        Component grid = getParticipantGrid();
+        VerticalLayout gridLayout = vertical(grid, MARGIN_LR, SPACING_TRUE, SIZE_FULL, BACK_PINK);
 
-        addComponents(participantMenuBar, gridLayout, new Label());
+        addComponents(participantMenuBar, gridLayout);
         setExpandRatio(gridLayout, 1.0f);
     }
 
@@ -87,6 +77,9 @@ public class ParticipantsAdmin extends BaseEventTagsAdmin implements MultiSelect
         List<Person> people = orgMgr.getPeopleByTag(tag.getId());
         eventMgr.addEventParticipants(people);
         msgDisplayer.displayMessage("Participants added");
+
+        List<EventParticipant> participants = eventMgr.getEventParticipants();
+
         set();
     }
 
@@ -107,6 +100,7 @@ public class ParticipantsAdmin extends BaseEventTagsAdmin implements MultiSelect
         Map<String, Person> peopleById = orgMgr.getPeopleByIdMap();
 
         Grid<EventParticipant> grid = new Grid<>();
+        grid.setStyleGenerator(item -> ADMIN_GRID_STYLE_NAME);
         grid.setSizeFull();
 
         addColumn(grid, LAST_COMMA_FIRST_FIELD, EventParticipant::getLastCommaFirst, 1);
@@ -201,7 +195,7 @@ public class ParticipantsAdmin extends BaseEventTagsAdmin implements MultiSelect
         return button;
     }
 
-    public void setOrgTagsDisclosureCaption() { tagsDisclosure.setDisclosureCaption(); }
+//    public void setOrgTagsDisclosureCaption() { tagsDisclosure.setDisclosureCaption(); }
 
 
     @Override

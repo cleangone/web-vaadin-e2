@@ -26,7 +26,7 @@ public abstract class BaseProfilePage extends BasePage implements View
     private ProfilePageType currPageType;
     private final HorizontalLayout leftWrapper  = horizontal(MARGIN_FALSE, SPACING_FALSE, VaadinUtils.SIZE_UNDEFINED, BACK_RED);
     private final VerticalLayout   leftLayout   = vertical(MARGIN_TRB, SPACING_FALSE, WIDTH_UNDEFINED, HEIGHT_100_PCT);
-    private final VerticalLayout   centerLayout = vertical(MARGIN_RL, HEIGHT_100_PCT, BACK_BLUE);
+    private final VerticalLayout   centerLayout = vertical(MARGIN_LR, HEIGHT_100_PCT, BACK_BLUE);
 
     protected Organization org;
     protected final Map<ProfilePageType, BaseAdmin> components = new HashMap<>();

@@ -27,7 +27,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent.*;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.createTextButton;
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.BACK_PURPLE;
 
 public class EventsAdmin extends BaseEventAdmin
 {
@@ -39,9 +40,7 @@ public class EventsAdmin extends BaseEventAdmin
     public EventsAdmin(EventsAdminLayout eventsAdminLayout, MessageDisplayer msgDisplayer)
     {
         super(eventsAdminLayout, msgDisplayer);
-
-        setMargin(new MarginInfo(true, false, false, false)); // T/R/B/L
-        setSpacing(true);
+        setLayout(this, MARGIN_T, SPACING_TRUE, BACK_GREEN);
     }
 
     public void set(SessionManager sessionMgr)

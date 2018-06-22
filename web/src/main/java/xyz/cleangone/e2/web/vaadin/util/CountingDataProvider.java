@@ -14,7 +14,6 @@ public class CountingDataProvider<T> extends ListDataProvider<T>
     private final Label countLabel;
     private final Collection<T> items;
 
-
     public CountingDataProvider(Collection<T> items, Label countLabel)
     {
         super(items);
@@ -38,6 +37,8 @@ public class CountingDataProvider<T> extends ListDataProvider<T>
     {
         items.clear();
         items.addAll(newItems);
+
+        refreshAll();
     }
 
     private void setCountLabelValue(long count)

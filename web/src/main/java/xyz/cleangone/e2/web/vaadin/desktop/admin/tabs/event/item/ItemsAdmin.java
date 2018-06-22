@@ -1,28 +1,25 @@
 package xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.item;
 
 import com.vaadin.data.ValueProvider;
-import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.event.selection.MultiSelectionEvent;
 import com.vaadin.event.selection.MultiSelectionListener;
-import com.vaadin.server.Setter;
 import com.vaadin.ui.*;
-import com.vaadin.ui.components.grid.FooterRow;
+import com.vaadin.ui.components.grid.ColumnVisibilityChangeListener;
 import com.vaadin.ui.components.grid.HeaderRow;
-import com.vaadin.ui.renderers.DateRenderer;
 import com.vaadin.ui.themes.ValoTheme;
-import org.vaadin.dialogs.ConfirmDialog;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
+import xyz.cleangone.data.aws.dynamo.entity.base.EntityType;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
 import xyz.cleangone.data.aws.dynamo.entity.item.SaleStatus;
 import xyz.cleangone.data.aws.dynamo.entity.item.SaleType;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
+import xyz.cleangone.data.aws.dynamo.entity.organization.TagType;
 import xyz.cleangone.data.manager.event.ItemManager;
-import xyz.cleangone.e2.web.manager.SessionManager;
+import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.BaseGrid;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.BaseEventTagsAdmin;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.EventsAdminLayout;
 import xyz.cleangone.e2.web.vaadin.util.*;
 
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -32,48 +29,42 @@ import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
 public class ItemsAdmin extends BaseEventTagsAdmin implements MultiSelectionListener<CatalogItem>
 {
-    protected static String ADMIN_GRID_STYLE_NAME = "admin";
-    private static boolean COLORS = false;
-
     private ItemManager itemMgr;
     private List<OrgTag> categories;
-    private Map<String, OrgTag> categoriesById;
     private Map<EntityField, String> previousFilterValues = new HashMap<>();
+    private Map<String, Boolean> previousHiddenValues = new HashMap<>();
 
-    private final ItemMenuBar itemMenuBar;
+    private final ItemsMenuBar itemsMenuBar;
     private List<CatalogItem> selectedItems;
 
-    private Map<EntityField, String> filterValues;
-
+    private List<TagType> itemTagTypes;
+    private List<OrgTag> itemTags;
+    private Map<String, OrgTag> itemTagsById;
 
     // pass eventsAdminLayout so msg can be sent to nav col
     public ItemsAdmin(EventsAdminLayout eventsAdminLayout, MessageDisplayer msgDisplayer)
     {
-        super(eventsAdminLayout, OrgTag.TagType.Category, msgDisplayer);
-        itemMenuBar = new ItemMenuBar(this);
+        super(eventsAdminLayout, TagType.CATEGORY_TAG_TYPE, msgDisplayer);
+        itemsMenuBar = new ItemsMenuBar(this);
 
-        setSizeFull();
-        setMargin(false);
-        setSpacing(true);
-        setWidth("100%");
-        if (COLORS) { addStyleName("backGreen"); }
-    }
-
-    public void set(SessionManager sessionMgr)
-    {
-        filterValues = new HashMap<>();
-        super.set(sessionMgr);
+        setLayout(this, MARGIN_FALSE, SPACING_TRUE, SIZE_FULL, BACK_GREEN);
     }
 
     public void set()
     {
         super.set();
 
-        event.getCategoryIds();
         categories = tagMgr.getCategories().stream()
-            .filter(category -> event.getId().equals(category.getEventId()) || event.getCategoryIds().contains(category.getId()) )
+            .filter(category -> category.getEventId() == null || category.getEventId().equals(event.getId()))
             .collect(Collectors.toList());
-        categoriesById = tagMgr.getTagsById(categories);
+
+        itemTagTypes = tagMgr.getTagTypes().stream()
+            .filter(t -> t.isEntityType(EntityType.Item))
+            .collect(Collectors.toList());
+
+        itemTags = tagMgr.getTags(EntityType.Item);
+        itemTagsById = tagMgr.getTagsById(itemTags);
+
         itemMgr = eventMgr.getItemManager(); // todo - work on caching
 
         setContent();
@@ -88,21 +79,14 @@ public class ItemsAdmin extends BaseEventTagsAdmin implements MultiSelectionList
     {
         removeAllComponents();
 
-        Component grid = getItemsGrid();
-        itemMenuBar.setItemsSelected(false);
-        itemMenuBar.setCategories(categories);
-        itemMenuBar.setAddCategories(null);
-        itemMenuBar.setRemoveCategories(null);
+        itemsMenuBar.setItemsSelected(false);
+        itemsMenuBar.setCategories(categories);
+        itemsMenuBar.clearTags();
 
-        VerticalLayout gridLayout = new VerticalLayout();
-        gridLayout.setMargin(false);
-        gridLayout.setSpacing(true);
-        gridLayout.addStyleName("marginLeft"); // todo - marginRight doesn't work, menu stack is collapsed to vertical ...
-        gridLayout.addComponents(grid);
-        gridLayout.setSizeFull();
-        if (COLORS) { gridLayout.addStyleName("backYellow"); }
+        Component grid = new ItemsGrid();
+        VerticalLayout gridLayout = vertical(grid, MARGIN_LR, SPACING_TRUE, SIZE_FULL, BACK_PINK);
 
-        addComponents(itemMenuBar, gridLayout);
+        addComponents(itemsMenuBar, gridLayout);
         setExpandRatio(gridLayout, 1.0f);
     }
 
@@ -149,182 +133,168 @@ public class ItemsAdmin extends BaseEventTagsAdmin implements MultiSelectionList
         set();
     }
 
-    void addCategoryToSelectedItems(OrgTag category)
+    void addTagToSelectedItems(TagType tagType, OrgTag tag)
     {
-        itemMgr.addCategoryId(category.getId(), selectedItems);
+        if (tagType.isTagType(TagType.CATEGORY_TAG_TYPE)) { itemMgr.addCategoryId(tag.getId(), selectedItems); }
+        else { itemMgr.addTagId(tag.getId(), selectedItems); }
+
         set();
     }
 
-    void removeCategoryFromSelectedItems(OrgTag category)
+    void removeTagFromSelectedItems(TagType tagType, OrgTag tag)
     {
-        itemMgr.removeCategoryId(category.getId(), selectedItems);
+        if (tagType.isTagType(TagType.CATEGORY_TAG_TYPE)) { itemMgr.removeCategoryId(tag.getId(), selectedItems); }
+        else { itemMgr.removeTagId(tag.getId(), selectedItems); }
+
         set();
-    }
-
-    private Grid<CatalogItem> getItemsGrid()
-    {
-        Grid<CatalogItem> grid = new Grid<>();
-        grid.setStyleGenerator(item -> ADMIN_GRID_STYLE_NAME);
-        grid.setSizeFull();
-
-        Grid.Column<CatalogItem, LinkButton> nameCol = grid.addComponentColumn(this::buildNameLinkButton);
-        nameCol.setId(NAME_FIELD.getName());
-        nameCol.setComparator((link1, link2) -> link1.getName().compareTo(link2.getName()));
-
-        addColumn(grid, CATEGORIES_FIELD, CatalogItem::getCategoriesCsv, 2);
-        addColumn(grid, PRICE_FIELD, CatalogItem::getDisplayPrice, 1);
-        addColumn(grid, COMBINED_STATUS_FIELD, CatalogItem::getCombinedStatus, 1);
-        addDateColumn(grid, AVAIL_START_FIELD, CatalogItem::getAvailabilityStart, 1);
-        Grid.Column endDateCol = addDateColumn(grid, AVAIL_END_FIELD, CatalogItem::getAvailabilityEnd, 1);
-        Grid.Column deleteCol = grid.addComponentColumn(this::buildDeleteButton);
-
-        grid.setColumnReorderingAllowed(true);
-        grid.setSelectionMode(Grid.SelectionMode.MULTI);
-        grid.asMultiSelect().addSelectionListener(this);
-
-        List<CatalogItem> items = itemMgr.getItems();
-        items.forEach(item -> item.setCategoriesCsv(categoriesById));
-
-        Label countLabel = new Label();
-        CountingDataProvider<CatalogItem> dataProvider = new CountingDataProvider<>(items, countLabel);
-        grid.setDataProvider(dataProvider);
-
-        grid.getEditor().setEnabled(true);
-        grid.getEditor().setBuffered(true);
-        grid.getEditor().addSaveListener(ev -> {
-            CatalogItem item = ev.getBean();
-            itemMgr.save(item);
-            msgDisplayer.displayMessage("Item saved");
-            grid.setDataProvider(new ListDataProvider<>(items));
-        });
-
-        grid.getColumns().stream()
-            .filter(col -> col != nameCol && col != deleteCol)
-            .forEach(column -> column.setHidable(true));
-        endDateCol.setHidden(true);
-
-        HeaderRow filterHeader = grid.appendHeaderRow();
-        setColumnFiltering(filterHeader, dataProvider);
-
-        FooterRow footerRow = grid.appendFooterRow();
-        footerRow.getCell(NAME_FIELD.getName()).setComponent(countLabel);
-
-        return grid;
-    }
-
-    private Grid.Column<CatalogItem, String> addColumn(
-        Grid<CatalogItem> grid, EntityField entityField,
-        ValueProvider<CatalogItem, String> valueProvider, Setter<CatalogItem, String> setter, int expandRatio)
-    {
-        return addColumn(grid, entityField, valueProvider, expandRatio).setEditorComponent(new TextField(), setter);
-    }
-
-    private Grid.Column<CatalogItem, String> addColumn(
-        Grid<CatalogItem> grid, EntityField entityField, ValueProvider<CatalogItem, String> valueProvider, int expandRatio)
-    {
-        return grid.addColumn(valueProvider)
-            .setId(entityField.getName()).setCaption(entityField.getDisplayName()).setExpandRatio(expandRatio);
-    }
-
-    private Grid.Column<CatalogItem, Boolean> addBooleanColumn(Grid<CatalogItem> grid,
-        EntityField entityField, ValueProvider<CatalogItem, Boolean> valueProvider, int expandRatio)
-    {
-        return grid.addColumn(valueProvider)
-            .setId(entityField.getName()).setCaption(entityField.getDisplayName()).setExpandRatio(expandRatio);
-    }
-
-    private Grid.Column<CatalogItem, BigDecimal> addBigDecimalColumn(Grid<CatalogItem> grid,
-        EntityField entityField, ValueProvider<CatalogItem, BigDecimal> valueProvider, int expandRatio)
-    {
-        return grid.addColumn(valueProvider)
-            .setId(entityField.getName()).setCaption(entityField.getDisplayName()).setExpandRatio(expandRatio);
-    }
-
-    private Grid.Column<CatalogItem, Date> addDateColumn(Grid<CatalogItem> grid,
-        EntityField entityField, ValueProvider<CatalogItem, Date> valueProvider, int expandRatio)
-    {
-        return grid.addColumn(valueProvider)
-            .setId(entityField.getName()).setCaption(entityField.getDisplayName())
-            .setRenderer(new DateRenderer(PageUtils.SDF_ADMIN_GRID))
-            .setExpandRatio(expandRatio);
-    }
-
-    private void setColumnFiltering(HeaderRow filterHeader, CountingDataProvider<CatalogItem> dataProvider)
-    {
-        MultiFieldFilter<CatalogItem> filter = new MultiFieldFilter<>(dataProvider);
-
-        addFilterField(NAME_FIELD,            CatalogItem::getName,           filter, filterHeader);
-        addFilterField(COMBINED_STATUS_FIELD, CatalogItem::getCombinedStatus, filter, filterHeader);
-        addFilterField(CATEGORIES_FIELD,      CatalogItem::getCategoriesCsv,  filter, filterHeader);
-
-        previousFilterValues = filter.getFilterValues();
-    }
-
-    private void addFilterField(EntityField entityField,
-        ValueProvider<CatalogItem, String> valueProvider, MultiFieldFilter<CatalogItem> filter, HeaderRow filterHeader)
-    {
-        filter.addField(entityField, valueProvider);
-        TextField filterField = VaadinUtils.addFilterField(entityField, filter, filterHeader);
-
-        if (previousFilterValues.containsKey(entityField)) { filterField.setValue(previousFilterValues.get(entityField)); }
-    }
-
-    private LinkButton buildNameLinkButton(CatalogItem item)
-    {
-        LinkButton linkButton = new LinkButton(item);
-        linkButton.addClickListener(e -> setContent(new ItemAdmin(eventMgr.getItemManager(item), msgDisplayer, this, ui)));
-        return linkButton;
-    }
-
-    private Component buildDeleteButton(CatalogItem item)
-    {
-        return createDeleteButton("Delete '" + item.getName() + "'", getUI(),
-            new ConfirmDialog.Listener() { public void onClose(ConfirmDialog dialog) {
-                if (dialog.isConfirmed()) {
-                    itemMgr.delete(item);
-                    set();
-                }
-            }
-        });
     }
 
     @Override
     public void selectionChange(MultiSelectionEvent<CatalogItem> selectionEvent)
     {
         selectedItems = new ArrayList<>(selectionEvent.getAllSelectedItems());
-        itemMenuBar.setItemsSelected(!selectedItems.isEmpty());
+        itemsMenuBar.setItemsSelected(!selectedItems.isEmpty());
+        itemsMenuBar.clearTags();
 
         if (selectedItems.isEmpty())
         {
-            itemMenuBar.setAddCategories(null);
-            itemMenuBar.setRemoveCategories(null);
+            itemsMenuBar.clearTags();
             return;
         }
 
-        itemMenuBar.setAddCategories(categories);
-
-        Set<String> selectedCategoryIds = new HashSet<>();
+        Set<String> selectedTagIds = new HashSet<>();
         for (CatalogItem selectedItem : selectedItems)
         {
-            selectedCategoryIds.addAll(selectedItem.getCategoryIds());
+            selectedTagIds.addAll(selectedItem.getCategoryIds());
+            selectedTagIds.addAll(selectedItem.getTagIds());
+
         }
 
-        List<OrgTag> selectedCategories = selectedCategoryIds.stream()
-            .map(id -> categoriesById.get(id))
-            .collect(Collectors.toList());
+        for (TagType itemTagType : itemTagTypes)
+        {
+            List<OrgTag> tags = itemTags.stream()
+                .filter(t -> t.isTagType(itemTagType.getName()))
+                .collect(Collectors.toList());
 
-        itemMenuBar.setRemoveCategories(selectedCategories);
+            List<OrgTag> selectedTags = selectedTagIds.stream()
+                .map(id -> itemTagsById.get(id))
+                .filter(t -> t.isTagType(itemTagType.getName()))
+                .collect(Collectors.toList());
+
+            itemsMenuBar.setTags(itemTagType, tags, selectedTags);
+        }
+    }
+
+    private class ItemsGrid extends BaseGrid<CatalogItem> implements ColumnVisibilityChangeListener
+    {
+        ItemsGrid()
+        {
+            setStyleGenerator(item -> ADMIN_GRID_STYLE_NAME);
+            setSizeFull();
+
+            Grid.Column<CatalogItem, LinkButton> nameCol = addComponentColumn(this::buildNameLinkButton);
+            nameCol.setId(NAME_FIELD.getName());
+            nameCol.setComparator((link1, link2) -> link1.getName().compareTo(link2.getName()));
+
+            addColumn(CATEGORIES_FIELD, CatalogItem::getCategoriesCsv);
+            addColumn(PRICE_FIELD, CatalogItem::getDisplayPrice);
+            addColumn(COMBINED_STATUS_FIELD, CatalogItem::getCombinedStatus);
+            addDateColumn(AVAIL_START_FIELD, CatalogItem::getAvailabilityStart);
+            Grid.Column endDateCol = addDateColumn(AVAIL_END_FIELD, CatalogItem::getAvailabilityEnd);
+            Grid.Column deleteCol = addComponentColumn(this::buildDeleteButton);
+
+            for (TagType itemTagType : itemTagTypes)
+            {
+                if (!itemTagType.isDefaultTagType())
+                {
+                    Boolean previousHidden = previousHiddenValues.get(itemTagType.getName());
+                    addColumn(catalogItem -> catalogItem.getTagsCsv(itemTagType.getId()))
+                        .setId(itemTagType.getName())
+                        .setCaption(itemTagType.getName())
+                        .setHidden(previousHidden == null ? true : previousHidden);
+                }
+            }
+
+            addColumnVisibilityChangeListener(this);
+
+            setColumnReorderingAllowed(true);
+            setSelectionMode(Grid.SelectionMode.MULTI);
+            asMultiSelect().addSelectionListener(ItemsAdmin.this);
+
+            List<CatalogItem> items = itemMgr.getItems();
+            for (CatalogItem item : items)
+            {
+                item.setCategorieCsv(itemTagsById);
+                for (TagType itemTagType : itemTagTypes)
+                {
+                    item.setTagsCsv(itemTagType.getId(), itemTagsById);
+                }
+            }
+
+            CountingDataProvider<CatalogItem> dataProvider = new CountingDataProvider<>(items, countLabel);
+            setDataProvider(dataProvider);
+
+            getColumns().stream()
+                .filter(col -> col != nameCol && col != deleteCol)
+                .forEach(column -> column.setHidable(true));
+            endDateCol.setHidden(true);
+
+            setColumnFiltering(dataProvider);
+            appendCountFooterRow(NAME_FIELD);
+        }
+
+        private LinkButton buildNameLinkButton(CatalogItem item)
+        {
+            return new LinkButton(item.getName(), e -> setContent(new ItemAdmin(eventMgr.getItemManager(item), msgDisplayer, ItemsAdmin.this, ui)));
+        }
+
+        private Component buildDeleteButton(CatalogItem item)
+        {
+            return super.buildDeleteButton(item, item.getName());
+        }
+
+
+        public void columnVisibilityChanged(Grid.ColumnVisibilityChangeEvent event)
+        {
+            previousHiddenValues.put(event.getColumn().getId(), event.isHidden());
+        }
+
+
+        @Override
+        protected void delete(CatalogItem item)
+        {
+            itemMgr.delete(item);
+            set();
+        }
+
+        @Override
+        protected void setColumnFiltering(MultiFieldFilter<CatalogItem> filter, HeaderRow filterHeader, CountingDataProvider<CatalogItem> dataProvider)
+        {
+            addFilterWithPrev(NAME_FIELD,            CatalogItem::getName,           filter, filterHeader);
+            addFilterWithPrev(COMBINED_STATUS_FIELD, CatalogItem::getCombinedStatus, filter, filterHeader);
+            addFilterWithPrev(CATEGORIES_FIELD,      CatalogItem::getCategoriesCsv,  filter, filterHeader);
+
+            previousFilterValues = filter.getFilterValues();
+        }
+
+        protected void addFilterWithPrev(EntityField entityField, ValueProvider<CatalogItem, String> valueProvider, MultiFieldFilter<CatalogItem> filter, HeaderRow filterHeader)
+        {
+            TextField filterField = addFilterField(entityField, valueProvider, filter, filterHeader);
+            if (previousFilterValues.containsKey(entityField)) { filterField.setValue(previousFilterValues.get(entityField)); }
+        }
     }
 
     class LinkButton extends Button
     {
         String name;
 
-        LinkButton(CatalogItem item)
+        LinkButton(String name, ClickListener listener)
         {
-            super(item.getName());
-            name = item.getName();
+            super(name);
+            this.name = name;
             addStyleName(ValoTheme.BUTTON_LINK);
+
+            addClickListener(listener);
         }
 
         String getName()
@@ -332,4 +302,5 @@ public class ItemsAdmin extends BaseEventTagsAdmin implements MultiSelectionList
             return name;
         }
     }
+
 }

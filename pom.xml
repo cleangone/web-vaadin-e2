@@ -6,7 +6,7 @@
 
     <groupId>xyz.cleangone.e2</groupId>
     <artifactId>e2</artifactId>
-    <version>1.5.0-SNAPSHOT</version>
+    <version>1.6.0-SNAPSHOT</version>
     <name>Experiment Two</name>
     <packaging>pom</packaging>
 

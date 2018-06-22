@@ -25,7 +25,9 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import static xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem.*;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.createTextField;
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.BACK_GREEN;
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.SIZE_FULL;
 
 public class ItemAdmin extends VerticalLayout
 {
@@ -48,8 +50,7 @@ public class ItemAdmin extends VerticalLayout
         imageAdmin = new ImageAdmin(msgDisplayer);
         imageAdmin.set(itemMgr, ui);
 
-        setMargin(false);
-        setSpacing(false);
+        setLayout(this, MARGIN_FALSE, SPACING_FALSE, BACK_PINK);
 
         formLayout.setMargin(false);
         formLayout.setSpacing(false);

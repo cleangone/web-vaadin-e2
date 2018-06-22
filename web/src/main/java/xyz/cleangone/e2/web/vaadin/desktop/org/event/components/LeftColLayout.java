@@ -9,6 +9,7 @@ import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
 import xyz.cleangone.data.aws.dynamo.entity.item.SaleStatus;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
+import xyz.cleangone.data.aws.dynamo.entity.organization.TagType;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.manager.EventManager;
 import xyz.cleangone.data.manager.OrgManager;
@@ -98,11 +99,7 @@ public class LeftColLayout extends HorizontalLayout
         changeManager.reset(user, event);
         removeAllComponents();
 
-        // also need any categories that have eventId set
-        List<String> categoryIds = event.getCategoryIds();
-        if (categoryIds == null || categoryIds.isEmpty()) { return PageDisplayType.NoRetrieval; }
-
-        categories = tagMgr.getEventVisibleTags(OrgTag.TagType.Category, event);
+        categories = tagMgr.getEventVisibleTags(TagType.CATEGORY_TAG_TYPE, event);
         if (categories.isEmpty()) { return PageDisplayType.ObjectRetrieval; }
 
         itemCountByCategoryId = new HashMap<>();

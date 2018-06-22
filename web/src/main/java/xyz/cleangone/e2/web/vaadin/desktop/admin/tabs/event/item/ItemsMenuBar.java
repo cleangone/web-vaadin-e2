@@ -9,21 +9,22 @@ import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
 import xyz.cleangone.data.aws.dynamo.entity.item.SaleStatus;
 import xyz.cleangone.data.aws.dynamo.entity.item.SaleType;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
+import xyz.cleangone.data.aws.dynamo.entity.organization.TagType;
 import xyz.cleangone.e2.web.vaadin.desktop.actionbar.*;
 import xyz.cleangone.e2.web.vaadin.util.PageUtils;
 import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class ItemMenuBar extends BaseActionBar
+public class ItemsMenuBar extends BaseActionBar
 {
     private final ItemsAdmin itemsAdmin;
     private MyLeftMenuBar leftMenuBar;
     private MyCenterMenuBar centerMenuBar = new MyCenterMenuBar();
 
-
-    public ItemMenuBar(ItemsAdmin itemsAdmin)
+    public ItemsMenuBar(ItemsAdmin itemsAdmin)
     {
         this.itemsAdmin = itemsAdmin;
         leftMenuBar = new MyLeftMenuBar(itemsAdmin);
@@ -58,13 +59,13 @@ public class ItemMenuBar extends BaseActionBar
     {
         leftMenuBar.setCategories(categories);
     }
-    public void setAddCategories(List<OrgTag> categories)
+    public void clearTags()
     {
-        centerMenuBar.setAddCategories(categories);
+        centerMenuBar.clearTags();
     }
-    public void setRemoveCategories(List<OrgTag> categories)
+    public void setTags(TagType tagType, List<OrgTag> tagsToAdd, List<OrgTag> tagsToRemove)
     {
-        centerMenuBar.setRemoveCategories(categories);
+        centerMenuBar.setTags(tagType, tagsToAdd, tagsToRemove);
     }
 
     class MyLeftMenuBar extends BaseMenuBar
@@ -142,10 +143,9 @@ public class ItemMenuBar extends BaseActionBar
 
     class MyCenterMenuBar extends MenuBar
     {
+        MenuBar.MenuItem topMenuItem;
         MenuBar.MenuItem dateItem;
-        MenuBar.MenuItem categoryItem;
-        MenuBar.MenuItem addCategoryItem;
-        MenuBar.MenuItem removeCategoryItem;
+        List <MenuBar.MenuItem> tagMenuItems = new ArrayList<>();
         MenuBar.MenuItem statusItem;
 
         PopupView startDatePopup;
@@ -158,18 +158,14 @@ public class ItemMenuBar extends BaseActionBar
             startDatePopup = new PopupView(null, createDatePopupLayout(CatalogItem.AVAIL_START_FIELD));
             endDatePopup   = new PopupView(null, createDatePopupLayout(CatalogItem.AVAIL_END_FIELD));
 
-            MenuBar.MenuItem menuItem = addItem("",  VaadinIcons.MENU, null);
-            menuItem.setStyleName("icon-only");
+            topMenuItem = addItem("",  VaadinIcons.MENU, null);
+            topMenuItem.setStyleName("icon-only");
 
-            dateItem = menuItem.addItem("Date", null, null);
+            dateItem = topMenuItem.addItem("Date", null, null);
             addPopupItem(dateItem, "Start Date", startDatePopup);
             addPopupItem(dateItem, "End Date",   endDatePopup);
 
-            categoryItem = menuItem.addItem("Category", null, null);
-            addCategoryItem = categoryItem.addItem("Add Category", null, null);
-            removeCategoryItem = categoryItem.addItem("Remove Category", null, null);
-
-            statusItem = menuItem.addItem("Status", null, null);
+            statusItem = topMenuItem.addItem("Status", null, null);
             MenuBar.MenuItem saleTypeItem = statusItem.addItem("Sale Type", null, null);
             addSaleTypeItem(saleTypeItem, SaleType.Purchase);
             addSaleTypeItem(saleTypeItem, SaleType.Auction);
@@ -179,9 +175,6 @@ public class ItemMenuBar extends BaseActionBar
             addStatusTypeItem(saleStatusItem, SaleStatus.Preview);
             addStatusTypeItem(saleStatusItem, SaleStatus.Available);
             addStatusTypeItem(saleStatusItem, SaleStatus.Sold);
-
-            addCategoryItem.setEnabled(false);
-            removeCategoryItem.setEnabled(false);
         }
 
         MenuBar.MenuItem addPopupItem(MenuBar.MenuItem menuItem, String caption, PopupView popup)
@@ -222,7 +215,6 @@ public class ItemMenuBar extends BaseActionBar
         public void setItemsSelected(boolean setItemsSelected)
         {
             dateItem.setEnabled(setItemsSelected);
-            categoryItem.setEnabled(setItemsSelected);
             statusItem.setEnabled(setItemsSelected);
         }
 
@@ -252,46 +244,38 @@ public class ItemMenuBar extends BaseActionBar
             return field;
         }
 
-
-        void setAddCategories(List<OrgTag> categories)
+        void clearTags()
         {
-            addCategoryItem.removeChildren();
-            if (categories == null || categories.isEmpty())
-            {
-                addCategoryItem.setEnabled(false);
-                return;
-            }
-
-            addCategoryItem.setEnabled(true);
-            for (OrgTag category : categories)
-            {
-                addCategoryItem.addItem(category.getName(), null, new MenuBar.Command() {
-                    public void menuSelected(MenuBar.MenuItem selectedItem)
-                    {
-                        itemsAdmin.addCategoryToSelectedItems(category);
-                    }
-                });
-            }
+            tagMenuItems.forEach(tagItem -> topMenuItem.removeChild(tagItem));
+            tagMenuItems.clear();
         }
 
-        void setRemoveCategories(List<OrgTag> categories)
+        public void setTags(TagType tagType, List<OrgTag> tagsToAdd, List<OrgTag> tagsToRemove)
         {
-            removeCategoryItem.removeChildren();
-            if (categories == null || categories.isEmpty())
+            if (tagsToAdd.isEmpty() && tagsToRemove.isEmpty()) { return; }
+
+            MenuBar.MenuItem tagMenuItem = topMenuItem.addItemBefore(tagType.getName(), null, null, statusItem);
+            tagMenuItems.add(tagMenuItem);
+
+            if (!tagsToAdd.isEmpty())
             {
-                removeCategoryItem.setEnabled(false);
-                return;
+                MenuBar.MenuItem addTagMenuItem = tagMenuItem.addItem("Add " + tagType.getName(), null, null);
+                for (OrgTag tag : tagsToAdd)
+                {
+                    addTagMenuItem.addItem(tag.getName(), null, new MenuBar.Command() {
+                        public void menuSelected(MenuBar.MenuItem selectedItem) { itemsAdmin.addTagToSelectedItems(tagType, tag); }
+                    });
+                }
             }
 
-            removeCategoryItem.setEnabled(true);
-            for (OrgTag category : categories)
+            if (!tagsToRemove.isEmpty())
             {
-                removeCategoryItem.addItem(category.getName(), null, new MenuBar.Command() {
-                    public void menuSelected(MenuBar.MenuItem selectedItem)
-                    {
-                        itemsAdmin.removeCategoryFromSelectedItems(category);
-                    }
-                });
+                for (OrgTag tag : tagsToRemove)
+                {
+                    tagMenuItem.addItem("Remove " + tag.getName(), null, new MenuBar.Command() {
+                        public void menuSelected(MenuBar.MenuItem selectedItem) { itemsAdmin.removeTagFromSelectedItems(tagType, tag); }
+                    });
+                }
             }
         }
     }

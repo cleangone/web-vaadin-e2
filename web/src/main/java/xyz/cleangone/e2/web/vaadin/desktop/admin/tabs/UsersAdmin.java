@@ -1,25 +1,21 @@
 package xyz.cleangone.e2.web.vaadin.desktop.admin.tabs;
 
-import com.vaadin.data.ValueProvider;
-import com.vaadin.data.provider.ListDataProvider;
-import com.vaadin.server.Setter;
 import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.ui.*;
-import com.vaadin.ui.components.grid.FooterRow;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.themes.ValoTheme;
-import org.vaadin.dialogs.ConfirmDialog;
-import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
 import xyz.cleangone.data.aws.dynamo.entity.person.AdminPrivledge;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.manager.OrgManager;
 import xyz.cleangone.data.manager.UserManager;
 import xyz.cleangone.e2.web.vaadin.util.CountingDataProvider;
 import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
+import xyz.cleangone.e2.web.vaadin.util.MultiFieldFilter;
 import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
 import static xyz.cleangone.data.aws.dynamo.entity.person.User.*;
 import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
@@ -49,7 +45,7 @@ public class UsersAdmin extends VerticalLayout
     {
         removeAllComponents();
 
-        Component grid = getUserGrid();
+        Component grid = new UserGrid();
         addComponents(getAddUserLayout(), grid);
         setExpandRatio(grid, 1.0f);
     }
@@ -84,125 +80,76 @@ public class UsersAdmin extends VerticalLayout
         return layout;
     }
 
-    private Component getUserGrid()
+    private class UserGrid extends BaseGrid<User>
     {
-        Grid<User> grid = new Grid<>();
-        grid.setSizeFull();
+        UserGrid()
+        {
+            setSizeFull();
 
-        Grid.Column<User, String> nameCol = addColumn(grid, LAST_FIRST_FIELD, User::getLastCommaFirst);
+            Grid.Column<User, String> nameCol = addColumn(LAST_FIRST_FIELD, User::getLastCommaFirst);
 
-        // cannot edit email - should you be able to edit email just created?  or delete & recreate?
-        addColumn(grid, EMAIL_FIELD, User::getEmail);
-        addColumn(grid, PASSWORD_FIELD, User::getPassword, User::setPassword);  // shows blank, clear text when typed in
-        grid.addColumn(this::isOrgAdmin)
-            .setId(ADMIN_FIELD.getName()).setCaption(ADMIN_FIELD.getDisplayName())
-            .setEditorComponent(new CheckBox(), this::setOrgAdmin);
+            // cannot edit email - should you be able to edit email just created?  or delete & recreate?
+            addColumn(EMAIL_FIELD, User::getEmail);
+            addColumn(PASSWORD_FIELD, User::getPassword, User::setPassword);  // shows blank, clear text when typed in
+            addColumn(this::isOrgAdmin)
+                .setId(ADMIN_FIELD.getName()).setCaption(ADMIN_FIELD.getDisplayName())
+                .setEditorComponent(new CheckBox(), this::setOrgAdmin);
+            addComponentColumn(this::buildDeleteButton).setWidth(ICON_COL_WIDTH);
 
-        // todo - cannot disable user - should admin be able to block them?
-        // addBooleanColumn(grid, ENABLED_FIELD, User::getEnabled, User::setEnabled);
+            sort(nameCol, SortDirection.ASCENDING);
 
-        grid.addComponentColumn(this::buildDeleteButton);
+            getEditor().setEnabled(true);
+            getEditor().addSaveListener(event -> {
+                User user = event.getBean();
+                userMgr.save(user);
+                msgDisplayer.displayMessage("User updates saved");
+                set();
+            });
 
-        grid.sort(nameCol, SortDirection.ASCENDING);
+            List<User> users = orgMgr.getUsers().stream()
+                .filter(user -> !user.isSuperAdmin())
+                .collect(Collectors.toList());
 
-        grid.getEditor().setEnabled(true);
-        grid.getEditor().addSaveListener(event -> {
-            User user = event.getBean();
-            userMgr.save(user);
-            msgDisplayer.displayMessage("User updates saved");
+            CountingDataProvider<User> dataProvider = new CountingDataProvider<>(users, countLabel);
+            setDataProvider(dataProvider);
+
+            HeaderRow filterHeader = appendHeaderRow();
+            setColumnFiltering(filterHeader, dataProvider);
+
+            appendCountFooterRow(LAST_FIRST_FIELD);
+        }
+
+        private boolean isOrgAdmin(User user)
+        {
+            return user.isOrgAdmin(orgId);
+        }
+        private void setOrgAdmin(User user, boolean isAdmin)
+        {
+            if (isAdmin) { user.addAdminPrivledge(new AdminPrivledge(orgId)); }
+            else { user.removeAdminPrivledge(new AdminPrivledge(orgId)); }
+        }
+
+        private Button buildDeleteButton(User user)
+        {
+            // can only delete users that have not had password set - ie. just been created
+            return (user.hasPassword() ? null :
+                buildDeleteButton(user, "Delete User", "Confirm User Delete", "Delete user '" + user.getFirstLast() + "'?"));
+        }
+
+        @Override
+        protected void delete(User user)
+        {
+            userMgr.delete(user);
             set();
-        });
+        }
 
-        List<User> users = orgMgr.getUsers().stream()
-            .filter(user -> !user.isSuperAdmin())
-            .collect(Collectors.toList());
+        private void setColumnFiltering(HeaderRow filterHeader, CountingDataProvider<User> dataProvider)
+        {
+            MultiFieldFilter<User> filter = new MultiFieldFilter<>(dataProvider);
 
-        Label countLabel = new Label();
-        CountingDataProvider<User> dataProvider = new CountingDataProvider<User>(users, countLabel);
-        grid.setDataProvider(dataProvider);
-
-        HeaderRow filterHeader = grid.appendHeaderRow();
-        setColumnFiltering(filterHeader, dataProvider);
-
-        FooterRow footerRow = grid.appendFooterRow();
-        footerRow.getCell(EMAIL_FIELD.getName()).setComponent(countLabel);
-
-        return grid;
-    }
-
-    private boolean isOrgAdmin(User user)
-    {
-        return user.isOrgAdmin(orgId);
-    }
-    private void setOrgAdmin(User user, boolean isAdmin)
-    {
-        if (isAdmin) { user.addAdminPrivledge(new AdminPrivledge(orgId)); }
-        else { user.removeAdminPrivledge(new AdminPrivledge(orgId)); }
-    }
-
-    private Grid.Column<User, String> addColumn(
-        Grid<User> grid, EntityField entityField, ValueProvider<User, String> valueProvider, Setter<User, String> setter)
-    {
-        return addColumn(grid, entityField, valueProvider)
-            .setEditorComponent(new TextField(), setter);
-    }
-
-    private Grid.Column<User, String> addColumn(
-        Grid<User> grid, EntityField entityField, ValueProvider<User, String> valueProvider)
-    {
-        return grid.addColumn(valueProvider)
-            .setId(entityField.getName()).setCaption(entityField.getDisplayName());
-    }
-
-    private void addBooleanColumn(
-        Grid<User> grid, EntityField entityField, ValueProvider<User, Boolean> valueProvider, Setter<User, Boolean> setter)
-    {
-        grid.addColumn(valueProvider)
-            .setId(entityField.getName()).setCaption(entityField.getDisplayName())
-            .setEditorComponent(new CheckBox(), setter);
-    }
-
-    // can only delete users that have not had password set - ie. just been created
-    private Button buildDeleteButton(User user)
-    {
-        if (user.hasPassword()) { return null; }
-
-        Button button = createDeleteButton("Delete User");
-        button.addClickListener(e -> {
-            ConfirmDialog.show(getUI(), "Confirm User Delete", "Delete user '" + user.getName() + "'?",
-                "Delete", "Cancel", new ConfirmDialog.Listener() {
-                    public void onClose(ConfirmDialog dialog) {
-                        if (dialog.isConfirmed()) {
-                            userMgr.delete(user);
-                            set();
-                        }
-                    }
-                });
-        });
-
-        return button;
-    }
-
-    private void setColumnFiltering(HeaderRow filterHeader, ListDataProvider<User> dataProvider)
-    {
-        addFilterField(EMAIL_FIELD, User::getName, dataProvider, filterHeader);
-        addFilterField(LAST_FIRST_FIELD, User::getLastCommaFirst, dataProvider, filterHeader);
-    }
-
-    private void addFilterField(
-        EntityField entityField, ValueProvider<User, String> valueProvider, ListDataProvider<User> dataProvider, HeaderRow filterHeader)
-    {
-        TextField filterField = VaadinUtils.createGridTextField("Filter");
-        filterField.addValueChangeListener(event -> {
-            dataProvider.setFilter(valueProvider, s -> contains(s, event.getValue()));
-        });
-
-        filterHeader.getCell(entityField.getName()).setComponent(filterField);
-    }
-
-    private boolean contains(String s, String contains)
-    {
-        return (s != null && contains != null && s.toLowerCase().contains(contains.toLowerCase()));
+            addFilterField(LAST_FIRST_FIELD, User::getLastCommaFirst, filter, filterHeader);
+            addFilterField(EMAIL_FIELD, User::getEmail, filter, filterHeader);
+        }
     }
 }
 

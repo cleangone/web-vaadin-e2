@@ -67,7 +67,7 @@ public class OrgPage extends BasePage implements View
         String introHtml = org.getIntroHtml();
         if (introHtml != null)
         {
-            VerticalLayout introLayout = vertical(getHtmlLabel(introHtml), MARGIN_RL);
+            VerticalLayout introLayout = vertical(getHtmlLabel(introHtml), MARGIN_LR);
             mainLayout.addComponent(introLayout);
         }
 

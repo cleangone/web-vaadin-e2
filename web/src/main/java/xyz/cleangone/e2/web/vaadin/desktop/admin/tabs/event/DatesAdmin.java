@@ -21,7 +21,7 @@ import java.util.List;
 
 import static xyz.cleangone.data.aws.dynamo.entity.organization.EventDate.DATE_NAME_FIELD;
 import static xyz.cleangone.data.aws.dynamo.entity.organization.EventDate.DETAILS_FIELD;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.createDeleteButton;
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
 
 public class DatesAdmin extends BaseEventAdmin
@@ -31,11 +31,7 @@ public class DatesAdmin extends BaseEventAdmin
     public DatesAdmin(EventsAdminLayout eventsAdmin, MessageDisplayer msgDisplayer)
     {
         super(eventsAdmin, msgDisplayer);
-
-        setSizeFull();
-        setMargin(new MarginInfo(true, false, false, false)); // T/R/B/L
-        setSpacing(true);
-        setWidth("100%");
+        setLayout(this, MARGIN_T, SPACING_TRUE, SIZE_FULL, BACK_RED);
     }
 
     public void set(SessionManager sessionMgr)

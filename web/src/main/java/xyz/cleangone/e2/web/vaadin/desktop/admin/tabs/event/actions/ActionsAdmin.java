@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
 
 public abstract class ActionsAdmin extends BaseEventAdmin
@@ -31,11 +32,7 @@ public abstract class ActionsAdmin extends BaseEventAdmin
     public ActionsAdmin(EventsAdminLayout eventsAdmin, MessageDisplayer msgDisplayer)
     {
         super(eventsAdmin, msgDisplayer);
-
-        setSizeFull();
-        setMargin(new MarginInfo(true, false, false, false)); // T/R/B/L
-        setSpacing(true);
-        setWidth("100%");
+        setLayout(this, MARGIN_TR, SPACING_TRUE, SIZE_FULL, BACK_GREEN);
     }
 
     public void set(SessionManager sessionMgr)

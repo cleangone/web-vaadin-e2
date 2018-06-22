@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>xyz.cleangone.e2</groupId>
 		<artifactId>e2</artifactId>
-		<version>1.5.0-SNAPSHOT</version>
+		<version>1.6.0-SNAPSHOT</version>
 	</parent>
 
 	<groupId>xyz.cleangone.e2.web</groupId>
@@ -63,7 +63,7 @@
 		<dependency>
 			<groupId>xyz.cleangone.e2.util</groupId>
 			<artifactId>e2-util</artifactId>
-			<version>1.5.0-SNAPSHOT</version>
+			<version>1.6.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>xyz.cleangone.util</groupId>
@@ -73,7 +73,7 @@
 		<dependency>
 			<groupId>xyz.cleangone.data</groupId>
 			<artifactId>data-aws-dynamo</artifactId>
-			<version>1.3.0-SNAPSHOT</version>
+			<version>1.4.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>xyz.cleangone.message</groupId>

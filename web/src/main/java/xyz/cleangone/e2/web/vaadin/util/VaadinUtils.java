@@ -37,7 +37,7 @@ public class VaadinUtils
     public static final String MARGIN_TRB      = "marginTopRightBot";
     public static final String MARGIN_L        = "marginLeft";
     public static final String MARGIN_R        = "marginRight";
-    public static final String MARGIN_RL       = "marginRightLeft";
+    public static final String MARGIN_LR       = "marginLeftRight";
     public static final String SPACING_TRUE    = "spacingTrue";
     public static final String SPACING_FALSE   = "spacingFalse";
     public static final String SIZE_FULL       = "sizeFull";
@@ -103,7 +103,6 @@ public class VaadinUtils
 
     public static void setLayout(AbstractOrderedLayout layout, String... directives)
     {
-        // todo - figure out better way to do this
         for (String directive : directives)
         {
             if (directive.equals(MARGIN_TRUE))          { layout.setMargin(true); }
@@ -114,7 +113,7 @@ public class VaadinUtils
             else if (directive.equals(MARGIN_TRB))      { layout.setMargin(new MarginInfo(true,  true,  true,  false)); }
             else if (directive.equals(MARGIN_L))        { layout.setMargin(new MarginInfo(false, false, false, true));  }
             else if (directive.equals(MARGIN_R))        { layout.setMargin(new MarginInfo(false, true,  false, false)); }
-            else if (directive.equals(MARGIN_RL))       { layout.setMargin(new MarginInfo(false, true,  false, true));  }
+            else if (directive.equals(MARGIN_LR))       { layout.setMargin(new MarginInfo(false, true,  false, true));  }
             else if (directive.equals(SPACING_TRUE))    { layout.setSpacing(true); }
             else if (directive.equals(SPACING_FALSE))   { layout.setSpacing(false); }
             else if (directive.equals(SIZE_FULL))       { layout.setSizeFull(); }

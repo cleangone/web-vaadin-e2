@@ -54,7 +54,7 @@ public class CatalogPage extends BaseEventPage implements View, CatalogView
     {
         centerLayout.removeAllComponents();
 
-        List<CatalogItem> items = itemMgr.getItems(category.getId());
+        List<CatalogItem> items = itemMgr.getItemsWithCategory(category.getId());
         List<CatalogItem> visibleItems = items.stream()
             .filter(CatalogItem::isVisible)
             .collect(Collectors.toList());

@@ -5,6 +5,7 @@ import xyz.cleangone.data.aws.dynamo.entity.base.EntityType;
 import xyz.cleangone.data.aws.dynamo.entity.organization.EventParticipant;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
+import xyz.cleangone.data.aws.dynamo.entity.organization.TagType;
 import xyz.cleangone.data.aws.dynamo.entity.person.Person;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.manager.EventManager;
@@ -68,10 +69,10 @@ public class RightColLayout extends VerticalLayout
             return PageDisplayType.NoRetrieval;
         }
 
-        List<OrgTag> orgTagsVisibleToEvent = tagMgr.getTags(event.getTagIds());
-        List<OrgTag> eventTags = tagMgr.getEventTags(OrgTag.TagType.PersonTag, event.getId());
-        List<OrgTag> allEventTags = new ArrayList<>(orgTagsVisibleToEvent);
-        allEventTags.addAll(eventTags);
+//        List<OrgTag> orgTagsVisibleToEvent = tagMgr.getTags(event.getTagIds());
+        List<OrgTag> eventTags = tagMgr.getEventVisibleTags(TagType.PERSON_TAG_TAG_TYPE, event);
+        List<OrgTag> allEventTags = new ArrayList<>(eventTags);
+//        allEventTags.addAll(eventTags);
         Collections.sort(allEventTags);
 
         if (event.getUserCanRegister()) { addComponent(new RegisterPanel(allEventTags, sessionMgr, actionBar)); }

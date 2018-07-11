@@ -1,15 +1,13 @@
 package xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.tag;
 
 import com.vaadin.data.provider.ListDataProvider;
-import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.ui.*;
-import com.vaadin.ui.themes.ValoTheme;
-import xyz.cleangone.data.aws.dynamo.entity.base.EntityType;
+import xyz.cleangone.data.aws.dynamo.entity.lastTouched.EntityType;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.data.aws.dynamo.entity.organization.TagType;
 import xyz.cleangone.data.manager.TagManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
-import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.BaseGrid;
+import xyz.cleangone.e2.web.vaadin.util.EntityGrid;
 import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
 import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 
@@ -63,7 +61,7 @@ public class TagTypesAdmin extends BaseTagAdmin
         }
     }
 
-    private class TagTypeGrid extends BaseGrid<TagType>
+    private class TagTypeGrid extends EntityGrid<TagType>
     {
         TagTypeGrid()
         {

@@ -15,12 +15,10 @@ import org.vaadin.alump.ckeditor.CKEditorConfig;
 import org.vaadin.alump.ckeditor.CKEditorTextField;
 import org.vaadin.dialogs.ConfirmDialog;
 import org.vaadin.viritin.fields.IntegerField;
-import org.vaadin.viritin.v7.fields.MValueChangeListener;
 import xyz.cleangone.data.aws.dynamo.dao.DynamoBaseDao;
 import xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity;
-import xyz.cleangone.data.aws.dynamo.entity.base.BaseMixinEntity;
+import xyz.cleangone.data.aws.dynamo.entity.base.BaseNamedEntity;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
-import xyz.cleangone.e2.web.vaadin.desktop.MyUI;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,6 +26,7 @@ import java.util.List;
 public class VaadinUtils
 {
     public static final String IMAGE_HAND_STYLE = "with-hand";
+    public static boolean SHOW_BACKBROUND_COLORS = false;
 
     public static final String MARGIN_TRUE     = "marginTrue";
     public static final String MARGIN_FALSE    = "marginFalse";
@@ -41,6 +40,7 @@ public class VaadinUtils
     public static final String SPACING_TRUE    = "spacingTrue";
     public static final String SPACING_FALSE   = "spacingFalse";
     public static final String SIZE_FULL       = "sizeFull";
+    public static final String SIZE_UNDEFINE   = "sizeUndefined"; // SIZE_UNDEFINED used other places and always
     public static final String SIZE_UNDEFINED  = "sizeUndefined";
     public static final String WIDTH_100_PCT   = "width100Pct";
     public static final String WIDTH_UNDEFINED = "widthUndefined";
@@ -127,7 +127,7 @@ public class VaadinUtils
 
     public static void addColorStyle(AbstractOrderedLayout layout, String styleName)
     {
-        if (MyUI.COLORS) { layout.addStyleName(styleName); }
+        if (SHOW_BACKBROUND_COLORS) { layout.addStyleName(styleName); }
     }
 
     public static TextField createNoCaptionTextField(
@@ -276,7 +276,7 @@ public class VaadinUtils
     }
 
     public static CKEditorTextField createCkEditor(
-        EntityField field, BaseMixinEntity entity, DynamoBaseDao dao, MessageDisplayer messageDisplayer)
+        EntityField field, BaseNamedEntity entity, DynamoBaseDao dao, MessageDisplayer messageDisplayer)
     {
         CKEditorConfig config = new CKEditorConfig();
         config.useCompactTags();

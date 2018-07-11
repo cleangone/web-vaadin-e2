@@ -1,30 +1,22 @@
 package xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event;
 
-import com.vaadin.data.ValueProvider;
 import com.vaadin.event.selection.MultiSelectionEvent;
 import com.vaadin.event.selection.MultiSelectionListener;
 import com.vaadin.shared.ui.AlignmentInfo;
-import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
 import com.vaadin.ui.components.grid.HeaderRow;
-import com.vaadin.ui.themes.ValoTheme;
-import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
-import xyz.cleangone.data.aws.dynamo.entity.organization.EventParticipant;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
-import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 
-import xyz.cleangone.data.aws.dynamo.entity.organization.TagType;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.manager.EventManager;
 import xyz.cleangone.data.manager.OrgManager;
 import xyz.cleangone.data.manager.TagManager;
 import xyz.cleangone.data.manager.UserManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
-import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.BaseGrid;
+import xyz.cleangone.e2.web.vaadin.util.EntityGrid;
 import xyz.cleangone.e2.web.vaadin.util.CountingDataProvider;
 import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
 import xyz.cleangone.e2.web.vaadin.util.MultiFieldFilter;
-import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -90,7 +82,7 @@ public class UsersAdmin extends BaseEventAdmin implements MultiSelectionListener
 
     }
 
-    private class UsersGrid extends BaseGrid<User>
+    private class UsersGrid extends EntityGrid<User>
     {
         UsersGrid(MultiSelectionListener<User> listener)
         {

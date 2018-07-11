@@ -18,6 +18,8 @@ import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.SHOW_BACKBROUND_COLORS;
+
 public class WatchLayout extends BaseAdmin implements CatalogView
 {
     private BasePage page;
@@ -39,7 +41,7 @@ public class WatchLayout extends BaseAdmin implements CatalogView
 
         setMargin(false);
         setSpacing(false);
-        if (MyUI.COLORS) { addStyleName("backGreen"); }
+        if (SHOW_BACKBROUND_COLORS) { addStyleName("backGreen"); }
     }
 
     public void set(SessionManager sessionMgr)

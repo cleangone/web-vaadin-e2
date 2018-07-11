@@ -43,7 +43,7 @@ public abstract class BaseEventPage extends BasePage implements View
         mainLayout.setWidth("100%");
         mainLayout.setHeightUndefined();
         mainLayout.setMargin(false);
-        if (MyUI.COLORS) { setStyleName("backBlue"); }
+        if (SHOW_BACKBROUND_COLORS) { setStyleName("backBlue"); }
 
         centerWrapperLayout.setMargin(false);
         centerWrapperLayout.setSpacing(true);

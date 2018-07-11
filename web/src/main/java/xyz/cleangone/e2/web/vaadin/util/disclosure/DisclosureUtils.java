@@ -1,10 +1,12 @@
-package xyz.cleangone.e2.web.vaadin.util;
+package xyz.cleangone.e2.web.vaadin.util.disclosure;
 
 import com.vaadin.ui.*;
 import xyz.cleangone.data.aws.dynamo.dao.DynamoBaseDao;
 import xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
-import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.disclosure.BaseDisclosure;
+import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
+import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
+import xyz.cleangone.e2.web.vaadin.util.disclosure.BaseDisclosure;
 
 public class DisclosureUtils
 {

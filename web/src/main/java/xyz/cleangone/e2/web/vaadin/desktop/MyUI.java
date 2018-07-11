@@ -48,6 +48,8 @@ import xyz.cleangone.util.env.EnvManager;
 import java.util.*;
 import java.util.logging.Logger;
 
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+
 @Push
 @Theme("mytheme")
 @Viewport("user-scalable=yes,initial-scale=1.0")
@@ -57,7 +59,6 @@ public class MyUI extends BroadcastListeningUI implements BroadcastListener
     public static final String VERIFY_EMAIL_URL_PARAM = "verify";
     public static final String ITEM_URL_PARAM = "item";
     public static final BrowserStats BROWSER_STATS = new BrowserStats();
-    public static boolean COLORS = false;
 
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
     @VaadinServletConfiguration(ui = MyUI.class, productionMode = false)
@@ -73,6 +74,8 @@ public class MyUI extends BroadcastListeningUI implements BroadcastListener
     @Override
     protected void init(VaadinRequest vaadinRequest)
     {
+        SHOW_BACKBROUND_COLORS = true;
+
         BROWSER_STATS.addPage(getCurrent().getPage());
 
         new Navigator(this, this);

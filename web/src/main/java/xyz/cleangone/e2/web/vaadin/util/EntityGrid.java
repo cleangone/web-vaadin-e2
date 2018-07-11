@@ -1,8 +1,7 @@
-package xyz.cleangone.e2.web.vaadin.desktop.admin.tabs;
+package xyz.cleangone.e2.web.vaadin.util;
 
 import com.vaadin.data.ValueProvider;
 import com.vaadin.server.Setter;
-import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.ui.*;
 import com.vaadin.ui.components.grid.EditorSaveListener;
 import com.vaadin.ui.components.grid.FooterRow;
@@ -11,18 +10,12 @@ import com.vaadin.ui.renderers.DateRenderer;
 import org.vaadin.dialogs.ConfirmDialog;
 import xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
-import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
-import xyz.cleangone.data.aws.dynamo.entity.organization.TagType;
-import xyz.cleangone.e2.web.vaadin.util.CountingDataProvider;
-import xyz.cleangone.e2.web.vaadin.util.MultiFieldFilter;
-import xyz.cleangone.e2.web.vaadin.util.PageUtils;
-import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 
 import java.util.Date;
 
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.createDeleteButton;
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
-public class BaseGrid<T extends BaseEntity> extends Grid<T>
+public class EntityGrid<T extends BaseEntity> extends Grid<T>
 {
     protected final int ICON_COL_WIDTH = 80;
     protected Label countLabel = new Label();

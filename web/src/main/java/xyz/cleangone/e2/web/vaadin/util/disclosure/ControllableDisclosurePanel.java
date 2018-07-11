@@ -1,13 +1,15 @@
-package xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.disclosure;
+package xyz.cleangone.e2.web.vaadin.util.disclosure;
 
 import com.vaadin.ui.Component;
 import org.vaadin.viritin.components.DisclosurePanel;
+import xyz.cleangone.e2.web.vaadin.util.disclosure.BaseDisclosure;
 
-public class MyDisclosurePanel extends DisclosurePanel
+// provide a hook into open/close
+public class ControllableDisclosurePanel extends DisclosurePanel
 {
     private BaseDisclosure parent;
 
-    public MyDisclosurePanel(Component content, BaseDisclosure parent)
+    public ControllableDisclosurePanel(Component content, BaseDisclosure parent)
     {
         super("", content);
         this.parent = parent;

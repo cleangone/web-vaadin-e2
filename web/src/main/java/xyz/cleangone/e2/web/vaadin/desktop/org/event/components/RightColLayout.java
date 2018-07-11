@@ -1,7 +1,7 @@
 package xyz.cleangone.e2.web.vaadin.desktop.org.event.components;
 
 import com.vaadin.ui.VerticalLayout;
-import xyz.cleangone.data.aws.dynamo.entity.base.EntityType;
+import xyz.cleangone.data.aws.dynamo.entity.lastTouched.EntityType;
 import xyz.cleangone.data.aws.dynamo.entity.organization.EventParticipant;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
@@ -18,7 +18,6 @@ import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
 
 public class RightColLayout extends VerticalLayout
 {

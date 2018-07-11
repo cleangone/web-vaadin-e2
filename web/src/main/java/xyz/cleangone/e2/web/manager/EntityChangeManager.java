@@ -1,7 +1,7 @@
 package xyz.cleangone.e2.web.manager;
 
 import xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity;
-import xyz.cleangone.data.aws.dynamo.entity.base.EntityType;
+import xyz.cleangone.data.aws.dynamo.entity.lastTouched.EntityType;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
@@ -9,7 +9,6 @@ import xyz.cleangone.data.cache.EntityLastTouchedCache;
 
 import java.util.Date;
 import java.util.List;
-
 
 public class EntityChangeManager
 {

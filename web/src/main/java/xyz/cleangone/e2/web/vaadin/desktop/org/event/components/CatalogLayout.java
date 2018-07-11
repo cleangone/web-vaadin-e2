@@ -55,7 +55,7 @@ public class CatalogLayout extends VerticalLayout
         catalogGridLayout.setMargin(false);
         catalogGridLayout.setSpacing(true);
         catalogGridLayout.setWidth("100%");
-        if (MyUI.COLORS) { catalogGridLayout.setStyleName(BACK_ORANGE); }
+        if (SHOW_BACKBROUND_COLORS) { catalogGridLayout.setStyleName(BACK_ORANGE); }
     }
 
     // called by WatchLayout
@@ -115,7 +115,7 @@ public class CatalogLayout extends VerticalLayout
     {
         if (getComponentCount() == 0) { addComponents(createViewSoldLayout(), catalogGridLayout); }
 
-        CatalogItemLayout itemLayout = new CatalogItemLayout(item, user, quickBidButton, bidMgr,  e -> {
+        CatalogItemLayout itemLayout = new CatalogItemLayout(item, user, quickBidButton, tagMgr, bidMgr,  e -> {
             // LayoutClickListener
             // this needs to do different things for catalog and watched items
 

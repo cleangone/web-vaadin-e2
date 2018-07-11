@@ -8,9 +8,11 @@ import org.vaadin.kim.countdownclock.CountdownClock;
 import xyz.cleangone.data.aws.dynamo.entity.bid.UserBid;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
+import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.manager.EventManager;
 import xyz.cleangone.data.manager.ImageManager;
+import xyz.cleangone.data.manager.TagManager;
 import xyz.cleangone.data.manager.event.BidManager;
 import xyz.cleangone.e2.web.vaadin.desktop.MyUI;
 import xyz.cleangone.e2.web.vaadin.desktop.image.ImageDimension;
@@ -22,24 +24,22 @@ import java.util.List;
 import java.util.Map;
 
 import static xyz.cleangone.e2.web.vaadin.desktop.org.event.EventUtils.*;
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.BACK_GREEN;
 
 public class CatalogItemLayout extends VerticalLayout
 {
-    private static boolean COLORS = true;
-
     private final CatalogItem item;
 
     public CatalogItemLayout(
-        CatalogItem item, User user, Button quickBidButton, BidManager bidManager, LayoutEvents.LayoutClickListener listener)
+        CatalogItem item, User user, Button quickBidButton, TagManager tagMgr, BidManager bidManager, LayoutEvents.LayoutClickListener listener)
     {
         this.item = item;
+        setLayout(this, MARGIN_FALSE, SPACING_FALSE, BACK_RED);
 
-        setMargin(false);
-        setSpacing(false);
         setStyleName("catalogItem");
         setDefaultComponentAlignment(new Alignment(AlignmentInfo.Bits.ALIGNMENT_HORIZONTAL_CENTER));
         addLayoutClickListener(listener);
-        if (MyUI.COLORS) { addStyleName("backRed"); }
 
         List<S3Link> images = item.getImages();
         if (images != null && !images.isEmpty())
@@ -50,6 +50,12 @@ public class CatalogItemLayout extends VerticalLayout
         }
 
         addComponent(new Label(item.getName()));
+
+        List<OrgTag> tags = tagMgr.getTags(item.getTagIds());
+        for (OrgTag tag : tags)
+        {
+            addComponent(new Label(tag.getTagTypeName() + ": " + tag.getName()));
+        }
 
         PriceLayout priceLayout = getPriceLayout(item, user, bidManager);
         addComponent(priceLayout);
@@ -66,8 +72,7 @@ public class CatalogItemLayout extends VerticalLayout
     private PriceLayout getPriceLayout(CatalogItem item, User user, BidManager bidManager)
     {
         PriceLayout layout = new PriceLayout();
-        layout.setMargin(false);
-        layout.setSizeUndefined();
+        setLayout(layout, MARGIN_FALSE, SIZE_UNDEFINE);
 
         layout.addComponent(new Label(item.getDisplayPrice()));
 

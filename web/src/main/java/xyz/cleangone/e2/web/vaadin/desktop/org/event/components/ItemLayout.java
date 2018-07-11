@@ -16,11 +16,12 @@ import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.aws.dynamo.entity.purchase.Cart;
 import xyz.cleangone.data.manager.ImageManager;
+import xyz.cleangone.data.manager.TagManager;
 import xyz.cleangone.data.manager.UserManager;
 import xyz.cleangone.data.manager.event.BidManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.actionbar.ActionBar;
-import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.disclosure.BaseDisclosure;
+import xyz.cleangone.e2.web.vaadin.util.disclosure.BaseDisclosure;
 import xyz.cleangone.e2.web.vaadin.desktop.image.ImageDimension;
 import xyz.cleangone.e2.web.vaadin.desktop.image.ImageLabel;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.BidHandler;
@@ -91,6 +92,13 @@ public class ItemLayout extends VerticalLayout
         VerticalLayout detailslayout = vertical((sessionMgr.isMobileBrowser() ? MARGIN_TRUE : MARGIN_FALSE), WIDTH_100_PCT);
         itemLayout.addComponent(detailslayout);
         detailslayout.addComponent(VaadinUtils.createLabel(item.getName(), "title"));
+
+        TagManager tagMgr = sessionMgr.getOrgManager().getTagManager();
+        List<OrgTag> tags = tagMgr.getTags(item.getTagIds());
+        for (OrgTag tag : tags)
+        {
+            detailslayout.addComponent(new Label(tag.getTagTypeName() + ": " + tag.getName()));
+        }
 
         boolean userOutbid = false;
         String displayPrice = item.getDisplayPrice();

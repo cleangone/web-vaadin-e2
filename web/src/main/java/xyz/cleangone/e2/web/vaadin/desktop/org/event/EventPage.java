@@ -3,8 +3,8 @@ package xyz.cleangone.e2.web.vaadin.desktop.org.event;
 import com.vaadin.navigator.View;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
-import xyz.cleangone.data.aws.dynamo.entity.base.EntityType;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
+import xyz.cleangone.data.aws.dynamo.entity.lastTouched.EntityType;
 import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.components.*;
 

@@ -10,7 +10,6 @@ import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
 import xyz.cleangone.data.manager.OrgManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.OrgAdminPage;
-import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.EventsAdminLayout;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.BaseAdmin;
 import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
 import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
@@ -19,7 +18,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static xyz.cleangone.data.aws.dynamo.entity.base.BaseMixinEntity.*;
+import static xyz.cleangone.data.aws.dynamo.entity.base.BaseNamedEntity.*;
 import static xyz.cleangone.data.aws.dynamo.entity.organization.Organization.*;
 import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 

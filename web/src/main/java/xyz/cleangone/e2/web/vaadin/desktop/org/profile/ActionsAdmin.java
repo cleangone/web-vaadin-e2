@@ -7,7 +7,7 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.renderers.DateRenderer;
 import xyz.cleangone.data.aws.dynamo.entity.action.Action;
 import xyz.cleangone.data.aws.dynamo.entity.action.ActionType;
-import xyz.cleangone.data.aws.dynamo.entity.base.EntityType;
+import xyz.cleangone.data.aws.dynamo.entity.lastTouched.EntityType;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.manager.ActionManager;
 import xyz.cleangone.e2.web.manager.EntityChangeManager;

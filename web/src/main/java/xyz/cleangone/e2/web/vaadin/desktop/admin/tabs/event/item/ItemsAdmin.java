@@ -8,14 +8,14 @@ import com.vaadin.ui.components.grid.ColumnVisibilityChangeListener;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.themes.ValoTheme;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
-import xyz.cleangone.data.aws.dynamo.entity.base.EntityType;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
 import xyz.cleangone.data.aws.dynamo.entity.item.SaleStatus;
 import xyz.cleangone.data.aws.dynamo.entity.item.SaleType;
+import xyz.cleangone.data.aws.dynamo.entity.lastTouched.EntityType;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.data.aws.dynamo.entity.organization.TagType;
 import xyz.cleangone.data.manager.event.ItemManager;
-import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.BaseGrid;
+import xyz.cleangone.e2.web.vaadin.util.EntityGrid;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.BaseEventTagsAdmin;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.EventsAdminLayout;
 import xyz.cleangone.e2.web.vaadin.util.*;
@@ -23,7 +23,7 @@ import xyz.cleangone.e2.web.vaadin.util.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static xyz.cleangone.data.aws.dynamo.entity.base.BaseMixinEntity.NAME_FIELD;
+import static xyz.cleangone.data.aws.dynamo.entity.base.BaseNamedEntity.*;
 import static xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem.*;
 import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
@@ -185,7 +185,7 @@ public class ItemsAdmin extends BaseEventTagsAdmin implements MultiSelectionList
         }
     }
 
-    private class ItemsGrid extends BaseGrid<CatalogItem> implements ColumnVisibilityChangeListener
+    private class ItemsGrid extends EntityGrid<CatalogItem> implements ColumnVisibilityChangeListener
     {
         ItemsGrid()
         {

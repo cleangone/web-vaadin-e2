@@ -8,10 +8,7 @@ import xyz.cleangone.data.aws.dynamo.entity.person.AdminPrivledge;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.manager.OrgManager;
 import xyz.cleangone.data.manager.UserManager;
-import xyz.cleangone.e2.web.vaadin.util.CountingDataProvider;
-import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
-import xyz.cleangone.e2.web.vaadin.util.MultiFieldFilter;
-import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
+import xyz.cleangone.e2.web.vaadin.util.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -80,7 +77,7 @@ public class UsersAdmin extends VerticalLayout
         return layout;
     }
 
-    private class UserGrid extends BaseGrid<User>
+    private class UserGrid extends EntityGrid<User>
     {
         UserGrid()
         {

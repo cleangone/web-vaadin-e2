@@ -51,7 +51,7 @@ public abstract class BasePage extends Panel implements View
 
         // panel fills the browser screen
         setSizeFull();
-        if (MyUI.COLORS) { setStyleName("backOrange"); }
+        if (SHOW_BACKBROUND_COLORS) { setStyleName("backOrange"); }
 
         // pageLayout sits in panel, scrolls if doesn't fit, sadly does not expand because height not 100%
         //

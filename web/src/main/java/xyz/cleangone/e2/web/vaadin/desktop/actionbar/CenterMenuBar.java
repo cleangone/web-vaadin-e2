@@ -2,7 +2,7 @@ package xyz.cleangone.e2.web.vaadin.desktop.actionbar;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.MenuBar;
-import xyz.cleangone.data.aws.dynamo.entity.base.EntityType;
+import xyz.cleangone.data.aws.dynamo.entity.lastTouched.EntityType;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
 import xyz.cleangone.e2.web.manager.SessionManager;

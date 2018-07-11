@@ -9,7 +9,7 @@ import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.data.manager.EventManager;
 import xyz.cleangone.data.manager.TagManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
-import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.BaseGrid;
+import xyz.cleangone.e2.web.vaadin.util.EntityGrid;
 import xyz.cleangone.e2.web.vaadin.util.*;
 
 import java.util.List;
@@ -79,7 +79,7 @@ public class TagAdmin extends BaseTagAdmin
         }
     }
 
-    private class TagsGrid extends BaseGrid<OrgTag>
+    private class TagsGrid extends EntityGrid<OrgTag>
     {
         TagsGrid()
         {

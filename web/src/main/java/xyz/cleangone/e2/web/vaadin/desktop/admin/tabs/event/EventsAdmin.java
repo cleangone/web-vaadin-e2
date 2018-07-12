@@ -4,31 +4,23 @@ import com.vaadin.data.ValueProvider;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.server.Setter;
 import com.vaadin.shared.data.sort.SortDirection;
-import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
-import xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
-import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.manager.EventManager;
 import xyz.cleangone.data.manager.OrgManager;
-import xyz.cleangone.data.manager.TagManager;
 import xyz.cleangone.data.manager.UserManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
-import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
-import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
+import xyz.cleangone.web.vaadin.ui.MessageDisplayer;
+import xyz.cleangone.web.vaadin.util.VaadinUtils;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent.*;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.BACK_PURPLE;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 public class EventsAdmin extends BaseEventAdmin
 {

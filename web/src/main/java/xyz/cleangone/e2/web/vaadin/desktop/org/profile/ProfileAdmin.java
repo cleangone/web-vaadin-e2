@@ -14,17 +14,17 @@ import xyz.cleangone.e2.web.manager.EntityChangeManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.MyUI;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.BaseAdmin;
-import xyz.cleangone.e2.web.vaadin.util.disclosure.BaseDisclosure;
-import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
-import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
+import xyz.cleangone.web.vaadin.disclosure.BaseDisclosure;
+import xyz.cleangone.web.vaadin.ui.MessageDisplayer;
+import xyz.cleangone.web.vaadin.util.VaadinUtils;
 import xyz.cleangone.message.EmailSender;
 
 import static java.util.Objects.requireNonNull;
 import static xyz.cleangone.data.aws.dynamo.entity.person.User.*;
 import static xyz.cleangone.data.aws.dynamo.entity.person.Address.*;
-import static xyz.cleangone.e2.web.vaadin.util.disclosure.DisclosureUtils.createCheckBox;
-import static xyz.cleangone.e2.web.vaadin.util.disclosure.DisclosureUtils.createTextField;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.web.vaadin.disclosure.DisclosureUtils.createCheckBox;
+import static xyz.cleangone.web.vaadin.disclosure.DisclosureUtils.createTextField;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 public class ProfileAdmin extends BaseAdmin
 {

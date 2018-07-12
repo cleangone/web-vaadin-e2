@@ -3,17 +3,11 @@ package xyz.cleangone.e2.web.vaadin.desktop.actionbar;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.MenuBar;
 import xyz.cleangone.data.aws.dynamo.entity.lastTouched.EntityType;
-import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.org.CalendarPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.OrgPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
-
-import java.util.Date;
-import java.util.List;
-
-import static xyz.cleangone.e2.web.vaadin.util.PageUtils.*;
 
 public class CenterMenuBar extends BaseMenuBar
 {

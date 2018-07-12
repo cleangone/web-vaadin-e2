@@ -4,7 +4,7 @@ import com.vaadin.ui.AbstractOrderedLayout;
 import xyz.cleangone.data.aws.dynamo.entity.organization.BaseOrg;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
-import xyz.cleangone.e2.web.vaadin.util.disclosure.BaseDisclosure;
+import xyz.cleangone.web.vaadin.disclosure.BaseDisclosure;
 
 
 public abstract class BaseOrgDisclosure extends BaseDisclosure

@@ -21,7 +21,7 @@ import xyz.cleangone.data.manager.UserManager;
 import xyz.cleangone.data.manager.event.BidManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.actionbar.ActionBar;
-import xyz.cleangone.e2.web.vaadin.util.disclosure.BaseDisclosure;
+import xyz.cleangone.web.vaadin.disclosure.BaseDisclosure;
 import xyz.cleangone.e2.web.vaadin.desktop.image.ImageDimension;
 import xyz.cleangone.e2.web.vaadin.desktop.image.ImageLabel;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.BidHandler;
@@ -29,15 +29,15 @@ import xyz.cleangone.e2.web.vaadin.desktop.org.event.CatalogPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.EventPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.EventUtils;
 import xyz.cleangone.e2.web.vaadin.desktop.org.profile.BidsPage;
-import xyz.cleangone.e2.web.vaadin.util.DollarField;
+import xyz.cleangone.web.vaadin.ui.DollarField;
 import xyz.cleangone.e2.web.vaadin.util.PageUtils;
-import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
+import xyz.cleangone.web.vaadin.util.VaadinUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static xyz.cleangone.e2.web.vaadin.desktop.org.event.EventUtils.*;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 public class ItemLayout extends VerticalLayout
 {

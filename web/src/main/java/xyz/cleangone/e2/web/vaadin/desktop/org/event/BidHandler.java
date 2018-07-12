@@ -5,11 +5,8 @@ import com.vaadin.ui.Button;
 import xyz.cleangone.data.aws.dynamo.entity.action.Action;
 import xyz.cleangone.data.aws.dynamo.entity.bid.BidUtils;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
-import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
-import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.manager.ActionManager;
-import xyz.cleangone.data.manager.ImageManager;
 import xyz.cleangone.data.manager.OrgManager;
 import xyz.cleangone.data.manager.UserManager;
 import xyz.cleangone.data.manager.event.BidManager;
@@ -17,18 +14,11 @@ import xyz.cleangone.data.manager.event.BidStatus;
 import xyz.cleangone.e2.web.manager.OutbidEmailSender;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.broadcast.Broadcaster;
-import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
-import xyz.cleangone.e2.web.vaadin.desktop.org.event.components.CatalogLayout;
-import xyz.cleangone.e2.web.vaadin.util.DollarField;
-import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
+import xyz.cleangone.web.vaadin.ui.MessageDisplayer;
 
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.createTextButton;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.createTextButton;
 
 public class BidHandler implements View
 {

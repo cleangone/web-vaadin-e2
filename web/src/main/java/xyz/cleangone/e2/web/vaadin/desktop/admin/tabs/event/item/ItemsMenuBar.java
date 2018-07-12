@@ -12,7 +12,7 @@ import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.data.aws.dynamo.entity.organization.TagType;
 import xyz.cleangone.e2.web.vaadin.desktop.actionbar.*;
 import xyz.cleangone.e2.web.vaadin.util.PageUtils;
-import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
+import xyz.cleangone.web.vaadin.util.VaadinUtils;
 
 import java.util.ArrayList;
 import java.util.Date;

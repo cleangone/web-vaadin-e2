@@ -11,10 +11,10 @@ import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.aws.dynamo.entity.person.UserToken;
 import xyz.cleangone.data.manager.UserManager;
 import xyz.cleangone.e2.web.vaadin.desktop.MyUI;
-import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
+import xyz.cleangone.web.vaadin.util.VaadinUtils;
 import xyz.cleangone.message.EmailSender;
 
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 public class PasswordRequestPage extends BaseOrgPage implements View
 {

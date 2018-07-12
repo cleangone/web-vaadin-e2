@@ -3,22 +3,18 @@ package xyz.cleangone.e2.web.vaadin.desktop.org.event.components;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
 import org.vaadin.dialogs.ConfirmDialog;
-import xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity;
 import xyz.cleangone.data.aws.dynamo.entity.organization.EventParticipant;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.actionbar.ActionBar;
-import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 import xyz.cleangone.e2.web.vaadin.desktop.org.SigninPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.EventPage;
-import xyz.cleangone.e2.web.vaadin.util.PageUtils;
-import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
+import xyz.cleangone.web.vaadin.util.VaadinUtils;
 
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.createTextButton;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.createTextButton;
 
 public class RegisterPanel extends BaseActionPanel
 {

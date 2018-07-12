@@ -1,7 +1,7 @@
 package xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.disclosure;
 
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.ImageAdmin;
-import xyz.cleangone.e2.web.vaadin.util.disclosure.BaseDisclosure;
+import xyz.cleangone.web.vaadin.disclosure.BaseDisclosure;
 
 
 public class ImagesDisclosure extends BaseDisclosure

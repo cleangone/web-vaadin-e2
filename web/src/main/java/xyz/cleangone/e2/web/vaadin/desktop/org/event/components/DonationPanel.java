@@ -8,13 +8,13 @@ import xyz.cleangone.data.aws.dynamo.entity.purchase.Cart;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.actionbar.ActionBar;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.EventPage;
-import xyz.cleangone.e2.web.vaadin.util.DollarField;
+import xyz.cleangone.web.vaadin.ui.DollarField;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 import static xyz.cleangone.e2.web.vaadin.desktop.org.event.EventUtils.*;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 public class DonationPanel extends BaseActionPanel
 {

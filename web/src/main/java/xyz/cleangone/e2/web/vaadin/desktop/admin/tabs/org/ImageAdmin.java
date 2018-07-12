@@ -1,6 +1,6 @@
 package xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org;
 
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.S3Link;
 import com.vaadin.shared.MouseEventDetails;
@@ -15,7 +15,7 @@ import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.disclosure.ImagesDiscl
 import xyz.cleangone.e2.web.vaadin.desktop.image.ImageDisplayer;
 import xyz.cleangone.e2.web.vaadin.desktop.image.ImageLabel;
 import xyz.cleangone.e2.web.vaadin.desktop.image.ImageUploader;
-import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
+import xyz.cleangone.web.vaadin.ui.MessageDisplayer;
 
 import java.util.List;
 

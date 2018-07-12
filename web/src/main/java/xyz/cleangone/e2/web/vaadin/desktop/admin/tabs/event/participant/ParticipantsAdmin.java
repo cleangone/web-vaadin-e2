@@ -16,7 +16,8 @@ import xyz.cleangone.data.aws.dynamo.entity.organization.TagType;
 import xyz.cleangone.data.aws.dynamo.entity.person.Person;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.BaseEventTagsAdmin;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.EventsAdminLayout;
-import xyz.cleangone.e2.web.vaadin.util.*;
+import xyz.cleangone.web.vaadin.ui.MessageDisplayer;
+import xyz.cleangone.web.vaadin.util.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -24,8 +25,8 @@ import java.util.stream.Collectors;
 import static xyz.cleangone.data.aws.dynamo.entity.organization.EventParticipant.LAST_COMMA_FIRST_FIELD;
 import static xyz.cleangone.data.aws.dynamo.entity.organization.EventParticipant.SELF_REGISTERED_FIELD;
 import static xyz.cleangone.data.aws.dynamo.entity.person.Person.TAGS_FIELD;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.BACK_GREEN;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.BACK_GREEN;
 
 public class ParticipantsAdmin extends BaseEventTagsAdmin implements MultiSelectionListener<EventParticipant>
 {

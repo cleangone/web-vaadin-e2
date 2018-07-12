@@ -7,25 +7,19 @@ import com.vaadin.ui.*;
 import org.vaadin.kim.countdownclock.CountdownClock;
 import xyz.cleangone.data.aws.dynamo.entity.bid.UserBid;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
-import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
-import xyz.cleangone.data.manager.EventManager;
 import xyz.cleangone.data.manager.ImageManager;
 import xyz.cleangone.data.manager.TagManager;
 import xyz.cleangone.data.manager.event.BidManager;
-import xyz.cleangone.e2.web.vaadin.desktop.MyUI;
 import xyz.cleangone.e2.web.vaadin.desktop.image.ImageDimension;
 import xyz.cleangone.e2.web.vaadin.desktop.image.ImageLabel;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.EventUtils;
-import xyz.cleangone.e2.web.vaadin.desktop.org.event.ItemPage;
 
 import java.util.List;
-import java.util.Map;
 
 import static xyz.cleangone.e2.web.vaadin.desktop.org.event.EventUtils.*;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.BACK_GREEN;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 public class CatalogItemLayout extends VerticalLayout
 {

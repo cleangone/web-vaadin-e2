@@ -8,10 +8,10 @@ import xyz.cleangone.e2.web.manager.EntityChangeManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.BaseEventAdmin;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.EventsAdminLayout;
-import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
+import xyz.cleangone.web.vaadin.ui.MessageDisplayer;
 
 import static java.util.Objects.requireNonNull;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 
 public abstract class ActionsAdmin extends BaseEventAdmin

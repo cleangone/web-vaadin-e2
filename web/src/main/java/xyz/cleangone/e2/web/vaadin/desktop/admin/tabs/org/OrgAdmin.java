@@ -9,22 +9,21 @@ import xyz.cleangone.data.aws.dynamo.dao.org.OrgDao;
 import xyz.cleangone.data.aws.dynamo.dao.org.PaymentProcessorDao;
 import xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
-import xyz.cleangone.data.aws.dynamo.entity.organization.BaseOrg;
 import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
 import xyz.cleangone.data.aws.dynamo.entity.organization.PaymentProcessor;
 import xyz.cleangone.data.manager.OrgManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.disclosure.BaseOrgDisclosure;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.disclosure.ImagesDisclosure;
-import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
-import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
+import xyz.cleangone.web.vaadin.ui.MessageDisplayer;
+import xyz.cleangone.web.vaadin.util.VaadinUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static xyz.cleangone.data.aws.dynamo.entity.organization.Organization.*;
 import static xyz.cleangone.data.aws.dynamo.entity.organization.PaymentProcessor.*;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 public class OrgAdmin extends BaseOrgAdmin
 {

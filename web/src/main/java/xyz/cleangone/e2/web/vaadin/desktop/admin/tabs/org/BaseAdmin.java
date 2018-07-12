@@ -2,7 +2,7 @@ package xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org;
 
 import com.vaadin.ui.*;
 import xyz.cleangone.e2.web.manager.SessionManager;
-import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
+import xyz.cleangone.web.vaadin.ui.MessageDisplayer;
 
 // todo - rename to BaseLayout
 public abstract class BaseAdmin extends VerticalLayout

@@ -8,7 +8,6 @@ import com.vaadin.ui.components.grid.FooterRow;
 import org.vaadin.dialogs.ConfirmDialog;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
 import xyz.cleangone.data.aws.dynamo.entity.item.CartItem;
-import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
 import xyz.cleangone.data.aws.dynamo.entity.organization.PaymentProcessor;
 import xyz.cleangone.data.aws.dynamo.entity.purchase.Cart;
 import xyz.cleangone.data.manager.EventManager;
@@ -17,15 +16,14 @@ import xyz.cleangone.e2.web.vaadin.desktop.org.event.EventPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.ItemPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.payment.IatsPaymentPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.payment.PaymentPage;
-import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
-import xyz.cleangone.payment.iats.IatsClient;
+import xyz.cleangone.web.vaadin.util.VaadinUtils;
 
 import java.util.List;
 import java.util.logging.Logger;
 
 import static xyz.cleangone.data.aws.dynamo.entity.item.CartItem.CART_ITEM_NAME_FIELD;
 import static xyz.cleangone.data.aws.dynamo.entity.item.CartItem.PRICE_FIELD;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 
 public class CartPage extends BasePage implements View

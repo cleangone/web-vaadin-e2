@@ -8,14 +8,14 @@ import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.actionbar.ActionBar;
 import xyz.cleangone.e2.web.vaadin.desktop.org.SigninPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.EventPage;
-import xyz.cleangone.e2.web.vaadin.util.DollarField;
-import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
+import xyz.cleangone.web.vaadin.ui.DollarField;
+import xyz.cleangone.web.vaadin.util.VaadinUtils;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 import static xyz.cleangone.e2.web.vaadin.desktop.org.event.EventUtils.createParticipantComboBox;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.createTextButton;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.createTextButton;
 
 public class PledgePanel extends BaseActionPanel
 {

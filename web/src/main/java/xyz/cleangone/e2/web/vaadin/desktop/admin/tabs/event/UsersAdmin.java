@@ -13,10 +13,10 @@ import xyz.cleangone.data.manager.OrgManager;
 import xyz.cleangone.data.manager.TagManager;
 import xyz.cleangone.data.manager.UserManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
-import xyz.cleangone.e2.web.vaadin.util.EntityGrid;
-import xyz.cleangone.e2.web.vaadin.util.CountingDataProvider;
-import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
-import xyz.cleangone.e2.web.vaadin.util.MultiFieldFilter;
+import xyz.cleangone.web.vaadin.ui.EntityGrid;
+import xyz.cleangone.web.vaadin.util.CountingDataProvider;
+import xyz.cleangone.web.vaadin.ui.MessageDisplayer;
+import xyz.cleangone.web.vaadin.util.MultiFieldFilter;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 import static java.util.Objects.requireNonNull;
 import static xyz.cleangone.data.aws.dynamo.entity.organization.EventParticipant.*;
 import static xyz.cleangone.data.aws.dynamo.entity.person.User.*;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 public class UsersAdmin extends BaseEventAdmin implements MultiSelectionListener<User>
 {

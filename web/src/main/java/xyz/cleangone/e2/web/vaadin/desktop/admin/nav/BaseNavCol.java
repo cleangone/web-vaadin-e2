@@ -2,9 +2,9 @@ package xyz.cleangone.e2.web.vaadin.desktop.admin.nav;
 
 import com.vaadin.event.LayoutEvents;
 import com.vaadin.ui.*;
-import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
+import xyz.cleangone.web.vaadin.util.VaadinUtils;
 
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 public abstract class BaseNavCol extends VerticalLayout
 {

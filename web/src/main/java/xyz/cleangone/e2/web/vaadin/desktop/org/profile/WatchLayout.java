@@ -4,21 +4,19 @@ import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.manager.*;
-import xyz.cleangone.data.manager.event.BidManager;
 import xyz.cleangone.data.manager.event.ItemManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
-import xyz.cleangone.e2.web.vaadin.desktop.MyUI;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.BaseAdmin;
 import xyz.cleangone.e2.web.vaadin.desktop.org.BasePage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.BidHandler;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.CatalogView;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.components.CatalogLayout;
-import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
+import xyz.cleangone.web.vaadin.ui.MessageDisplayer;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.SHOW_BACKBROUND_COLORS;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.SHOW_BACKBROUND_COLORS;
 
 public class WatchLayout extends BaseAdmin implements CatalogView
 {

@@ -1,18 +1,17 @@
 package xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin;
 
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.nav.AdminPageType;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.BaseAdmin;
-import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
+import xyz.cleangone.web.vaadin.ui.MessageDisplayer;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 public class SuperAdminLayout extends HorizontalLayout
 {

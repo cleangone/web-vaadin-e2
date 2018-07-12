@@ -1,7 +1,7 @@
 package xyz.cleangone.e2.web.vaadin.desktop.admin.tabs;
 
 import static xyz.cleangone.data.aws.dynamo.entity.person.Person.*;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 import com.vaadin.data.ValueProvider;
 import com.vaadin.event.selection.MultiSelectionEvent;
@@ -17,16 +17,14 @@ import com.vaadin.ui.themes.ValoTheme;
 import org.vaadin.dialogs.ConfirmDialog;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
-import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
 import xyz.cleangone.data.aws.dynamo.entity.person.Person;
-import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.manager.OrgManager;
 import xyz.cleangone.data.manager.TagManager;
 import xyz.cleangone.e2.web.manager.EntityChangeManager;
-import xyz.cleangone.e2.web.vaadin.util.CountingDataProvider;
-import xyz.cleangone.e2.web.vaadin.util.MultiFieldFilter;
-import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
-import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
+import xyz.cleangone.web.vaadin.util.CountingDataProvider;
+import xyz.cleangone.web.vaadin.util.MultiFieldFilter;
+import xyz.cleangone.web.vaadin.ui.MessageDisplayer;
+import xyz.cleangone.web.vaadin.util.VaadinUtils;
 
 import java.text.DateFormat;
 import java.util.*;

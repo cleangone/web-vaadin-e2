@@ -8,13 +8,15 @@ import xyz.cleangone.data.aws.dynamo.entity.person.AdminPrivledge;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.manager.OrgManager;
 import xyz.cleangone.data.manager.UserManager;
-import xyz.cleangone.e2.web.vaadin.util.*;
+import xyz.cleangone.web.vaadin.ui.EntityGrid;
+import xyz.cleangone.web.vaadin.ui.MessageDisplayer;
+import xyz.cleangone.web.vaadin.util.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static xyz.cleangone.data.aws.dynamo.entity.person.User.*;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 public class UsersAdmin extends VerticalLayout
 {

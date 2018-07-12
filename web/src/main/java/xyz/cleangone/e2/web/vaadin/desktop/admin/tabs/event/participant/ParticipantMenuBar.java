@@ -1,17 +1,13 @@
 package xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.participant;
 
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.shared.ui.AlignmentInfo;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.e2.web.vaadin.desktop.actionbar.BaseActionBar;
 import xyz.cleangone.e2.web.vaadin.desktop.actionbar.BaseMenuBar;
-import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 
 import java.util.List;
-
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
 
 public class ParticipantMenuBar extends BaseActionBar
 {

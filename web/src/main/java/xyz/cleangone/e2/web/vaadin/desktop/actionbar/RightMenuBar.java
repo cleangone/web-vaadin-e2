@@ -6,12 +6,12 @@ import xyz.cleangone.data.aws.dynamo.entity.lastTouched.EntityType;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.aws.dynamo.entity.purchase.Cart;
 import xyz.cleangone.e2.web.manager.SessionManager;
-import xyz.cleangone.e2.web.manager.VaadinSessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin.SuperAdminProfilePage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.*;
 import xyz.cleangone.e2.web.vaadin.desktop.org.profile.BidsPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.profile.ProfilePage;
-import xyz.cleangone.e2.web.vaadin.desktop.org.profile.WatchLayout;
+
+import static xyz.cleangone.e2.web.manager.CookieManager.*;
 
 public class RightMenuBar extends BaseMenuBar
 {
@@ -67,7 +67,7 @@ public class RightMenuBar extends BaseMenuBar
             MenuBar.Command logoutCmd = new MenuBar.Command() {
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
                     userMgr.logout();
-                    VaadinSessionManager.clearUserCookie();
+                    clearUserCookie();
                     navigateTo("");
                 }
             };

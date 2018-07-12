@@ -10,7 +10,7 @@ import xyz.cleangone.data.aws.dynamo.entity.action.ActionType;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.manager.ActionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.EventsAdminLayout;
-import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
+import xyz.cleangone.web.vaadin.ui.MessageDisplayer;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;

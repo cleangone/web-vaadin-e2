@@ -6,19 +6,17 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.dnd.DropTargetExtension;
 import org.apache.commons.lang3.StringUtils;
 import org.vaadin.alump.ckeditor.CKEditorTextField;
-import org.vaadin.viritin.fields.IntegerField;
 import xyz.cleangone.data.aws.dynamo.dao.DynamoBaseDao;
 import xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
 import xyz.cleangone.data.aws.dynamo.entity.organization.BaseOrg;
-import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
 import xyz.cleangone.data.manager.ImageContainerManager;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.disclosure.BaseOrgDisclosure;
 import xyz.cleangone.e2.web.vaadin.desktop.image.ImageLabel;
-import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
-import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
+import xyz.cleangone.web.vaadin.ui.MessageDisplayer;
+import xyz.cleangone.web.vaadin.util.VaadinUtils;
 
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 import static xyz.cleangone.data.aws.dynamo.entity.organization.BaseOrg.*;
 
 public abstract class BaseOrgAdmin extends BaseAdmin

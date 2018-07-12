@@ -15,17 +15,19 @@ import xyz.cleangone.data.aws.dynamo.entity.lastTouched.EntityType;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.data.aws.dynamo.entity.organization.TagType;
 import xyz.cleangone.data.manager.event.ItemManager;
-import xyz.cleangone.e2.web.vaadin.util.EntityGrid;
+import xyz.cleangone.e2.web.vaadin.util.PageUtils;
+import xyz.cleangone.web.vaadin.ui.EntityGrid;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.BaseEventTagsAdmin;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.EventsAdminLayout;
-import xyz.cleangone.e2.web.vaadin.util.*;
+import xyz.cleangone.web.vaadin.ui.MessageDisplayer;
+import xyz.cleangone.web.vaadin.util.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static xyz.cleangone.data.aws.dynamo.entity.base.BaseNamedEntity.*;
 import static xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem.*;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 public class ItemsAdmin extends BaseEventTagsAdmin implements MultiSelectionListener<CatalogItem>
 {
@@ -199,8 +201,8 @@ public class ItemsAdmin extends BaseEventTagsAdmin implements MultiSelectionList
             addColumn(CATEGORIES_FIELD, CatalogItem::getCategoriesCsv);
             addColumn(PRICE_FIELD, CatalogItem::getDisplayPrice);
             addColumn(COMBINED_STATUS_FIELD, CatalogItem::getCombinedStatus);
-            addDateColumn(AVAIL_START_FIELD, CatalogItem::getAvailabilityStart);
-            Grid.Column endDateCol = addDateColumn(AVAIL_END_FIELD, CatalogItem::getAvailabilityEnd);
+            addDateColumn(AVAIL_START_FIELD, CatalogItem::getAvailabilityStart, PageUtils.SDF_ADMIN_GRID);
+            Grid.Column endDateCol = addDateColumn(AVAIL_END_FIELD, CatalogItem::getAvailabilityEnd, PageUtils.SDF_ADMIN_GRID);
             Grid.Column deleteCol = addComponentColumn(this::buildDeleteButton);
 
             for (TagType itemTagType : itemTagTypes)

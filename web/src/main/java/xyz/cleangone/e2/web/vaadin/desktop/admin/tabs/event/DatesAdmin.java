@@ -4,7 +4,6 @@ import com.vaadin.data.ValueProvider;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.server.Setter;
 import com.vaadin.shared.data.sort.SortDirection;
-import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
 import com.vaadin.ui.renderers.LocalDateTimeRenderer;
 import com.vaadin.ui.themes.ValoTheme;
@@ -13,15 +12,15 @@ import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
 import xyz.cleangone.data.aws.dynamo.entity.organization.EventDate;
 import xyz.cleangone.data.manager.EventManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
-import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
-import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
+import xyz.cleangone.web.vaadin.ui.MessageDisplayer;
+import xyz.cleangone.web.vaadin.util.VaadinUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static xyz.cleangone.data.aws.dynamo.entity.organization.EventDate.DATE_NAME_FIELD;
 import static xyz.cleangone.data.aws.dynamo.entity.organization.EventDate.DETAILS_FIELD;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 
 public class DatesAdmin extends BaseEventAdmin

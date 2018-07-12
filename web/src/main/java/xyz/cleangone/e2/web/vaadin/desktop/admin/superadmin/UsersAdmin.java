@@ -13,15 +13,15 @@ import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.manager.UserManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.BaseAdmin;
-import xyz.cleangone.e2.web.vaadin.util.CountingDataProvider;
-import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
-import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
+import xyz.cleangone.web.vaadin.util.CountingDataProvider;
+import xyz.cleangone.web.vaadin.ui.MessageDisplayer;
+import xyz.cleangone.web.vaadin.util.VaadinUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static xyz.cleangone.data.aws.dynamo.entity.person.User.*;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 public class UsersAdmin extends BaseAdmin
 {

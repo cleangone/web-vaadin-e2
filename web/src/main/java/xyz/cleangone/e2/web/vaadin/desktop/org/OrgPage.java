@@ -2,17 +2,14 @@ package xyz.cleangone.e2.web.vaadin.desktop.org;
 
 import com.vaadin.navigator.View;
 import com.vaadin.shared.ui.AlignmentInfo;
-import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
 import xyz.cleangone.e2.web.manager.SessionManager;
-import xyz.cleangone.e2.web.vaadin.desktop.MyUI;
-import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
 
 import java.util.List;
 
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 public class OrgPage extends BasePage implements View
 {

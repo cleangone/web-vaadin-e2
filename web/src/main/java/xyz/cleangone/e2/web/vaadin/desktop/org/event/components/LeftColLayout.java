@@ -21,7 +21,7 @@ import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.CatalogPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.EventPage;
-import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
+import xyz.cleangone.web.vaadin.util.VaadinUtils;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import static xyz.cleangone.e2.web.vaadin.util.PageUtils.*;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 public class LeftColLayout extends HorizontalLayout
 {

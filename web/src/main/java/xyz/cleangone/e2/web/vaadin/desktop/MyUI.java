@@ -25,7 +25,6 @@ import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.manager.VaadinSessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.EventAdminPage;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.OrgAdminPage;
-import xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin.OrgsAdmin;
 import xyz.cleangone.e2.web.vaadin.desktop.actionbar.ActionBar;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin.SuperAdminPage;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin.SuperAdminProfilePage;
@@ -48,7 +47,7 @@ import xyz.cleangone.util.env.EnvManager;
 import java.util.*;
 import java.util.logging.Logger;
 
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.e2.web.manager.CookieManager.*;
 
 @Push
 @Theme("mytheme")
@@ -74,7 +73,7 @@ public class MyUI extends BroadcastListeningUI implements BroadcastListener
     @Override
     protected void init(VaadinRequest vaadinRequest)
     {
-        SHOW_BACKBROUND_COLORS = true;
+//        SHOW_BACKBROUND_COLORS = true;
 
         BROWSER_STATS.addPage(getCurrent().getPage());
 
@@ -194,19 +193,19 @@ public class MyUI extends BroadcastListeningUI implements BroadcastListener
     private boolean loginByCookie(UserManager userMgr)
     {
         // check for token
-        Cookie userCookie = VaadinSessionManager.getUserCookie();
+        Cookie userCookie = getUserCookie();
         if (userCookie != null && userCookie.getValue() != null && userCookie.getValue().length() > 0)
         {
             User user = userMgr.loginByToken(userCookie.getValue());
             if (user == null)
             {
                 // cookie is old
-                VaadinSessionManager.clearUserCookie();
+                clearUserCookie();
             }
             else
             {
                 UserToken newToken = userMgr.cycleToken();
-                VaadinSessionManager.setUserCookie(newToken.getId());
+                setUserCookie(newToken.getId());
                 return true;
             }
         }

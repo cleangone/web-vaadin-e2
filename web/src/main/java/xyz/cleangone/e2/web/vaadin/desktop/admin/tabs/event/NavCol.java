@@ -1,13 +1,10 @@
 package xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event;
 
 import com.vaadin.ui.*;
-import xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
-import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.manager.EventManager;
 import xyz.cleangone.data.manager.OrgManager;
-import xyz.cleangone.data.manager.TagManager;
 import xyz.cleangone.data.manager.UserManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.nav.BaseNavCol;
@@ -15,11 +12,8 @@ import xyz.cleangone.e2.web.vaadin.desktop.admin.nav.AdminPageType;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 public class NavCol extends BaseNavCol
 {

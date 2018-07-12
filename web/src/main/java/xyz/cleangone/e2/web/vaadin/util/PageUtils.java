@@ -4,19 +4,16 @@ import com.vaadin.server.Page;
 import com.vaadin.ui.DateTimeField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity;
 import xyz.cleangone.data.aws.dynamo.entity.organization.BaseOrg;
 import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.TimeZone;
 
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 public class PageUtils
 {

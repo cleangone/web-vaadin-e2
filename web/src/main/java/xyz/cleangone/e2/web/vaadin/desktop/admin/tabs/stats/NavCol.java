@@ -4,9 +4,9 @@ import com.vaadin.ui.VerticalLayout;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.nav.AdminPageType;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.nav.BaseNavCol;
 
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.MARGIN_FALSE;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.SPACING_FALSE;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.vertical;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.MARGIN_FALSE;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.SPACING_FALSE;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.vertical;
 
 public class NavCol extends BaseNavCol
 {

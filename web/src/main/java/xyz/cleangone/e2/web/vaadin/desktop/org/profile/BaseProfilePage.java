@@ -8,13 +8,13 @@ import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.BaseAdmin;
 import xyz.cleangone.e2.web.vaadin.desktop.org.BasePage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
-import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
+import xyz.cleangone.web.vaadin.util.VaadinUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static xyz.cleangone.e2.web.vaadin.util.PageUtils.*;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 public abstract class BaseProfilePage extends BasePage implements View
 {

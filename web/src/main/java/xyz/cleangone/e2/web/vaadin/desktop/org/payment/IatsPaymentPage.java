@@ -4,10 +4,9 @@ import com.vaadin.navigator.View;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.TextField;
-import xyz.cleangone.data.aws.dynamo.entity.organization.PaymentProcessor;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
-import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
+import xyz.cleangone.web.vaadin.util.VaadinUtils;
 import xyz.cleangone.payment.PaymentResult;
 import xyz.cleangone.payment.iats.IatsClient;
 

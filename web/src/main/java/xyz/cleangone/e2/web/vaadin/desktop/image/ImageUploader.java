@@ -3,7 +3,7 @@ package xyz.cleangone.e2.web.vaadin.desktop.image;
 import com.amazonaws.services.dynamodbv2.datamodeling.S3Link;
 import com.vaadin.ui.*;
 import xyz.cleangone.data.manager.ImageManager;
-import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
+import xyz.cleangone.web.vaadin.ui.MessageDisplayer;
 
 import java.io.File;
 import java.io.FileOutputStream;

@@ -9,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.vaadin.alump.labelbutton.LabelButton;
 import org.vaadin.alump.labelbutton.LabelButtonStyles;
 import org.vaadin.alump.labelbutton.LabelClickListener;
-import xyz.cleangone.data.aws.AwsClientFactory;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
 import xyz.cleangone.data.aws.dynamo.entity.organization.BannerText;
 import xyz.cleangone.data.aws.dynamo.entity.organization.BaseOrg;
@@ -19,7 +18,7 @@ import xyz.cleangone.data.manager.ImageManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.org.OrgPage;
 
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 import static xyz.cleangone.data.aws.dynamo.entity.organization.BaseOrg.*;
 
 public class BannerUtil

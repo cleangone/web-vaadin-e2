@@ -5,7 +5,6 @@ import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
 import com.vaadin.ui.renderers.DateRenderer;
 import xyz.cleangone.data.aws.dynamo.dao.CatalogItemDao;
-import xyz.cleangone.data.aws.dynamo.entity.action.Action;
 import xyz.cleangone.data.aws.dynamo.entity.bid.UserBid;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
@@ -18,14 +17,11 @@ import xyz.cleangone.e2.web.manager.EntityChangeManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.BaseAdmin;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.ItemPage;
-import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
+import xyz.cleangone.web.vaadin.ui.MessageDisplayer;
 import xyz.cleangone.e2.web.vaadin.util.PageUtils;
-import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
+import xyz.cleangone.web.vaadin.util.VaadinUtils;
 
-import java.text.DateFormat;
 import java.util.*;
-
-import static xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity.CREATED_DATE_FIELD;
 
 public class BidsAdmin extends BaseAdmin
 {

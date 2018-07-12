@@ -16,18 +16,18 @@ import xyz.cleangone.data.manager.EventManager;
 import xyz.cleangone.e2.web.manager.EntityChangeManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.BaseOrgAdmin;
-import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.disclosure.BaseCustomComponent;
-import xyz.cleangone.e2.web.vaadin.util.disclosure.BaseDisclosure;
+import xyz.cleangone.web.vaadin.ui.BaseCustomComponent;
+import xyz.cleangone.web.vaadin.disclosure.BaseDisclosure;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.disclosure.BaseOrgDisclosure;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.disclosure.ImagesDisclosure;
-import xyz.cleangone.e2.web.vaadin.util.disclosure.DisclosureUtils;
-import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
+import xyz.cleangone.web.vaadin.disclosure.DisclosureUtils;
+import xyz.cleangone.web.vaadin.ui.MessageDisplayer;
 
 import static java.util.Objects.requireNonNull;
 import static xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent.BLURB_HTML_FIELD;
 import static xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent.ITER_COUNT_LABEL_PLURAL_FIELD;
 import static xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent.ITER_LABEL_SINGULAR_FIELD;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 public class GeneralAdmin extends BaseOrgAdmin
 {

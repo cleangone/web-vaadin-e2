@@ -9,15 +9,16 @@ import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.data.manager.EventManager;
 import xyz.cleangone.data.manager.TagManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
-import xyz.cleangone.e2.web.vaadin.util.EntityGrid;
-import xyz.cleangone.e2.web.vaadin.util.*;
+import xyz.cleangone.web.vaadin.ui.EntityGrid;
+import xyz.cleangone.web.vaadin.ui.MessageDisplayer;
+import xyz.cleangone.web.vaadin.util.*;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import static xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag.*;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 public class TagAdmin extends BaseTagAdmin
 {

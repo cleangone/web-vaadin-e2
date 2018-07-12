@@ -7,7 +7,7 @@ import xyz.cleangone.data.aws.dynamo.entity.organization.BaseOrg;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.e2.web.manager.SessionManager;
 
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 public class BaseActionBar extends HorizontalLayout
 {

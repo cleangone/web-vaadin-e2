@@ -10,7 +10,7 @@ import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.manager.VaadinSessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.actionbar.ActionBar;
 
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 public abstract class BaseAdminPage extends Panel implements View
 {

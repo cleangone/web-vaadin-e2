@@ -1,23 +1,11 @@
 package xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event;
 
-import com.vaadin.ui.CheckBoxGroup;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.HorizontalLayout;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
-import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.data.manager.EventManager;
 import xyz.cleangone.data.manager.OrgManager;
 import xyz.cleangone.data.manager.TagManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
-import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.disclosure.BaseOrgDisclosure;
-import xyz.cleangone.e2.web.vaadin.util.DescriptionGenerator;
-import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import xyz.cleangone.web.vaadin.ui.MessageDisplayer;
 
 import static java.util.Objects.requireNonNull;
 

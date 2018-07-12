@@ -8,7 +8,6 @@ import xyz.cleangone.data.manager.OrgManager;
 import xyz.cleangone.e2.web.manager.EntityChangeManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.manager.VaadinSessionManager;
-import xyz.cleangone.e2.web.vaadin.desktop.MyUI;
 import xyz.cleangone.e2.web.vaadin.desktop.actionbar.ActionBar;
 import xyz.cleangone.e2.web.vaadin.desktop.banner.BannerComponent;
 import xyz.cleangone.e2.web.vaadin.desktop.banner.BannerCarousel;
@@ -20,7 +19,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static xyz.cleangone.e2.web.manager.PageStats.*;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 
 public abstract class BasePage extends Panel implements View

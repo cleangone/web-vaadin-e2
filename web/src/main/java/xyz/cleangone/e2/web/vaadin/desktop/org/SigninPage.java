@@ -3,19 +3,14 @@ package xyz.cleangone.e2.web.vaadin.desktop.org;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.navigator.View;
 import com.vaadin.ui.*;
-import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
-import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
-import xyz.cleangone.data.aws.dynamo.entity.person.AdminPrivledge;
+
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.aws.dynamo.entity.person.UserToken;
 import xyz.cleangone.data.manager.UserManager;
-import xyz.cleangone.e2.web.manager.VaadinSessionManager;
-import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
-import xyz.cleangone.util.Crypto;
+import xyz.cleangone.web.vaadin.util.VaadinUtils;
 
-import java.util.Objects;
-
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.e2.web.manager.CookieManager.*;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 public class SigninPage extends BaseOrgPage implements View
 {
@@ -65,12 +60,12 @@ public class SigninPage extends BaseOrgPage implements View
         if (rememberMe)
         {
             UserToken userToken = userMgr.cycleToken();
-            VaadinSessionManager.setUserCookie(userToken.getId());
+            setUserCookie(userToken.getId());
         }
         else
         {
             // todo - this should be somewhere else
-            VaadinSessionManager.clearUserCookie();
+            clearUserCookie();
         }
 
         String navToPage = sessionMgr.getNavToAfterLogin(OrgPage.NAME);

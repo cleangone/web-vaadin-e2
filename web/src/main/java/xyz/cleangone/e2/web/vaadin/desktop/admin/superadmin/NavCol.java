@@ -3,7 +3,7 @@ package xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.nav.AdminPageType;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.nav.BaseNavCol;
 
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 public class NavCol extends BaseNavCol
 {

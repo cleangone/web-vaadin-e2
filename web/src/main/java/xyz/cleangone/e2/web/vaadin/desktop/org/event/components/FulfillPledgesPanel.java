@@ -11,14 +11,11 @@ import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.aws.dynamo.entity.purchase.Cart;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.actionbar.ActionBar;
-import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.EventPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.payment.PaymentPage;
-import xyz.cleangone.e2.web.vaadin.util.PageUtils;
-import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
+import xyz.cleangone.web.vaadin.util.VaadinUtils;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;

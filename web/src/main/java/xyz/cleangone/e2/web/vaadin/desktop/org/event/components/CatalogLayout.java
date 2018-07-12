@@ -11,15 +11,14 @@ import xyz.cleangone.data.manager.TagManager;
 import xyz.cleangone.data.manager.event.BidManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.manager.ViewStatus;
-import xyz.cleangone.e2.web.vaadin.desktop.MyUI;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.ItemPage;
-import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
+import xyz.cleangone.web.vaadin.util.VaadinUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 public class CatalogLayout extends VerticalLayout
 {

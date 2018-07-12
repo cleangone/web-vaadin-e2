@@ -7,16 +7,16 @@ import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.data.aws.dynamo.entity.organization.TagType;
 import xyz.cleangone.data.manager.TagManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
-import xyz.cleangone.e2.web.vaadin.util.EntityGrid;
-import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
-import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
+import xyz.cleangone.web.vaadin.ui.EntityGrid;
+import xyz.cleangone.web.vaadin.ui.MessageDisplayer;
+import xyz.cleangone.web.vaadin.util.VaadinUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent.*;
 import static xyz.cleangone.data.aws.dynamo.entity.organization.TagType.*;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 public class TagTypesAdmin extends BaseTagAdmin
 {

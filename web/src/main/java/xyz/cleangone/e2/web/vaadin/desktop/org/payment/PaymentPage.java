@@ -5,7 +5,6 @@ import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.navigator.View;
 import com.vaadin.ui.*;
 import com.vaadin.ui.components.grid.FooterRow;
-import xyz.cleangone.data.aws.dynamo.entity.action.Action;
 import xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
 import xyz.cleangone.data.aws.dynamo.entity.item.CartItem;
@@ -17,14 +16,14 @@ import xyz.cleangone.data.manager.ActionManager;
 import xyz.cleangone.data.manager.UserManager;
 import xyz.cleangone.e2.web.vaadin.desktop.org.BasePage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
-import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
+import xyz.cleangone.web.vaadin.util.VaadinUtils;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.payment.PaymentResult;
 
 import java.util.List;
 import java.util.logging.Logger;
 import static xyz.cleangone.data.aws.dynamo.entity.item.CartItem.*;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 
 public class PaymentPage extends BasePage implements View

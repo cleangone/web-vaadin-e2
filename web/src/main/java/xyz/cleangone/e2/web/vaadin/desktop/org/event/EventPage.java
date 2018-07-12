@@ -12,7 +12,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static xyz.cleangone.e2.web.vaadin.util.PageUtils.getPageDisplayType;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 public class EventPage extends BaseEventPage implements View
 {

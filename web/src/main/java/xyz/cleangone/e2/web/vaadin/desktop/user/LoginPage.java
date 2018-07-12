@@ -11,7 +11,6 @@ import xyz.cleangone.data.manager.OrgManager;
 import xyz.cleangone.data.manager.UserManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.manager.VaadinSessionManager;
-import xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin.OrgsAdmin;
 import xyz.cleangone.e2.web.vaadin.desktop.actionbar.ActionBar;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin.SuperAdminPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.OrgPage;
@@ -19,6 +18,7 @@ import xyz.cleangone.e2.web.vaadin.desktop.org.OrgPage;
 import javax.servlet.http.Cookie;
 import java.util.List;
 
+import static xyz.cleangone.e2.web.manager.CookieManager.*;
 
 public class LoginPage extends Panel implements View
 {
@@ -63,19 +63,19 @@ public class LoginPage extends Panel implements View
         UserManager userMgr = sessionMgr.getUserManager();
 
         // check for token
-        Cookie userCookie = VaadinSessionManager.getUserCookie();
+        Cookie userCookie = getUserCookie();
         if (userCookie != null && userCookie.getValue() != null && userCookie.getValue().length() > 0)
         {
             User user = userMgr.loginByToken(userCookie.getValue());
             if (user == null)
             {
                 // cookie is old
-                VaadinSessionManager.clearUserCookie();
+                clearUserCookie();
             }
             else
             {
                 UserToken newToken = userMgr.cycleToken();
-                VaadinSessionManager.setUserCookie(newToken.getId());
+                setUserCookie(newToken.getId());
 
                 if (sessionMgr.hasSuperUser())
                 {
@@ -135,12 +135,12 @@ public class LoginPage extends Panel implements View
                 if (rememberMeCheckbox.getValue())
                 {
                     UserToken userToken = userMgr.createToken();
-                    VaadinSessionManager.setUserCookie(userToken.getId());
+                    setUserCookie(userToken.getId());
                 }
                 else
                 {
                     // todo - this should be somewhere else
-                    VaadinSessionManager.clearUserCookie();
+                    clearUserCookie();
                 }
 
                 if (sessionMgr.hasSuperUser()) { getUI().getNavigator().navigateTo(SuperAdminPage.NAME); }

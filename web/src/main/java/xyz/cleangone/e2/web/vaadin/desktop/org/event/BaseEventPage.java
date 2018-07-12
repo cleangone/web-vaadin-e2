@@ -7,13 +7,12 @@ import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.manager.*;
 import xyz.cleangone.data.manager.event.ItemManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
-import xyz.cleangone.e2.web.vaadin.desktop.MyUI;
 import xyz.cleangone.e2.web.vaadin.desktop.org.BasePage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.components.LeftColLayout;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.components.RightColLayout;
 
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 public abstract class BaseEventPage extends BasePage implements View
 {

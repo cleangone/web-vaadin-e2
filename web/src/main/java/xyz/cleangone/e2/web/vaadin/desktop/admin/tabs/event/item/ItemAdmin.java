@@ -4,9 +4,6 @@ import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.vaadin.viritin.fields.IntegerField;
-import xyz.cleangone.data.aws.dynamo.dao.CatalogItemDao;
-import xyz.cleangone.data.aws.dynamo.dao.DynamoBaseDao;
-import xyz.cleangone.data.aws.dynamo.entity.base.BaseEntity;
 import xyz.cleangone.data.aws.dynamo.entity.base.EntityField;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
 import xyz.cleangone.data.aws.dynamo.entity.item.PurchaseItem;
@@ -16,18 +13,16 @@ import xyz.cleangone.data.manager.event.ItemManager;
 import xyz.cleangone.e2.web.manager.notification.NotificationWatcher;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.ImageAdmin;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.disclosure.ImagesDisclosure;
-import xyz.cleangone.e2.web.vaadin.util.DollarField;
-import xyz.cleangone.e2.web.vaadin.util.MessageDisplayer;
+import xyz.cleangone.web.vaadin.ui.DollarField;
+import xyz.cleangone.web.vaadin.ui.MessageDisplayer;
 import xyz.cleangone.e2.web.vaadin.util.PageUtils;
-import xyz.cleangone.e2.web.vaadin.util.VaadinUtils;
+import xyz.cleangone.web.vaadin.util.VaadinUtils;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
 import static xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem.*;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.*;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.BACK_GREEN;
-import static xyz.cleangone.e2.web.vaadin.util.VaadinUtils.SIZE_FULL;
+import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 public class ItemAdmin extends VerticalLayout
 {

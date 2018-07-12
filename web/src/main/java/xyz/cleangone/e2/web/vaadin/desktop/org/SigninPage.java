@@ -7,6 +7,7 @@ import com.vaadin.ui.*;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.aws.dynamo.entity.person.UserToken;
 import xyz.cleangone.data.manager.UserManager;
+import xyz.cleangone.web.vaadin.ui.PageDisplayType;
 import xyz.cleangone.web.vaadin.util.VaadinUtils;
 
 import static xyz.cleangone.e2.web.manager.CookieManager.*;

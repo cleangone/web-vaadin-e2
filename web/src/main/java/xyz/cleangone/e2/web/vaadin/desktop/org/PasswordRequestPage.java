@@ -11,6 +11,7 @@ import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.aws.dynamo.entity.person.UserToken;
 import xyz.cleangone.data.manager.UserManager;
 import xyz.cleangone.e2.web.vaadin.desktop.MyUI;
+import xyz.cleangone.web.vaadin.ui.PageDisplayType;
 import xyz.cleangone.web.vaadin.util.VaadinUtils;
 import xyz.cleangone.message.EmailSender;
 

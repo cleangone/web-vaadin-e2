@@ -9,10 +9,9 @@ import xyz.cleangone.data.manager.TagManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.EventAdminPage;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.OrgAdminPage;
-import xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin.OrgsAdmin;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin.SuperAdminPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.OrgPage;
-import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
+import xyz.cleangone.web.vaadin.ui.PageDisplayType;
 
 public class LeftMenuBar extends BaseMenuBar
 {

@@ -18,7 +18,7 @@ import xyz.cleangone.data.manager.UserManager;
 import xyz.cleangone.data.manager.event.ItemManager;
 import xyz.cleangone.e2.web.manager.EntityChangeManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
-import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
+import xyz.cleangone.web.vaadin.ui.PageDisplayType;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.CatalogPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.EventPage;
 import xyz.cleangone.web.vaadin.util.VaadinUtils;
@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static xyz.cleangone.e2.web.vaadin.util.PageUtils.*;
+import static xyz.cleangone.web.vaadin.util.PageUtils.*;
 import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 public class LeftColLayout extends HorizontalLayout
@@ -210,7 +210,7 @@ public class LeftColLayout extends HorizontalLayout
 
     private void setStyle()
     {
-        setStyleName(setNavStyle("menu-left-" + orgMgr.getOrg().getTag() + "-", event));
+        setStyleName(setNavStyle("menu-left-" + orgMgr.getOrg().getTag() + "-" + event.getTag(), event.getNavBackgroundColor()));
     }
 
     private class CategoryMenu extends MenuBar

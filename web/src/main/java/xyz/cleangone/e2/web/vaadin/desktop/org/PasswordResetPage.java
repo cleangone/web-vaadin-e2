@@ -5,7 +5,7 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import xyz.cleangone.data.aws.dynamo.entity.person.User;
 import xyz.cleangone.data.manager.UserManager;
-
+import xyz.cleangone.web.vaadin.ui.PageDisplayType;
 
 public class PasswordResetPage extends BaseOrgPage implements View
 {

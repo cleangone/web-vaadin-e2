@@ -5,13 +5,13 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
 import xyz.cleangone.data.aws.dynamo.entity.lastTouched.EntityType;
-import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
+import xyz.cleangone.web.vaadin.ui.PageDisplayType;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.components.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static xyz.cleangone.e2.web.vaadin.util.PageUtils.getPageDisplayType;
+import static xyz.cleangone.web.vaadin.util.PageUtils.*;
 import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 
 public class EventPage extends BaseEventPage implements View

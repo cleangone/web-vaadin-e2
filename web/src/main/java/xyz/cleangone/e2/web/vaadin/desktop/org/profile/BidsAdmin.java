@@ -18,7 +18,7 @@ import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.BaseAdmin;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.ItemPage;
 import xyz.cleangone.web.vaadin.ui.MessageDisplayer;
-import xyz.cleangone.e2.web.vaadin.util.PageUtils;
+import xyz.cleangone.web.vaadin.util.PageUtils;
 import xyz.cleangone.web.vaadin.util.VaadinUtils;
 
 import java.util.*;

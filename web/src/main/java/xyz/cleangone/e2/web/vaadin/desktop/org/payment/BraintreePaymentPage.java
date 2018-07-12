@@ -3,11 +3,11 @@ package xyz.cleangone.e2.web.vaadin.desktop.org.payment;
 import com.vaadin.navigator.View;
 import com.vaadin.ui.Component;
 import xyz.cleangone.e2.web.manager.SessionManager;
-import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 import xyz.cleangone.payment.PaymentResult;
 import xyz.cleangone.payment.braintree.BraintreeClient;
 import xyz.cleangone.payment.braintree.BraintreeClientResult;
 import xyz.cleangone.payment.braintree.Gateway;
+import xyz.cleangone.web.vaadin.ui.PageDisplayType;
 
 import java.math.BigDecimal;
 

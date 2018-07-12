@@ -6,6 +6,7 @@ import com.vaadin.ui.*;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
 import xyz.cleangone.e2.web.manager.SessionManager;
+import xyz.cleangone.web.vaadin.ui.PageDisplayType;
 
 import java.util.List;
 

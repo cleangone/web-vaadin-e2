@@ -15,7 +15,7 @@ import xyz.cleangone.data.aws.dynamo.entity.purchase.Cart;
 import xyz.cleangone.data.manager.ActionManager;
 import xyz.cleangone.data.manager.UserManager;
 import xyz.cleangone.e2.web.vaadin.desktop.org.BasePage;
-import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
+import xyz.cleangone.web.vaadin.ui.PageDisplayType;
 import xyz.cleangone.web.vaadin.util.VaadinUtils;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.payment.PaymentResult;

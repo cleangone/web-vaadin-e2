@@ -3,9 +3,9 @@ package xyz.cleangone.e2.web.vaadin.desktop.actionbar;
 import com.vaadin.shared.ui.AlignmentInfo;
 import com.vaadin.ui.*;
 import xyz.cleangone.e2.web.manager.SessionManager;
-import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
+import xyz.cleangone.web.vaadin.ui.PageDisplayType;
 import xyz.cleangone.web.vaadin.ui.MessageDisplayer;
-import xyz.cleangone.e2.web.vaadin.util.PageUtils;
+import xyz.cleangone.web.vaadin.util.PageUtils;
 
 import static xyz.cleangone.web.vaadin.util.VaadinUtils.*;
 

@@ -5,8 +5,8 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.UI;
 import xyz.cleangone.data.aws.dynamo.entity.item.CatalogItem;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
-import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.components.CatalogLayout;
+import xyz.cleangone.web.vaadin.ui.PageDisplayType;
 
 import java.util.*;
 import java.util.stream.Collectors;

@@ -1,7 +1,7 @@
 package xyz.cleangone.e2.web.manager;
 
-import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
 import java.util.*;
+import xyz.cleangone.web.vaadin.ui.PageDisplayType;
 
 public class PageStats
 {

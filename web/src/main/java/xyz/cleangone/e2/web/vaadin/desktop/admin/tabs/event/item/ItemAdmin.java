@@ -15,7 +15,7 @@ import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.ImageAdmin;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.org.disclosure.ImagesDisclosure;
 import xyz.cleangone.web.vaadin.ui.DollarField;
 import xyz.cleangone.web.vaadin.ui.MessageDisplayer;
-import xyz.cleangone.e2.web.vaadin.util.PageUtils;
+import xyz.cleangone.web.vaadin.util.PageUtils;
 import xyz.cleangone.web.vaadin.util.VaadinUtils;
 
 import java.math.BigDecimal;

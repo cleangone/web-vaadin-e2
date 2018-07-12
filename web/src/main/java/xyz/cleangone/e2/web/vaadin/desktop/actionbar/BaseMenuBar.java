@@ -1,23 +1,18 @@
 package xyz.cleangone.e2.web.vaadin.desktop.actionbar;
 
-import com.vaadin.icons.VaadinIcons;
-import com.vaadin.server.Page;
 import com.vaadin.server.Resource;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.themes.ValoTheme;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
-import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
-import xyz.cleangone.data.aws.dynamo.entity.purchase.Cart;
 import xyz.cleangone.data.manager.EventManager;
 import xyz.cleangone.data.manager.UserManager;
 import xyz.cleangone.e2.web.manager.EntityChangeManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
-import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
+import xyz.cleangone.web.vaadin.ui.PageDisplayType;
 
 import java.util.List;
 
 import static java.util.Objects.requireNonNull;
-import static xyz.cleangone.e2.web.vaadin.desktop.actionbar.ActionBar.ACTION_BAR_STYLE_NAME;
 
 public class BaseMenuBar extends MenuBar
 {

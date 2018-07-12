@@ -16,6 +16,7 @@ import xyz.cleangone.e2.web.vaadin.desktop.org.event.EventPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.ItemPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.payment.IatsPaymentPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.payment.PaymentPage;
+import xyz.cleangone.web.vaadin.ui.PageDisplayType;
 import xyz.cleangone.web.vaadin.util.VaadinUtils;
 
 import java.util.List;

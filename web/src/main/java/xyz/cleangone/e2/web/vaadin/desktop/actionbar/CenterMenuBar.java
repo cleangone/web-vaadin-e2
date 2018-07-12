@@ -7,7 +7,7 @@ import xyz.cleangone.data.aws.dynamo.entity.organization.Organization;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.org.CalendarPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.OrgPage;
-import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
+import xyz.cleangone.web.vaadin.ui.PageDisplayType;
 
 public class CenterMenuBar extends BaseMenuBar
 {

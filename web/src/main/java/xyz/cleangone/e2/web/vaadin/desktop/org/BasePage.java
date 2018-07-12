@@ -12,6 +12,7 @@ import xyz.cleangone.e2.web.vaadin.desktop.actionbar.ActionBar;
 import xyz.cleangone.e2.web.vaadin.desktop.banner.BannerComponent;
 import xyz.cleangone.e2.web.vaadin.desktop.banner.BannerCarousel;
 import xyz.cleangone.e2.web.vaadin.desktop.banner.BannerSingle;
+import xyz.cleangone.web.vaadin.ui.PageDisplayType;
 
 import java.util.Date;
 import java.util.concurrent.Executors;

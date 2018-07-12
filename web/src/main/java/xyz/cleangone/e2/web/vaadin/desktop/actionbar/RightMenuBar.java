@@ -10,6 +10,7 @@ import xyz.cleangone.e2.web.vaadin.desktop.admin.superadmin.SuperAdminProfilePag
 import xyz.cleangone.e2.web.vaadin.desktop.org.*;
 import xyz.cleangone.e2.web.vaadin.desktop.org.profile.BidsPage;
 import xyz.cleangone.e2.web.vaadin.desktop.org.profile.ProfilePage;
+import xyz.cleangone.web.vaadin.ui.PageDisplayType;
 
 import static xyz.cleangone.e2.web.manager.CookieManager.*;
 

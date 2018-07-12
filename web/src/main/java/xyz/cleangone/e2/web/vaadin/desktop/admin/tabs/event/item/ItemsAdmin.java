@@ -15,7 +15,7 @@ import xyz.cleangone.data.aws.dynamo.entity.lastTouched.EntityType;
 import xyz.cleangone.data.aws.dynamo.entity.organization.OrgTag;
 import xyz.cleangone.data.aws.dynamo.entity.organization.TagType;
 import xyz.cleangone.data.manager.event.ItemManager;
-import xyz.cleangone.e2.web.vaadin.util.PageUtils;
+import xyz.cleangone.web.vaadin.util.PageUtils;
 import xyz.cleangone.web.vaadin.ui.EntityGrid;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.BaseEventTagsAdmin;
 import xyz.cleangone.e2.web.vaadin.desktop.admin.tabs.event.EventsAdminLayout;

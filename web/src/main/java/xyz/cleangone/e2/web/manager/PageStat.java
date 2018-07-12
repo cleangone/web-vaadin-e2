@@ -1,7 +1,6 @@
 package xyz.cleangone.e2.web.manager;
 
-import xyz.cleangone.data.cache.EntityLastTouchedCache;
-import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
+import xyz.cleangone.web.vaadin.ui.PageDisplayType;
 
 import java.math.BigDecimal;
 import java.util.Date;

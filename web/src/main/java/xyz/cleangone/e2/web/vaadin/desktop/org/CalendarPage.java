@@ -13,6 +13,7 @@ import xyz.cleangone.data.aws.dynamo.entity.organization.OrgEvent;
 import xyz.cleangone.data.manager.EventManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.EventCalendarItem;
+import xyz.cleangone.web.vaadin.ui.PageDisplayType;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;

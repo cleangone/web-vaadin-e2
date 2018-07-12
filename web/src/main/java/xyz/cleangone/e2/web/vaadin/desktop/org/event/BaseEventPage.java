@@ -8,7 +8,7 @@ import xyz.cleangone.data.manager.*;
 import xyz.cleangone.data.manager.event.ItemManager;
 import xyz.cleangone.e2.web.manager.SessionManager;
 import xyz.cleangone.e2.web.vaadin.desktop.org.BasePage;
-import xyz.cleangone.e2.web.vaadin.desktop.org.PageDisplayType;
+import xyz.cleangone.web.vaadin.ui.PageDisplayType;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.components.LeftColLayout;
 import xyz.cleangone.e2.web.vaadin.desktop.org.event.components.RightColLayout;
 
